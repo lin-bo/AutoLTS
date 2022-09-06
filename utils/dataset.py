@@ -10,19 +10,23 @@ from PIL import Image
 
 class StreetviewDataset(Dataset):
 
-    def __init__(self, purpose='training', toy=False):
+    def __init__(self, purpose='training', toy=False, local=True):
         super().__init__()
         # load indices
         indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
         if toy:
+            np.random.seed(31415926)
             np.random.shuffle(indi)
-            indi = indi[:100]
+            indi = indi[:1000]
         # load labels
         lts = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
         self.y = lts[indi]
         self.x = []
         # load images
-        img_path = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
+        if local:
+            img_path = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
+        else:
+            img_path = './data/streetview/dataset'
         transform = transforms.Compose([
             transforms.PILToTensor(),
             transforms.Resize(224)

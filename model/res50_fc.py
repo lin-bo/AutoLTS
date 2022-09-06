@@ -5,10 +5,13 @@ from torch import nn
 
 class Res50FC(nn.Module):
 
-    def __init__(self, pretrained=False):
+    def __init__(self, pretrained=False, local=False):
         super().__init__()
-        weights = None if not pretrained else 'DEFAULT'
-        self.res50 = torchvision.models.resnet50(weights=weights)
+        if local:
+            weights = None if not pretrained else 'DEFAULT'
+            self.res50 = torchvision.models.resnet50(weights=weights)
+        else:
+            self.res50 = torchvision.models.resnet50(pretrained=pretrained)
         self.l1 = nn.Linear(1000, 100)
         self.l2 = nn.Linear(100, 4)
         self.l3 = nn.Softmax(dim=-1)

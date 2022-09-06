@@ -21,7 +21,7 @@ def validation(net, vali_loader, device):
 
 
 if __name__ == '__main__':
-    epoch = 3
+    epoch = 5
     # load checkpoint
     checkpoint = torch.load(f'./checkpoint/Res50FC_{epoch}.pt')
     # set parameters

@@ -1,12 +1,15 @@
+import numpy as np
+
 from utils import StreetviewDataset
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from model import Res50FC
 from tqdm import tqdm
+import argparse
 
 
-def train(net, optimizer, epoch, train_loader, device):
+def train_one_epoch(net, optimizer, epoch, train_loader, device):
     net.train()
     criterion = nn.CrossEntropyLoss(reduction='sum')
     total_loss = 0.
@@ -19,7 +22,7 @@ def train(net, optimizer, epoch, train_loader, device):
         loss = criterion(outputs, y-1)
         loss.backward()
         optimizer.step()
-        total_loss += loss
+        total_loss += loss.item()
         _, y_pred = torch.max(outputs, dim=1)
         y_pred += 1
         tot_cnt += len(y_pred)
@@ -28,25 +31,43 @@ def train(net, optimizer, epoch, train_loader, device):
     return total_loss
 
 
-if __name__ == '__main__':
+def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003, job_id=None, toy=False):
     # set parameters
-    n_epoch = 100
-    n_check = 3
-    device = 'mps'
-    batch_size = 32
-    lr = 0.0003
+    check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}'
     # load training data
-    train_loader = DataLoader(StreetviewDataset(purpose='validation', toy=True), batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local), batch_size=batch_size, shuffle=True)
     # initialization
-    net = Res50FC(pretrained=True).to(device=device)
+    net = Res50FC(pretrained=True).to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr)
+    loss_records = []
     print('start training ...')
     for epoch in range(n_epoch):
-        loss = train(net, optimizer, epoch, train_loader, device)
-        # if (epoch + 1) % n_check == 0:
-        #     torch.save({'epoch': epoch,
-        #                 'model_state_dict': net.state_dict(),
-        #                 'optimizer_state_dict': optimizer.state_dict(),
-        #                 'hyper-parameters': {'n_epoch': n_epoch, 'n_check': n_check, 'device': device, 'batch_size': batch_size, 'lr': lr}
-        #                 },
-        #                f'./checkpoint/Res50FC_{epoch}.pt')
+        loss = train_one_epoch(net, optimizer, epoch, train_loader, device)
+        loss_records.append(loss)
+        np.savetxt(check_path + 'Res50FC_loss.txt', loss_records, delimiter=',')
+        if (epoch + 1) % n_check == 0:
+            torch.save({'epoch': epoch,
+                        'model_state_dict': net.state_dict(),
+                        'optimizer_state_dict': optimizer.state_dict(),
+                        'loss': loss,
+                        'hyper-parameters': {'n_epoch': n_epoch, 'n_check': n_check, 'device': device, 'batch_size': batch_size, 'lr': lr}
+                        },
+                       check_path + f'.Res50FC_{epoch}.pt')
+
+
+if __name__ == '__main__':
+    # set parser
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, help='device for training')
+    parser.add_argument('--jobid', type=str, help='job id')
+    parser.add_argument('-bs', '--batchsize', type=int, help='batch size')
+    parser.add_argument('-ne', '--nepoch', type=int, help='the number of epoch')
+    parser.add_argument('-nc', '--ncheck', type=int, help='checkpoint frequency')
+    parser.add_argument('--lr', type=float, help='learning rate')
+    parser.add_argument('--toy', action='store_true', help='use the toy example or not')
+    parser.add_argument('--no-toy', dest='toy', action='store_false')
+    parser.add_argument('--local', action='store_true', help='is the training on a local device or not')
+    parser.add_argument('--no-local', dest='local', action='store_false')
+    args = parser.parse_args()
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local,
+          batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy)
