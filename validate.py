@@ -9,15 +9,20 @@ from tqdm import tqdm
 def validation(net, vali_loader, device):
     tot_cnt = 0
     corr_cnt = 0
+    criterion = nn.CrossEntropyLoss(reduction='sum')
+    total_loss = 0.
     with torch.no_grad():
         for x, y in tqdm(vali_loader):
             x, y = x.to(device), y.to(device)
             outputs = net(x)
+            loss = criterion(outputs, y-1)
+            total_loss += loss.item()
             _, predicted = torch.max(outputs, 1)
             predicted += 1
             tot_cnt += predicted.shape[0]
             corr_cnt += (predicted == y).sum().item()
-    print(f'Accuracy on validation set: {corr_cnt/tot_cnt * 100} %')
+    return total_loss, corr_cnt/tot_cnt * 100
+    # print(f'Accuracy on validation set: {corr_cnt/tot_cnt * 100} %')
 
 
 if __name__ == '__main__':
