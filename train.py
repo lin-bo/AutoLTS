@@ -45,7 +45,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
         train_loss, train_acc = train_one_epoch(net, optimizer, epoch, train_loader, device)
         vali_loss, vali_acc = validation(net, vali_loader, device)
         loss_records.append((train_loss, vali_loss))
-        np.savetxt(check_path + 'Res50FC_loss.txt', loss_records, delimiter=',')
+        np.savetxt(check_path + f'{job_id}_loss.txt', loss_records, delimiter=',')
         if (epoch + 1) % n_check == 0:
             torch.save({'epoch': epoch,
                         'model_state_dict': net.state_dict(),
@@ -53,7 +53,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
                         'loss': (train_loss, vali_loss),
                         'hyper-parameters': {'n_epoch': n_epoch, 'n_check': n_check, 'device': device, 'batch_size': batch_size, 'lr': lr}
                         },
-                       check_path + f'Res50FC_{epoch}.pt')
+                       check_path + f'{job_id}_{epoch}.pt')
         print(f'Epoch: {epoch}, train loss: {train_loss:.4f}, train accuracy: {train_acc:.2f}%, vali loss: {vali_loss:.4f}, vali accuracy: {vali_acc:.2f}%')
 
 
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     # set parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, help='device for training')
-    parser.add_argument('--jobid', type=str, help='job id')
+    parser.add_argument('--jobid', type=int, help='job id')
     parser.add_argument('-bs', '--batchsize', type=int, help='batch size')
     parser.add_argument('-ne', '--nepoch', type=int, help='the number of epoch')
     parser.add_argument('-nc', '--ncheck', type=int, help='checkpoint frequency')
