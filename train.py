@@ -7,6 +7,7 @@ from model import Res50FC
 from tqdm import tqdm
 import argparse
 from validate import validation
+import os
 
 
 def train_one_epoch(net, optimizer, train_loader, device):
@@ -30,6 +31,22 @@ def train_one_epoch(net, optimizer, train_loader, device):
     return total_loss, corr_cnt/tot_cnt * 100
 
 
+def initialization(check_path, n_check, n_epoch, job_id, net, optimizer):
+    init_epoch = 0
+    loss_records = []
+    for epoch in list(range(n_epoch))[::-1]:
+        if (epoch + 1) % n_check != 0:
+            continue
+        if os.path.exists(check_path + f'{job_id}_{epoch}.pt'):
+            checkpoint = torch.load(check_path + f'{job_id}_{epoch}.pt')
+            net.load_state_dict(checkpoint['model_state_dict'])
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            init_epoch = checkpoint['epoch']
+            loss_records = checkpoint['loss_records']
+            return init_epoch, loss_records, net, optimizer
+    return init_epoch, loss_records, net, optimizer
+
+
 def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003, job_id=None, toy=False, frozen=False):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
@@ -40,6 +57,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
     net = Res50FC(pretrained=True, frozen=frozen).to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr)
     loss_records = []
+    init_epoch, loss_records, net, optimizer = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
     print('start training ...')
     for epoch in range(n_epoch):
         train_loss, train_acc = train_one_epoch(net, optimizer, train_loader, device)
@@ -50,7 +68,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
             torch.save({'epoch': epoch,
                         'model_state_dict': net.state_dict(),
                         'optimizer_state_dict': optimizer.state_dict(),
-                        'loss': (train_loss, vali_loss),
+                        'loss_records': loss_records,
                         'hyper-parameters': {'n_epoch': n_epoch, 'n_check': n_check, 'device': device, 'batch_size': batch_size, 'lr': lr}
                         },
                        check_path + f'{job_id}_{epoch}.pt')
