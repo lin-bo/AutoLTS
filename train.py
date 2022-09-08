@@ -9,7 +9,7 @@ import argparse
 from validate import validation
 
 
-def train_one_epoch(net, optimizer, epoch, train_loader, device):
+def train_one_epoch(net, optimizer, train_loader, device):
     net.train()
     criterion = nn.CrossEntropyLoss(reduction='sum')
     total_loss = 0.
@@ -30,19 +30,19 @@ def train_one_epoch(net, optimizer, epoch, train_loader, device):
     return total_loss, corr_cnt/tot_cnt * 100
 
 
-def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003, job_id=None, toy=False):
+def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003, job_id=None, toy=False, frozen=False):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # load training data
     train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local), batch_size=batch_size, shuffle=True)
     vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local), batch_size=batch_size, shuffle=True)
     # initialization
-    net = Res50FC(pretrained=True).to(device)
+    net = Res50FC(pretrained=True, frozen=frozen).to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr)
     loss_records = []
     print('start training ...')
     for epoch in range(n_epoch):
-        train_loss, train_acc = train_one_epoch(net, optimizer, epoch, train_loader, device)
+        train_loss, train_acc = train_one_epoch(net, optimizer, train_loader, device)
         vali_loss, vali_acc = validation(net, vali_loader, device)
         loss_records.append((train_loss, vali_loss))
         np.savetxt(check_path + f'{job_id}_loss.txt', loss_records, delimiter=',')
@@ -70,6 +70,8 @@ if __name__ == '__main__':
     parser.add_argument('--no-toy', dest='toy', action='store_false')
     parser.add_argument('--local', action='store_true', help='is the training on a local device or not')
     parser.add_argument('--no-local', dest='local', action='store_false')
+    parser.add_argument('--frozen', action='store_true', help='freeze the pretrained resent or not')
+    parser.add_argument('--no-frozen', dest='frozen', action='store_false')
     args = parser.parse_args()
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local,
-          batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy)
+          batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy, frozen=args.frozen)
