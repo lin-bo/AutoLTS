@@ -47,11 +47,11 @@ def initialization(check_path, n_check, n_epoch, job_id, net, optimizer):
     return init_epoch, loss_records, net, optimizer
 
 
-def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003, job_id=None, toy=False, frozen=False):
+def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003, job_id=None, toy=False, frozen=False, aug=False):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # load training data
-    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local), batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug), batch_size=batch_size, shuffle=True)
     vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local), batch_size=batch_size, shuffle=True)
     # initialization
     net = Res50FC(pretrained=True, frozen=frozen).to(device)
@@ -90,6 +90,8 @@ if __name__ == '__main__':
     parser.add_argument('--no-local', dest='local', action='store_false')
     parser.add_argument('--frozen', action='store_true', help='freeze the pretrained resent or not')
     parser.add_argument('--no-frozen', dest='frozen', action='store_false')
+    parser.add_argument('--aug', action='store_true', help='apply data augmentation or not')
+    parser.add_argument('--no-aug', dest='aug', action='store_false')
     args = parser.parse_args()
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local,
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local, aug=args.aug,
           batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy, frozen=args.frozen)
