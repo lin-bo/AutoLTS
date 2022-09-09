@@ -11,6 +11,7 @@ def validation(net, vali_loader, device):
     corr_cnt = 0
     criterion = nn.CrossEntropyLoss(reduction='sum')
     total_loss = 0.
+    net.eval()
     with torch.no_grad():
         for x, y in tqdm(vali_loader):
             x, y = x.to(device), y.to(device)
@@ -21,6 +22,7 @@ def validation(net, vali_loader, device):
             predicted += 1
             tot_cnt += predicted.shape[0]
             corr_cnt += (predicted == y).sum().item()
+    net.train()
     return total_loss, corr_cnt/tot_cnt * 100
     # print(f'Accuracy on validation set: {corr_cnt/tot_cnt * 100} %')
 

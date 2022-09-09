@@ -29,15 +29,15 @@ class StreetviewDataset(Dataset):
         if not augmentation:
             self.transform = transforms.Compose([
                 transforms.PILToTensor(),
-                transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
-                transforms.RandomGrayscale(p=0.2),
-                transforms.ColorJitter(0.4, 0.4, 0.4, 0.4),
-                transforms.RandomHorizontalFlip(),
+                transforms.Resize(224)
             ])
         else:
             self.transform = transforms.Compose([
                 transforms.PILToTensor(),
-
+                transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
+                transforms.RandomGrayscale(p=0.2),
+                transforms.ColorJitter(0.4, 0.4, 0.4, 0.4),
+                transforms.RandomHorizontalFlip(),
             ])
         self.img_path = [img_folder + f'/{idx}.jpg' for idx in indi]
 

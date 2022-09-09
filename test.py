@@ -14,6 +14,7 @@ def eval(net, test_loader, device):
     total_loss = 0.
     criterion = nn.CrossEntropyLoss(reduction='sum')
     pred_records, true_records = [], []
+    net.eval()
     with torch.no_grad():
         for x, y in tqdm(test_loader):
             x, y = x.to(device), y.to(device)
