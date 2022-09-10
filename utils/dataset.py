@@ -10,7 +10,7 @@ from PIL import Image
 
 class StreetviewDataset(Dataset):
 
-    def __init__(self, purpose='training', toy=False, local=True, augmentation=False):
+    def __init__(self, purpose='training', toy=False, local=True, augmentation=False, biased_sampling=False):
         super().__init__()
         # load indices
         indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
@@ -39,7 +39,14 @@ class StreetviewDataset(Dataset):
                 transforms.ColorJitter(0.4, 0.4, 0.4, 0.4),
                 transforms.RandomHorizontalFlip(),
             ])
-        self.img_path = [img_folder + f'/{idx}.jpg' for idx in indi]
+        self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
+        if biased_sampling:
+            flag3 = (self.y == 3).astype(bool)
+            flag4 = (self.y == 4).astype(bool)
+            y_series = [self.y, self.y[flag3], self.y[flag4], self.y[flag3], self.y[flag4]]
+            x_series = [self.img_path, self.img_path[flag3], self.img_path[flag4], self.img_path[flag3], self.img_path[flag4]]
+            self.y = np.concatenate(y_series, axis=0)
+            self.img_path = np.concatenate(x_series, axis=0)
 
     def __len__(self):
         return len(self.y)
@@ -48,5 +55,3 @@ class StreetviewDataset(Dataset):
         img = Image.open(self.img_path[idx])
         img = self.transform(img).float()
         return img, torch.tensor(self.y[idx])
-
-

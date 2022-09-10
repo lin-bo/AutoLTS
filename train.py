@@ -47,11 +47,13 @@ def initialization(check_path, n_check, n_epoch, job_id, net, optimizer):
     return init_epoch, loss_records, net, optimizer
 
 
-def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003, job_id=None, toy=False, frozen=False, aug=False):
+def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003,
+          job_id=None, toy=False, frozen=False, aug=False, biased=False):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # load training data
-    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug), batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug, biased_sampling=biased),
+                              batch_size=batch_size, shuffle=True)
     vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local), batch_size=batch_size, shuffle=True)
     # initialization
     net = Res50FC(pretrained=True, frozen=frozen).to(device)
@@ -59,7 +61,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
     loss_records = []
     init_epoch, loss_records, net, optimizer = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
     print('start training ...')
-    for epoch in range(n_epoch):
+    for epoch in range(init_epoch, n_epoch):
         train_loss, train_acc = train_one_epoch(net, optimizer, train_loader, device)
         vali_loss, vali_acc = validation(net, vali_loader, device)
         loss_records.append((train_loss, vali_loss))
@@ -92,6 +94,8 @@ if __name__ == '__main__':
     parser.add_argument('--no-frozen', dest='frozen', action='store_false')
     parser.add_argument('--aug', action='store_true', help='apply data augmentation or not')
     parser.add_argument('--no-aug', dest='aug', action='store_false')
+    parser.add_argument('--biased', action='store_true', help='apply data augmentation or not')
+    parser.add_argument('--no-biased', dest='biased', action='store_false')
     args = parser.parse_args()
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local, aug=args.aug,
-          batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy, frozen=args.frozen)
+          batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy, frozen=args.frozen, biased=args.biased)
