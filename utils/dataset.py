@@ -57,10 +57,14 @@ class StreetviewDataset(Dataset):
 
 class MoCoDataset(Dataset):
 
-    def __init__(self, purpose='training', local=True):
+    def __init__(self, purpose='training', local=True, toy=False):
         super().__init__()
         # load index and labels
         indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+        if toy:
+            np.random.seed(31415926)
+            np.random.shuffle(indi)
+            indi = indi[:1000]
         # load images
         if local:
             img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'

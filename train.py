@@ -1,12 +1,14 @@
 import numpy as np
 from utils import StreetviewDataset
 import torch
-from torch import nn
-from torch.utils.data import DataLoader
-from model import Res50FC
 from tqdm import tqdm
 import argparse
+from torch import nn
+from torch.utils.data import DataLoader
+
+from model import Res50FC
 from validate import validation
+from utils import initialization
 import os
 
 
@@ -29,22 +31,6 @@ def train_one_epoch(net, optimizer, train_loader, device):
         tot_cnt += len(y_pred)
         corr_cnt += (y_pred == y).sum().item()
     return total_loss, corr_cnt/tot_cnt * 100
-
-
-def initialization(check_path, n_check, n_epoch, job_id, net, optimizer):
-    init_epoch = 0
-    loss_records = []
-    for epoch in list(range(n_epoch))[::-1]:
-        if (epoch + 1) % n_check != 0:
-            continue
-        if os.path.exists(check_path + f'{job_id}_{epoch}.pt'):
-            checkpoint = torch.load(check_path + f'{job_id}_{epoch}.pt')
-            net.load_state_dict(checkpoint['model_state_dict'])
-            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-            init_epoch = checkpoint['epoch']
-            loss_records = checkpoint['loss_records']
-            return init_epoch, loss_records, net, optimizer
-    return init_epoch, loss_records, net, optimizer
 
 
 def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003,
