@@ -1,5 +1,4 @@
 import numpy as np
-from utils import StreetviewDataset
 import torch
 from tqdm import tqdm
 import argparse
@@ -8,7 +7,7 @@ from torch.utils.data import DataLoader
 
 from model import Res50FC
 from validate import validation
-from utils import initialization
+from utils import initialization, StreetviewDataset
 import os
 
 

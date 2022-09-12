@@ -5,7 +5,7 @@ import torchvision
 
 class MoCo(nn.Module):
 
-    def __init__(self, dim, queue_size=65536, momentum=0.999, temperature=0.07, mlp=True, local=True, device='mps'):
+    def __init__(self, dim, queue_size=8400, momentum=0.999, temperature=0.07, mlp=True, local=True, device='mps'):
         super(MoCo, self).__init__()
         # initialize parameters
         self.queue_size = queue_size

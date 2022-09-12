@@ -61,7 +61,7 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
     loader_vali = DataLoader(dataset_vali, shuffle=True, batch_size=batch_size, drop_last=False)
     n_train, n_vali = len(dataset_train), len(dataset_vali)
     # initialize the network and optimizer
-    net = MoCo(dim=128, device=device).to(device)
+    net = MoCo(dim=128, device=device, local=local).to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     criterion = nn.CrossEntropyLoss().to(device)
     loss_records = []
