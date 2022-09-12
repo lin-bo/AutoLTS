@@ -1,7 +1,9 @@
+import random
 import numpy as np
 import pandas as pd
 import geopandas
 import os
+from PIL import ImageFilter
 
 
 def train_test_split():
@@ -29,4 +31,15 @@ def extract_lts_labels():
     df = geopandas.read_file('./data/network/trt_network_filtered.shp')
     lts = df['LTS'].values
     np.savetxt('./data/LTS/lts_labels.txt', lts, delimiter=',')
+
+
+class GaussianBlur(object):
+
+    def __init__(self, sigma=[.1, 2.]):
+        self.sigma = sigma
+
+    def __call__(self, x):
+        sigma = random.uniform(self.sigma[0], self.sigma[1])
+        x = x.filter(ImageFilter.GaussianBlur(radius=sigma))
+        return x
 

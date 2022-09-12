@@ -1,1 +1,2 @@
-from .res50_fc import Res50FC
+from .res50_fc import *
+from .MoCo import *
