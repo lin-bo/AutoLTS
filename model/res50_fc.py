@@ -6,7 +6,7 @@ from torch import nn
 class Res50FC(nn.Module):
 
     def __init__(self, pretrained=False, local=False, frozen=False):
-        super().__init__()
+        super(Res50FC, self).__init__()
         if local:
             weights = None if not pretrained else 'DEFAULT'
             self.res50 = torchvision.models.resnet50(weights=weights)
