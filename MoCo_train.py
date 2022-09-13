@@ -5,6 +5,7 @@ from torch import nn
 from tqdm import tqdm
 import argparse
 import numpy as np
+import time
 
 from model import MoCo
 from utils import MoCoDataset, initialization
@@ -42,11 +43,13 @@ def validate(loader_vali, net, criterion, device):
     return total_loss
 
 
-def save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check, device, batch_size, lr, check_path, job_id):
+def save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check, device,
+                    batch_size, lr, check_path, job_id, output_records):
     torch.save({'epoch': epoch,
                 'model_state_dict': net.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss_records': loss_records,
+                'output_records': output_records,
                 'hyper-parameters': {'n_epoch': n_epoch, 'n_check': n_check, 'device': device, 'batch_size': batch_size, 'lr': lr}
                 },
                check_path + f'{job_id}_{epoch}.pt')
@@ -54,6 +57,7 @@ def save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check, devic
 
 def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32, job_id=None, local=False):
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
+    output_records = []
     # create dataloaders
     dataset_train = MoCoDataset(purpose='training', local=local, toy=toy)
     loader_train = DataLoader(dataset_train, shuffle=True, batch_size=batch_size, drop_last=True)
@@ -64,20 +68,26 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
     net = MoCo(dim=128, device=device, local=local).to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     criterion = nn.CrossEntropyLoss().to(device)
-    loss_records = []
     # load checkpoint if needed
-    init_epoch, loss_records, net, optimizer = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
-    print('start training ...')
+    init_epoch, loss_records, net, optimizer, output_records = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
+    loss_vali = 0
     # here we go
+    msg = f'------------------------------------\n(re)Start training from epoch {init_epoch}\n------------------------------------'
+    print(msg)
+    output_records.append(msg)
     for epoch in range(init_epoch, n_epoch):
+        tick = time.time()
         loss_train = train_one_epoch(loader_train, net, criterion, optimizer, epoch, device)
-        loss_vali = validate(loader_vali, net, criterion, device)
+        # loss_vali = validate(loader_vali, net, criterion, device)
         loss_train, loss_vali = loss_train / n_train * 100, loss_vali / n_vali * 100 # normalize
         loss_records.append((loss_train, loss_vali))
         np.savetxt(check_path + f'{job_id}_loss.txt', loss_records, delimiter=',')
-        if epoch + 1 % n_check == 0:
-            save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check, device, batch_size, lr, check_path, job_id)
-        print(f'epoch {epoch}, training loss: {loss_train:.2f}, validation loss: {loss_vali:.2f}')
+        msg = f'epoch {epoch}, training loss: {loss_train:.2f}, time: {time.time() - tick:.2f} sec'
+        print(msg)
+        output_records.append(msg)
+        if (epoch + 1) % n_check == 0:
+            save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check,
+                            device, batch_size, lr, check_path, job_id, output_records)
 
 
 if __name__ == '__main__':
@@ -95,6 +105,7 @@ if __name__ == '__main__':
     parser.add_argument('--no-local', dest='local', action='store_false')
     args = parser.parse_args()
     # here we go
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, local=args.local)
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy,
+          local=args.local, batch_size=args.batchsize, job_id=args.jobid)
 
 
