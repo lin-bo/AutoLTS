@@ -55,17 +55,18 @@ def save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check, devic
                check_path + f'{job_id}_{epoch}.pt')
 
 
-def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32, job_id=None, local=False):
+def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32,
+          job_id=None, local=False, simple_shuffle=False):
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     output_records = []
     # create dataloaders
     dataset_train = MoCoDataset(purpose='training', local=local, toy=toy)
-    loader_train = DataLoader(dataset_train, shuffle=True, batch_size=batch_size, drop_last=True)
-    dataset_vali = MoCoDataset(purpose='validation', local=local, toy=toy)
-    loader_vali = DataLoader(dataset_vali, shuffle=True, batch_size=batch_size, drop_last=False)
-    n_train, n_vali = len(dataset_train), len(dataset_vali)
+    loader_train = DataLoader(dataset_train, shuffle=False, batch_size=batch_size, drop_last=True)
+    # dataset_vali = MoCoDataset(purpose='validation', local=local, toy=toy)
+    # loader_vali = DataLoader(dataset_vali, shuffle=True, batch_size=batch_size, drop_last=False)
+    n_train = len(dataset_train)
     # initialize the network and optimizer
-    net = MoCo(dim=128, device=device, local=local).to(device)
+    net = MoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle).to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     criterion = nn.CrossEntropyLoss().to(device)
     # load checkpoint if needed
@@ -79,7 +80,7 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
         tick = time.time()
         loss_train = train_one_epoch(loader_train, net, criterion, optimizer, epoch, device)
         # loss_vali = validate(loader_vali, net, criterion, device)
-        loss_train, loss_vali = loss_train / n_train * 100, loss_vali / n_vali * 100 # normalize
+        loss_train= loss_train / n_train * 100  # normalize
         loss_records.append((loss_train, loss_vali))
         np.savetxt(check_path + f'{job_id}_loss.txt', loss_records, delimiter=',')
         msg = f'epoch {epoch}, training loss: {loss_train:.2f}, time: {time.time() - tick:.2f} sec'
@@ -103,9 +104,11 @@ if __name__ == '__main__':
     parser.add_argument('--no-toy', dest='toy', action='store_false')
     parser.add_argument('--local', action='store_true', help='is the training on a local device or not')
     parser.add_argument('--no-local', dest='local', action='store_false')
+    parser.add_argument('--simple', action='store_true', help='whether or not to apply simple shuffle for the keys')
+    parser.add_argument('--no-simple', dest='simple', action='store_false')
     args = parser.parse_args()
     # here we go
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy,
-          local=args.local, batch_size=args.batchsize, job_id=args.jobid)
+          local=args.local, batch_size=args.batchsize, job_id=args.jobid, simple_shuffle=args.simple)
 
 

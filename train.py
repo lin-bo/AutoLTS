@@ -44,7 +44,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
     net = Res50FC(pretrained=True, frozen=frozen).to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr)
     loss_records = []
-    init_epoch, loss_records, net, optimizer = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
+    init_epoch, loss_records, net, optimizer, _ = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
     print('start training ...')
     for epoch in range(init_epoch, n_epoch):
         train_loss, train_acc = train_one_epoch(net, optimizer, train_loader, device)
