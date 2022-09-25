@@ -5,21 +5,19 @@ import torchvision
 
 class MoCo(nn.Module):
 
-    def __init__(self, dim, queue_size=12800, momentum=0.999, temperature=0.07, mlp=True, local=True, device='mps'):
+    def __init__(self, dim, queue_size=6400, momentum=0.999, temperature=0.07, n_chunk=4,
+                 mlp=True, local=True, device='mps', simple_shuffle=False):
         super(MoCo, self).__init__()
         # initialize parameters
         self.queue_size = queue_size
         self.momentum = momentum
         self.temperature = temperature
         self.device = device
+        self.simple_shuffle = simple_shuffle
+        self.n_chunk = n_chunk
         # initialize encoders
-        if local:
-            weights = 'DEFAULT'
-            self.encoder_q = torchvision.models.resnet50(weights=weights)
-            self.encoder_k = torchvision.models.resnet50(weights=weights)
-        else:
-            self.encoder_q = torchvision.models.resnet50(pretrained=True)
-            self.encoder_k = torchvision.models.resnet50(pretrained=True)
+        self.encoder_q = torchvision.models.resnet50(pretrained=True)
+        self.encoder_k = torchvision.models.resnet50(pretrained=True)
         if mlp:
             dim_mlp = self.encoder_q.fc.weight.shape[1]
             self.encoder_q.fc = nn.Sequential(nn.Linear(dim_mlp, dim_mlp), nn.ReLU(), nn.Linear(dim_mlp, dim))
@@ -41,14 +39,22 @@ class MoCo(nn.Module):
         with torch.no_grad():
             # update the key encoder
             self._momentum_update_key_encoder()
-            # TODO: shuffle the keys
             # map the keys
-            k = self.encoder_k(im_k)
-            # TODO: un-shuffle the keys
+            if self.simple_shuffle:
+                chunk_size = int(im_k.shape[0] / self.n_chunk)
+                # shuffle the keys
+                im_k, idx_unshuffle = self._simple_shuffle(im_k)
+                for j in range(self.n_chunk):
+                    k_chunks = [self.encoder_k(im_k[chunk_size * j: chunk_size * (j + 1)]) for j in range(self.n_chunk)]
+                k = torch.cat(k_chunks, dim=0)
+                # un-shuffle the keys
+                k = self._simple_unshuffle(k, idx_unshuffle)
+            else:
+                k = self.encoder_k(im_k)
         # compute positive and negative logits
         l_pos = torch.einsum('nc,nc->n', [q, k]).unsqueeze(-1)
         l_neg = torch.einsum('nc,ck->nk', [q, self.queue.clone().detach()])
-        logits = torch.concat([l_pos, l_neg], dim=1) / self.temperature
+        logits = torch.cat([l_pos, l_neg], dim=1) / self.temperature
         # set the label to the positive key indicator
         labels = torch.zeros(logits.shape[0], dtype=torch.long).to(self.device)
         # dequeue and enqueue
@@ -70,6 +76,13 @@ class MoCo(nn.Module):
         for param_q, param_k in zip(self.encoder_q.parameters(), self.encoder_k.parameters()):
             param_k.data = param_k.data * self.momentum + param_q.data * (1 - self.momentum)
 
+    @torch.no_grad()
+    def _simple_shuffle(self, im_k):
+        batch_size = im_k.shape[0]
+        idx_shuffle = torch.randperm(batch_size).to(device=self.device)
+        idx_unshuffle = torch.argsort(idx_shuffle)
+        return im_k[idx_shuffle], idx_unshuffle
 
-
-
+    @torch.no_grad()
+    def _simple_unshuffle(self, k, idx_unshuffle):
+        return k[idx_unshuffle]
