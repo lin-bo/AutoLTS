@@ -5,13 +5,9 @@ from torch import nn
 
 class Res50FC(nn.Module):
 
-    def __init__(self, pretrained=False, local=False, frozen=False):
+    def __init__(self, pretrained=False, frozen=False):
         super(Res50FC, self).__init__()
-        if local:
-            weights = None if not pretrained else 'DEFAULT'
-            self.res50 = torchvision.models.resnet50(weights=weights)
-        else:
-            self.res50 = torchvision.models.resnet50(pretrained=pretrained)
+        self.res50 = torchvision.models.resnet50(pretrained=pretrained)
         if frozen:
             self.res50.requires_grad = False
         self.l1 = nn.Linear(1000, 100)
