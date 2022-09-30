@@ -61,7 +61,7 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
     output_records = []
     # create dataloaders
     dataset_train = MoCoDataset(purpose='training', local=local, toy=toy)
-    loader_train = DataLoader(dataset_train, shuffle=False, batch_size=batch_size, drop_last=True)
+    loader_train = DataLoader(dataset_train, shuffle=True, batch_size=batch_size, drop_last=True)
     # dataset_vali = MoCoDataset(purpose='validation', local=local, toy=toy)
     # loader_vali = DataLoader(dataset_vali, shuffle=True, batch_size=batch_size, drop_last=False)
     n_train = len(dataset_train)
@@ -80,10 +80,10 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
         tick = time.time()
         loss_train = train_one_epoch(loader_train, net, criterion, optimizer, epoch, device)
         # loss_vali = validate(loader_vali, net, criterion, device)
-        loss_train= loss_train / n_train * 100  # normalize
+        loss_train = loss_train / n_train * 100  # normalize
         loss_records.append((loss_train, loss_vali))
         np.savetxt(check_path + f'{job_id}_loss.txt', loss_records, delimiter=',')
-        msg = f'epoch {epoch}, training loss: {loss_train:.2f}, time: {time.time() - tick:.2f} sec'
+        msg = f'epoch {epoch}, training loss: {loss_train:}, time: {time.time() - tick:.2f} sec'
         print(msg)
         output_records.append(msg)
         if (epoch + 1) % n_check == 0:

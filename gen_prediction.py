@@ -52,11 +52,12 @@ if __name__ == '__main__':
     parser.add_argument('--no-local', dest='local', action='store_false')
     args = parser.parse_args()
     # load checkpoint
-    checkpoint = torch.load(f'./checkpoint/{args.modelname}.pt')
+    checkpoint = torch.load(f'./checkpoint/{args.checkpoint}.pt')
     # set parameters
     device = checkpoint['hyper-parameters']['device']
     batch_size = checkpoint['hyper-parameters']['batch_size']
     # load net
+    filename = f'{args.model}_{args.checkpoint}'
     net = load_net(model_name=args.model, model_state_dict=checkpoint['model_state_dict'])
     gen_prediction(net=net, device=device, local=args.local, dataset=args.dataset,
-                   batch_size=batch_size, filename=f'{args.model}_{args.checkpoint}')
+                   batch_size=batch_size, filename=filename)

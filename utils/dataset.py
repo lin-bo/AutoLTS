@@ -26,8 +26,10 @@ class StreetviewDataset(Dataset):
             img_folder = './data/streetview/dataset'
         if not augmentation:
             self.transform = transforms.Compose([
-                transforms.PILToTensor(),
-                transforms.Resize(224)
+                # transforms.PILToTensor(),
+                transforms.Resize(224),
+                transforms.ToTensor(),
+                # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         else:
             self.transform = transforms.Compose([

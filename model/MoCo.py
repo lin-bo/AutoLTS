@@ -49,8 +49,10 @@ class MoCo(nn.Module):
                 k = torch.cat(k_chunks, dim=0)
                 # un-shuffle the keys
                 k = self._simple_unshuffle(k, idx_unshuffle)
+                # k = nn.functional.normalize(k, dim=1)
             else:
                 k = self.encoder_k(im_k)
+                k = nn.functional.normalize(k, dim=1)
         # compute positive and negative logits
         l_pos = torch.einsum('nc,nc->n', [q, k]).unsqueeze(-1)
         l_neg = torch.einsum('nc,ck->nk', [q, self.queue.clone().detach()])
@@ -67,7 +69,13 @@ class MoCo(nn.Module):
         batch_size = keys.shape[0]
         ptr = int(self.queue_ptr)
         # replace the keys at ptr
-        self.queue[:, ptr: ptr + batch_size] = keys.T
+        # self.queue[:, ptr: ptr + batch_size] = keys.T
+        if ptr == 0:
+            self.queue = torch.cat([keys.T, self.queue[:, ptr+batch_size:]], dim=1)
+        elif ptr + batch_size == self.queue_size:
+            self.queue = torch.cat([self.queue[:, :ptr], keys.T], dim=1)
+        else:
+            self.queue = torch.cat([self.queue[:, :ptr], keys.T, self.queue[:, ptr+batch_size:]], dim=1)
         ptr = (ptr + batch_size) % self.queue_size
         self.queue_ptr[0] = ptr
 

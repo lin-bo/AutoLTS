@@ -41,7 +41,7 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None,
     # optimizer = torch.optim.SGD(parameters, lr=lr, momentum=0.9, weight_decay=1e-4)
     optimizer = torch.optim.SGD(parameters, lr=lr)
     # optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
-    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug, biased_sampling=biased), batch_size=batch_size, shuffle=True)
+    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug, biased_sampling=biased), batch_size=batch_size, shuffle=False)
     vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False, biased_sampling=False), batch_size=batch_size, shuffle=False)
     # start training
     init_epoch, loss_records, net, optimizer, _ = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
