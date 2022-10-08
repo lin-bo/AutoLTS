@@ -124,7 +124,7 @@ class LabelMoCo(nn.Module):
         self.register_buffer('queue_ptr', torch.zeros(1, dtype=torch.long))
         self.vali = False
 
-    def forward(self, im_q, im_k):
+    def forward(self, im_q, im_k, label):
         # compute query features
         q = self.encoder_q(im_q)
         q = nn.functional.normalize(q, dim=1)

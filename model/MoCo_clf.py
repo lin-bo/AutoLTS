@@ -25,7 +25,7 @@ class MoCoClf(nn.Module):
         # add FC layers
         dim = model.fc.weight.shape[1]
         # model = nn.Sequential(model, nn.Linear(dim, 100), nn.Linear(100, 4), nn.Softmax(dim=-1))
-        model.fc = nn.Sequential(nn.Linear(dim, 100), nn.Linear(100, 4), nn.Softmax(dim=-1))
+        model.fc = nn.Sequential(nn.Linear(dim, 100), nn.Linear(100, 4))
         self.clf = model
 
     def forward(self, x):

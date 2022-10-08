@@ -7,19 +7,23 @@ import argparse
 import numpy as np
 import time
 
-from model import MoCo
-from utils import MoCoDataset, initialization
+from model import MoCo, LabelMoCo
+from utils import MoCoDataset, LabelMoCoDataset, initialization
 from torch.utils.data import DataLoader
 
 
-def train_one_epoch(loader_train, net, criterion, optimizer, epoch, device):
+def train_one_epoch(loader_train, net, criterion, optimizer, device, aware=False):
     # switch to train
     net.train()
     total_loss = 0.
-    for imgs in tqdm(loader_train):
+    for dt in tqdm(loader_train):
         # forward step
-        img_q, img_k = imgs[0].to(device), imgs[1].to(device)
-        logits, labels = net(img_q, img_k)
+        if aware:
+            img_q, img_k, label = dt[0].to(device), dt[1].to(device), dt[2].to(device)
+            logits, labels = net(img_q, img_k, label)
+        else:
+            img_q, img_k = dt[0].to(device), dt[1].to(device)
+            logits, labels = net(img_q, img_k)
         loss = criterion(logits, labels)
         # backward step
         optimizer.zero_grad()
@@ -56,17 +60,21 @@ def save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check, devic
 
 
 def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32,
-          job_id=None, local=False, simple_shuffle=False):
+          job_id=None, local=False, simple_shuffle=False, aware=False):
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     output_records = []
-    # create dataloaders
-    dataset_train = MoCoDataset(purpose='training', local=local, toy=toy)
-    loader_train = DataLoader(dataset_train, shuffle=False, batch_size=batch_size, drop_last=True)
     # dataset_vali = MoCoDataset(purpose='validation', local=local, toy=toy)
     # loader_vali = DataLoader(dataset_vali, shuffle=True, batch_size=batch_size, drop_last=False)
+    # initialize the network and data loader
+    if aware:
+        net = LabelMoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle).to(device)
+        dataset_train = LabelMoCoDataset(purpose='training', local=local, toy=toy)
+    else:
+        net = MoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle).to(device)
+        dataset_train = MoCoDataset(purpose='training', local=local, toy=toy)
+    loader_train = DataLoader(dataset_train, shuffle=True, batch_size=batch_size, drop_last=True)
     n_train = len(dataset_train)
-    # initialize the network and optimizer
-    net = MoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle).to(device)
+    # initialize optimizer and loss function
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     criterion = nn.CrossEntropyLoss().to(device)
     # load checkpoint if needed
@@ -78,7 +86,7 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
     output_records.append(msg)
     for epoch in range(init_epoch, n_epoch):
         tick = time.time()
-        loss_train = train_one_epoch(loader_train, net, criterion, optimizer, epoch, device)
+        loss_train = train_one_epoch(loader_train, net, criterion, optimizer, device, aware)
         # loss_vali = validate(loader_vali, net, criterion, device)
         loss_train = loss_train / n_train * 100  # normalize
         loss_records.append((loss_train, loss_vali))
@@ -106,6 +114,8 @@ if __name__ == '__main__':
     parser.add_argument('--no-local', dest='local', action='store_false')
     parser.add_argument('--simple', action='store_true', help='whether or not to apply simple shuffle for the keys')
     parser.add_argument('--no-simple', dest='simple', action='store_false')
+    parser.add_argument('--aware', action='store_true', help='whether or not to use the label aware MoCo')
+    parser.add_argument('--no-aware', dest='aware', action='store_false')
     args = parser.parse_args()
     # here we go
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy,
