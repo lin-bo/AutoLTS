@@ -22,19 +22,12 @@ class MoCoClf(nn.Module):
                 state_dict[k[len('encoder_q.'):]] = state_dict[k]
             del state_dict[k]
         _ = model.load_state_dict(state_dict, strict=False)
-        # # add FC layers
-        dim = model.fc.weight.shape[0]
-        # model = nn.Sequential(model, nn.Linear(dim, 4), nn.Softmax(dim=-1))
-        # self.emb = model
-        # self.clf1 = nn.Linear(dim, 4)
-        # self.clf2 = nn.Softmax(dim=-1)
+        # add FC layers
         dim = model.fc.weight.shape[1]
-        model.fc = nn.Sequential(nn.Linear(dim, 4), nn.Softmax(dim=-1))
+        # model = nn.Sequential(model, nn.Linear(dim, 100), nn.Linear(100, 4), nn.Softmax(dim=-1))
+        model.fc = nn.Sequential(nn.Linear(dim, 100), nn.Linear(100, 4), nn.Softmax(dim=-1))
         self.clf = model
 
     def forward(self, x):
-        # x = self.emb(x)
-        # x = self.clf1(x)
-        # return self.clf2(x)
         return self.clf(x)
 

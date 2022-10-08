@@ -61,7 +61,7 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
     output_records = []
     # create dataloaders
     dataset_train = MoCoDataset(purpose='training', local=local, toy=toy)
-    loader_train = DataLoader(dataset_train, shuffle=True, batch_size=batch_size, drop_last=True)
+    loader_train = DataLoader(dataset_train, shuffle=False, batch_size=batch_size, drop_last=True)
     # dataset_vali = MoCoDataset(purpose='validation', local=local, toy=toy)
     # loader_vali = DataLoader(dataset_vali, shuffle=True, batch_size=batch_size, drop_last=False)
     n_train = len(dataset_train)
