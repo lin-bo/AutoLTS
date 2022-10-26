@@ -3,24 +3,35 @@
 
 import torch
 from torch import nn
-from torch.nn import _reduction as _Reduction
 
 
-class _Loss(nn.Module):
-    reduction: str
+class LabelMoCoLoss(nn.Module):
+    """
+    label aware MoCo loss
+    inner = True: take summation within log
+    inner = False: take summation outside log
+    """
 
-    def __init__(self, size_average=None, reduce=None, reduction: str = 'mean') -> None:
-        super(_Loss, self).__init__()
-        if size_average is not None or reduce is not None:
-            self.reduction: str = _Reduction.legacy_get_string(size_average, reduce)
-        else:
-            self.reduction = reduction
-
-
-class LabelMoCoLoss(_Loss):
-
-    def __init__(self, weight=None, size_average=None, reduce=None):
-        super(LabelMoCoLoss, self).__init__(weight, size_average, reduce)
+    def __init__(self, inner=True):
+        super(LabelMoCoLoss, self).__init__()
+        self.inner = inner
 
     def forward(self, logits, targets):
-        pass
+        """
+        :param logits: N_batchsize x N_queuesize
+        :param targets: N_batchsize x N_queuesize
+        :return:
+        """
+        logits = torch.exp(logits)
+        targets = targets.to(torch.float)
+        denominator = logits.sum(dim=1, keepdim=True)
+        logits = logits / denominator
+        logits = logits * targets
+        if self.inner:
+            logits = logits.mean(dim=1)
+            logits = - torch.log(logits)
+        else:
+            logits = - torch.log(logits).mean(dim=1)
+        print(logits[0])
+        return logits.sum()
+

@@ -8,7 +8,7 @@ import numpy as np
 import time
 
 from model import MoCo, LabelMoCo
-from utils import MoCoDataset, LabelMoCoDataset, initialization
+from utils import MoCoDataset, LabelMoCoDataset, LabelMoCoLoss, initialization
 from torch.utils.data import DataLoader
 
 
@@ -20,16 +20,17 @@ def train_one_epoch(loader_train, net, criterion, optimizer, device, aware=False
         # forward step
         if aware:
             img_q, img_k, label = dt[0].to(device), dt[1].to(device), dt[2].to(device)
-            logits, labels = net(img_q, img_k, label)
+            logits, targets = net(img_q, img_k, label)
         else:
             img_q, img_k = dt[0].to(device), dt[1].to(device)
-            logits, labels = net(img_q, img_k)
-        loss = criterion(logits, labels)
+            logits, targets = net(img_q, img_k)
+        loss = criterion(logits, targets)
         # backward step
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
+
     return total_loss
 
 
@@ -60,23 +61,24 @@ def save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check, devic
 
 
 def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32,
-          job_id=None, local=False, simple_shuffle=False, aware=False):
+          job_id=None, local=False, simple_shuffle=False, aware=False, memsize=6400):
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     output_records = []
     # dataset_vali = MoCoDataset(purpose='validation', local=local, toy=toy)
     # loader_vali = DataLoader(dataset_vali, shuffle=True, batch_size=batch_size, drop_last=False)
-    # initialize the network and data loader
+    # initialize the network, data loader, and loss function
     if aware:
-        net = LabelMoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle).to(device)
+        net = LabelMoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize).to(device)
         dataset_train = LabelMoCoDataset(purpose='training', local=local, toy=toy)
+        criterion = LabelMoCoLoss().to(device)
     else:
-        net = MoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle).to(device)
+        net = MoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize).to(device)
         dataset_train = MoCoDataset(purpose='training', local=local, toy=toy)
+        criterion = nn.CrossEntropyLoss().to(device)
     loader_train = DataLoader(dataset_train, shuffle=True, batch_size=batch_size, drop_last=True)
     n_train = len(dataset_train)
     # initialize optimizer and loss function
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
-    criterion = nn.CrossEntropyLoss().to(device)
     # load checkpoint if needed
     init_epoch, loss_records, net, optimizer, output_records = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
     loss_vali = 0
@@ -108,6 +110,7 @@ if __name__ == '__main__':
     parser.add_argument('-ne', '--nepoch', type=int, help='the number of epoch')
     parser.add_argument('-nc', '--ncheck', type=int, help='checkpoint frequency')
     parser.add_argument('--lr', type=float, help='learning rate')
+    parser.add_argument('--memsize', type=int, help='size of the memory bank')
     parser.add_argument('--toy', action='store_true', help='use the toy example or not')
     parser.add_argument('--no-toy', dest='toy', action='store_false')
     parser.add_argument('--local', action='store_true', help='is the training on a local device or not')
@@ -118,7 +121,8 @@ if __name__ == '__main__':
     parser.add_argument('--no-aware', dest='aware', action='store_false')
     args = parser.parse_args()
     # here we go
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy,
-          local=args.local, batch_size=args.batchsize, job_id=args.jobid, simple_shuffle=args.simple)
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, aware=args.aware,
+          local=args.local, batch_size=args.batchsize, job_id=args.jobid, simple_shuffle=args.simple,
+          memsize=args.memsize)
 
 

@@ -100,7 +100,7 @@ class LabelMoCo(nn.Module):
 
     def __init__(self, dim, queue_size=6400, momentum=0.999, temperature=0.07, n_chunk=4,
                  mlp=True, local=True, device='mps', simple_shuffle=False):
-        super(MoCo, self).__init__()
+        super(LabelMoCo, self).__init__()
         # initialize parameters
         self.queue_size = queue_size
         self.momentum = momentum
@@ -122,9 +122,11 @@ class LabelMoCo(nn.Module):
         self.register_buffer('queue', torch.randn(dim, self.queue_size))
         self.queue = nn.functional.normalize(self.queue, dim=0)
         self.register_buffer('queue_ptr', torch.zeros(1, dtype=torch.long))
+        self.register_buffer('queue_lts', - torch.ones(self.queue_size, dtype=torch.long))
         self.vali = False
 
     def forward(self, im_q, im_k, label):
+        batch_size = im_q.shape[0]
         # compute query features
         q = self.encoder_q(im_q)
         q = nn.functional.normalize(q, dim=1)
@@ -148,27 +150,32 @@ class LabelMoCo(nn.Module):
                 k = nn.functional.normalize(k, dim=1)
         # compute positive and negative logits
         l_pos = torch.einsum('nc,nc->n', [q, k]).unsqueeze(-1)
-        l_neg = torch.einsum('nc,ck->nk', [q, self.queue.clone().detach()])
-        logits = torch.cat([l_pos, l_neg], dim=1) / self.temperature
+        l_other = torch.einsum('nc,ck->nk', [q, self.queue.clone().detach()])
+        logits = torch.cat([l_pos, l_other], dim=1) / self.temperature
         # set the label to the positive key indicator
-        labels = torch.zeros(logits.shape[0], dtype=torch.long).to(self.device)
+        with torch.no_grad():
+            targets = (self.queue_lts.repeat(batch_size, 1) == torch.unsqueeze(label, 1)).to(torch.long)
+            targets = torch.cat([torch.unsqueeze(torch.ones(batch_size, dtype=torch.long), 1).to(self.device), targets], dim=1)
         # dequeue and enqueue
         if not self.vali:
-            self.dequeue_and_enqueue(k)
-        return logits, labels
+            self.dequeue_and_enqueue(k, label)
+        return logits, targets
 
     @torch.no_grad()
-    def dequeue_and_enqueue(self, keys):
+    def dequeue_and_enqueue(self, keys, label):
         batch_size = keys.shape[0]
         ptr = int(self.queue_ptr)
         # replace the keys at ptr
         # self.queue[:, ptr: ptr + batch_size] = keys.T
         if ptr == 0:
             self.queue = torch.cat([keys.T, self.queue[:, ptr+batch_size:]], dim=1)
+            self.queue_lts = torch.cat([label, self.queue_lts[ptr+batch_size: ]], dim=0)
         elif ptr + batch_size == self.queue_size:
             self.queue = torch.cat([self.queue[:, :ptr], keys.T], dim=1)
+            self.queue_lts = torch.cat([self.queue_lts[:ptr], label], dim=0)
         else:
-            self.queue = torch.cat([self.queue[:, :ptr], keys.T, self.queue[:, ptr+batch_size:]], dim=1)
+            self.queue = torch.cat([self.queue[:, :ptr], keys.T, self.queue[:, ptr + batch_size:]], dim=1)
+            self.queue_lts = torch.cat([self.queue_lts[:ptr], label, self.queue_lts[ptr + batch_size:]], dim=0)
         ptr = (ptr + batch_size) % self.queue_size
         self.queue_ptr[0] = ptr
 
