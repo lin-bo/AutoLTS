@@ -28,10 +28,9 @@ class LabelMoCoLoss(nn.Module):
         logits = logits / denominator
         logits = logits * targets
         if self.inner:
-            logits = logits.mean(dim=1)
+            logits = logits.sum(dim=1) / targets.sum(dim=1)
             logits = - torch.log(logits)
         else:
-            logits = - torch.log(logits).mean(dim=1)
-        print(logits[0])
+            logits = - torch.log(logits).sum(dim=1) / targets.sum(dim=1)
         return logits.sum()
 

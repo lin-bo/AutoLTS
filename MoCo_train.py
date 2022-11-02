@@ -34,15 +34,20 @@ def train_one_epoch(loader_train, net, criterion, optimizer, device, aware=False
     return total_loss
 
 
-def validate(loader_vali, net, criterion, device):
+def validate(loader_vali, net, criterion, device, aware=False):
     net.eval()
     net.vali = True
     total_loss = 0.
-    for imgs in tqdm(loader_vali):
+    for dt in tqdm(loader_vali):
         # forward step
-        img_q, img_k = imgs[0].to(device), imgs[1].to(device)
-        logits, labels = net(img_q, img_k)
-        loss = criterion(logits, labels)
+        if aware:
+            img_q, img_k, label = dt[0].to(device), dt[1].to(device), dt[2].to(device)
+            logits, targets = net(img_q, img_k, label)
+        else:
+            img_q, img_k = dt[0].to(device), dt[1].to(device)
+            logits, targets = net(img_q, img_k)
+        loss = criterion(logits, targets)
+        total_loss += loss.item()
         total_loss += loss.item()
     net.vali = False
     return total_loss
@@ -70,13 +75,17 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
     if aware:
         net = LabelMoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize).to(device)
         dataset_train = LabelMoCoDataset(purpose='training', local=local, toy=toy)
+        dataset_vali = LabelMoCoDataset(purpose='validation', local=local, toy=toy)
         criterion = LabelMoCoLoss().to(device)
     else:
         net = MoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize).to(device)
         dataset_train = MoCoDataset(purpose='training', local=local, toy=toy)
+        dataset_vali = MoCoDataset(purpose='validation', local=local, toy=toy)
         criterion = nn.CrossEntropyLoss().to(device)
     loader_train = DataLoader(dataset_train, shuffle=True, batch_size=batch_size, drop_last=True)
+    loader_vali = DataLoader(dataset_vali, shuffle=False, batch_size=batch_size, drop_last=True)
     n_train = len(dataset_train)
+    n_vali = len(dataset_vali)
     # initialize optimizer and loss function
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     # load checkpoint if needed
@@ -89,14 +98,18 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
     for epoch in range(init_epoch, n_epoch):
         tick = time.time()
         loss_train = train_one_epoch(loader_train, net, criterion, optimizer, device, aware)
-        # loss_vali = validate(loader_vali, net, criterion, device)
         loss_train = loss_train / n_train * 100  # normalize
+        if epoch % n_check == 0:
+            loss_vali = validate(loader_vali, net, criterion, device, aware)
+            loss_vali = loss_vali / n_vali * 100
+        else:
+            loss_vali = loss_records[-1][1]
         loss_records.append((loss_train, loss_vali))
-        np.savetxt(check_path + f'{job_id}_loss.txt', loss_records, delimiter=',')
-        msg = f'epoch {epoch}, training loss: {loss_train:}, time: {time.time() - tick:.2f} sec'
-        print(msg)
+        msg = f'epoch {epoch}, training loss: {loss_train}, vali loss: {loss_vali}, time: {time.time() - tick:.2f} sec'
         output_records.append(msg)
-        if (epoch + 1) % n_check == 0:
+        print(msg)
+        if epoch % n_check == 0:
+            np.savetxt(check_path + f'{job_id}_loss.txt', loss_records, delimiter=',')
             save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check,
                             device, batch_size, lr, check_path, job_id, output_records)
 
@@ -122,7 +135,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # here we go
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, aware=args.aware,
-          local=args.local, batch_size=args.batchsize, job_id=args.jobid, simple_shuffle=args.simple,
-          memsize=args.memsize)
+          local=args.local, batch_size=args.batchsize, job_id=args.jobid, simple_shuffle=args.simple, memsize=args.memsize)
 
 
