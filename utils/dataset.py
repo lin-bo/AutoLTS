@@ -29,7 +29,8 @@ class StreetviewDataset(Dataset):
                 # transforms.PILToTensor(),
                 transforms.Resize(224),
                 transforms.ToTensor(),
-                # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+                transforms.ConvertImageDtype(torch.float),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         else:
             self.transform = transforms.Compose([
@@ -38,6 +39,8 @@ class StreetviewDataset(Dataset):
                 transforms.RandomGrayscale(p=0.2),
                 transforms.ColorJitter(0.4, 0.4, 0.4, 0.4),
                 transforms.RandomHorizontalFlip(),
+                transforms.ConvertImageDtype(torch.float),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
         if biased_sampling:
@@ -110,7 +113,7 @@ class LabelMoCoDataset(Dataset):
             img_folder = './data/streetview/dataset'
         self.transform = transforms.Compose([
             transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
-            transforms.RandomApply([transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)], p=0.8),
+            # transforms.RandomApply([transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)], p=0.8),
             transforms.RandomGrayscale(p=0.2),
             transforms.RandomApply([GaussianBlur(sigma=[.1, 2.])], p=0.5),
             transforms.RandomHorizontalFlip(),

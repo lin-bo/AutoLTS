@@ -30,7 +30,6 @@ def train_one_epoch(loader_train, net, criterion, optimizer, device, aware=False
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
-
     return total_loss
 
 
@@ -47,7 +46,6 @@ def validate(loader_vali, net, criterion, device, aware=False):
             img_q, img_k = dt[0].to(device), dt[1].to(device)
             logits, targets = net(img_q, img_k)
         loss = criterion(logits, targets)
-        total_loss += loss.item()
         total_loss += loss.item()
     net.vali = False
     return total_loss
@@ -69,8 +67,6 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
           job_id=None, local=False, simple_shuffle=False, aware=False, memsize=6400):
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     output_records = []
-    # dataset_vali = MoCoDataset(purpose='validation', local=local, toy=toy)
-    # loader_vali = DataLoader(dataset_vali, shuffle=True, batch_size=batch_size, drop_last=False)
     # initialize the network, data loader, and loss function
     if aware:
         net = LabelMoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize).to(device)
@@ -83,14 +79,13 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
         dataset_vali = MoCoDataset(purpose='validation', local=local, toy=toy)
         criterion = nn.CrossEntropyLoss().to(device)
     loader_train = DataLoader(dataset_train, shuffle=True, batch_size=batch_size, drop_last=True)
-    loader_vali = DataLoader(dataset_vali, shuffle=False, batch_size=batch_size, drop_last=True)
+    loader_vali = DataLoader(dataset_vali, shuffle=False, batch_size=int(batch_size//2), drop_last=True)
     n_train = len(dataset_train)
     n_vali = len(dataset_vali)
     # initialize optimizer and loss function
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     # load checkpoint if needed
     init_epoch, loss_records, net, optimizer, output_records = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
-    loss_vali = 0
     # here we go
     msg = f'------------------------------------\n(re)Start training from epoch {init_epoch}\n------------------------------------'
     print(msg)
