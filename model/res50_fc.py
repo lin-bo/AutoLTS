@@ -9,14 +9,10 @@ class Res50FC(nn.Module):
         super(Res50FC, self).__init__()
         self.res50 = torchvision.models.resnet50(pretrained=pretrained)
         if frozen:
-            self.res50.requires_grad = False
-        self.l1 = nn.Linear(1000, 100)
-        self.l2 = nn.Linear(100, 4)
-        # self.l3 = nn.Softmax(dim=-1)
+            for name, param in self.res50.named_parameters():
+                param.requires_grad = False
+        dim = self.res50.fc.weight.shape[1]
+        self.res50.fc = nn.Sequential(nn.Linear(dim, 100), nn.ReLU(), nn.Linear(100, 4))
 
     def forward(self, x):
-        x = self.res50(x)
-        x = self.l1(x)
-        x = self.l2(x)
-        # x = self.l3(x)
-        return x
+        return self.res50(x)

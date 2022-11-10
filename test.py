@@ -3,18 +3,16 @@ from torch import nn
 from tqdm import tqdm
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader
-from utils import StreetviewDataset
+from utils import StreetviewDataset, accuracy, agg_accuracy, mae, mse, ob, kt
 from model import Res50FC
 import argparse
 
 
-def eval(net, test_loader, device):
-    tot_cnt = 0
-    corr_cnt = 0
+def eval(net, test_loader, device, purpose):
+    net.eval()
     total_loss = 0.
     criterion = nn.CrossEntropyLoss(reduction='sum')
     pred_records, true_records = [], []
-    net.eval()
     with torch.no_grad():
         for x, y in tqdm(test_loader):
             x, y = x.to(device), y.to(device)
@@ -25,10 +23,25 @@ def eval(net, test_loader, device):
             predicted += 1
             pred_records += predicted.tolist()
             true_records += y.tolist()
-            tot_cnt += predicted.shape[0]
-            corr_cnt += (predicted == y).sum().item()
+    pred_records, true_records = torch.tensor(pred_records), torch.tensor(true_records)
+    # accuracy
+    acc = accuracy(pred_records, true_records)
+    aggacc = agg_accuracy(pred_records, true_records)
+    mae_score = mae(pred_records, true_records)
+    mse_score = mse(pred_records, true_records)
+    ob_score = ob(pred_records, true_records)
+    if purpose != 'training':
+        # training matrix might be too big
+        kt_score = kt(pred_records, true_records)
+    else:
+        kt_score = 0
+    # aggregated accuracy
+    # confusion matrix
     conf_mat = confusion_matrix(y_pred=pred_records, y_true=true_records, normalize='true')
-    res = {'conf_mat': conf_mat, 'total_loss': total_loss, 'accuracy': corr_cnt/tot_cnt * 100}
+    res = {'conf_mat': conf_mat, 'total_loss': total_loss,
+           'accuracy': acc, 'aggregated_accuracy': aggacc,
+           'mae': mae_score, 'mse': mse_score,
+           'ob': ob_score, 'kt': kt_score}
     return res
 
 
@@ -36,15 +49,15 @@ def complete_eval(net, device, local):
     # training
     print('evaluating the training set')
     loader_train = DataLoader(StreetviewDataset(purpose='training', local=local, toy=False), batch_size=batch_size, shuffle=True)
-    res_train = eval(net, loader_train, device)
+    res_train = eval(net, loader_train, device, 'training')
     # validation
     print('evaluating the validation set')
     loader_vali = DataLoader(StreetviewDataset(purpose='validation', local=local, toy=False), batch_size=batch_size, shuffle=True)
-    res_vali = eval(net, loader_vali, device)
+    res_vali = eval(net, loader_vali, device, 'validation')
     # test
     print('evaluating the test set')
     loader_test = DataLoader(StreetviewDataset(purpose='test', local=local, toy=False), batch_size=batch_size, shuffle=True)
-    res_test = eval(net, loader_test, device)
+    res_test = eval(net, loader_test, device, 'test')
     return res_train, res_vali, res_test
 
 
@@ -54,14 +67,18 @@ if __name__ == '__main__':
     parser.add_argument('--modelname', type=str, help='the name of the model in the checkpoint folder w/o .pt')
     parser.add_argument('--local', action='store_true', help='is the training on a local device or not')
     parser.add_argument('--no-local', dest='local', action='store_false')
+    parser.add_argument('--device', type=str, help='device name')
     args = parser.parse_args()
     # load checkpoint
-    checkpoint = torch.load(f'./checkpoint/{args.modelname}.pt')
+    if args.device == 'mps':
+        checkpoint = torch.load(f'./checkpoint/{args.modelname}.pt',  map_location=torch.device('cpu'))
+    else:
+        checkpoint = torch.load(f'./checkpoint/{args.modelname}.pt')
     # set parameters
     device = checkpoint['hyper-parameters']['device']
     batch_size = checkpoint['hyper-parameters']['batch_size']
     # initialization
-    net = Res50FC(pretrained=False, local=args.local).to(device=device)
+    net = Res50FC(pretrained=False).to(device=device)
     net.load_state_dict(checkpoint['model_state_dict'])
     # eval
     res_train, res_vali, res_test = complete_eval(net, device, args.local)
