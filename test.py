@@ -4,8 +4,18 @@ from tqdm import tqdm
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader
 from utils import StreetviewDataset, accuracy, agg_accuracy, mae, mse, ob, kt
-from model import Res50FC
+from model import Res50FC, MoCoClf
 import argparse
+
+
+def init_mdl(mdl_name, device):
+    if mdl_name == 'res50':
+        mdl = Res50FC(pretrained=False).to(device=device)
+    elif mdl_name == 'MoCoClf':
+        mdl = MoCoClf(vali=True).to(device=device)
+    else:
+        ValueError(f'Model {mdl_name} not found')
+    return mdl
 
 
 def eval(net, test_loader, device, purpose):
@@ -23,7 +33,7 @@ def eval(net, test_loader, device, purpose):
             predicted += 1
             pred_records += predicted.tolist()
             true_records += y.tolist()
-    pred_records, true_records = torch.tensor(pred_records), torch.tensor(true_records)
+    pred_records, true_records = torch.tensor(pred_records).to(torch.float), torch.tensor(true_records).to(torch.float)
     # accuracy
     acc = accuracy(pred_records, true_records)
     aggacc = agg_accuracy(pred_records, true_records)
@@ -64,23 +74,25 @@ def complete_eval(net, device, local):
 if __name__ == '__main__':
     # set argparser
     parser = argparse.ArgumentParser()
-    parser.add_argument('--modelname', type=str, help='the name of the model in the checkpoint folder w/o .pt')
+    parser.add_argument('--checkpointname', type=str, help='the name of the model in the checkpoint folder w/o .pt')
+    parser.add_argument('--modelname', type=str, help='name of the architecture')
     parser.add_argument('--local', action='store_true', help='is the training on a local device or not')
     parser.add_argument('--no-local', dest='local', action='store_false')
     parser.add_argument('--device', type=str, help='device name')
     args = parser.parse_args()
     # load checkpoint
     if args.device == 'mps':
-        checkpoint = torch.load(f'./checkpoint/{args.modelname}.pt',  map_location=torch.device('cpu'))
+        checkpoint = torch.load(f'./checkpoint/{args.checkpointname}.pt',  map_location=torch.device('cpu'))
     else:
-        checkpoint = torch.load(f'./checkpoint/{args.modelname}.pt')
+        checkpoint = torch.load(f'./checkpoint/{args.checkpointname}.pt')
     # set parameters
     device = checkpoint['hyper-parameters']['device']
     batch_size = checkpoint['hyper-parameters']['batch_size']
     # initialization
-    net = Res50FC(pretrained=False).to(device=device)
+    # net = Res50FC(pretrained=False).to(device=device)
+    net = init_mdl(args.modelname, device)
     net.load_state_dict(checkpoint['model_state_dict'])
     # eval
     res_train, res_vali, res_test = complete_eval(net, device, args.local)
     res = {'training': res_train, 'validation': res_vali, 'test': res_test}
-    torch.save(res, f'./res/{args.modelname}_res.pt')
+    torch.save(res, f'./res/{args.checkpointname}_res.pt')

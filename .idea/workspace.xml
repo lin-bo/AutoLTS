@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="remove color jitter from MoCoLabelDataset as it is too difficult for MoCo to learn from.">
-      <change afterPath="$PROJECT_DIR$/Res50_train.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/metrics.py" afterDir="false" />
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="update comprehensive test">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/MoCo_clf.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo_clf.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/res50_fc.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/res50_fc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/metrics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/visualization/res_visual.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/visualization/res_visual.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -377,7 +374,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668024004949</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="update comprehensive test">
+      <created>1668095507966</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1668095507966</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -415,7 +419,8 @@
     <MESSAGE value="remove softmax before cross entropy" />
     <MESSAGE value="add validation while training." />
     <MESSAGE value="remove color jitter from MoCoLabelDataset as it is too difficult for MoCo to learn from." />
-    <option name="LAST_COMMIT_MESSAGE" value="remove color jitter from MoCoLabelDataset as it is too difficult for MoCo to learn from." />
+    <MESSAGE value="update comprehensive test" />
+    <option name="LAST_COMMIT_MESSAGE" value="update comprehensive test" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

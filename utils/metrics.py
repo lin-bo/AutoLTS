@@ -15,21 +15,22 @@ def agg_accuracy(y_pred, y_true):
 
 def mae(y_pred, y_true):
     score = torch.abs(y_pred - y_true).to(torch.float).mean()
-    return score
+    return score.item()
 
 
 def mse(y_pred, y_true):
     score = ((y_pred - y_true) ** 2).mean()
-    return score
+    return score.item()
 
 
 def ob(y_pred, y_true, k=1):
     score = (torch.abs(y_pred - y_true) <= k).sum() / y_true.shape[0] * 100
-    return score
+    return score.item()
 
 
 def kt(y_pred, y_true):
     pred_mat = torch.sign(y_pred.reshape((-1, 1)) - y_pred.reshape((1, -1)))
     true_mat = torch.sign(y_true.reshape((-1, 1)) - y_true.reshape((1, -1)))
     score = ((pred_mat == true_mat).sum() - y_true.shape[0])/2
-    return score
+    score /= ((y_pred.shape[0] - 1)** 2)
+    return score.item()
