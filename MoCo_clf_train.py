@@ -67,7 +67,7 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None,
 
 
 if __name__ == '__main__':
-     # set parser
+    # set parser
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, help='device for training')
     parser.add_argument('--jobid', type=int, help='job id')

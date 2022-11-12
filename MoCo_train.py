@@ -7,8 +7,8 @@ import argparse
 import numpy as np
 import time
 
-from model import MoCo, LabelMoCo
-from utils import MoCoDataset, LabelMoCoDataset, LabelMoCoLoss, initialization
+from model import MoCo, LabelMoCo, OrdLabelMoCo
+from utils import MoCoDataset, LabelMoCoDataset, LabelMoCoLoss, OrdLabelMoCoLoss, initialization
 from torch.utils.data import DataLoader
 
 
@@ -63,16 +63,23 @@ def save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check, devic
                check_path + f'{job_id}_{epoch}.pt')
 
 
-def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32,
+def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32, awaretype='clf', alpha=2,
           job_id=None, local=False, simple_shuffle=False, aware=False, memsize=6400):
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     output_records = []
     # initialize the network, data loader, and loss function
-    if aware:
+    if aware and awaretype == 'clf':
         net = LabelMoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize).to(device)
         dataset_train = LabelMoCoDataset(purpose='training', local=local, toy=toy)
         dataset_vali = LabelMoCoDataset(purpose='validation', local=local, toy=toy)
         criterion = LabelMoCoLoss().to(device)
+    elif aware and awaretype == 'ord':
+        net = OrdLabelMoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize, alpha=alpha).to(device)
+        dataset_train = LabelMoCoDataset(purpose='training', local=local, toy=toy)
+        dataset_vali = LabelMoCoDataset(purpose='validation', local=local, toy=toy)
+        criterion = OrdLabelMoCoLoss().to(device)
+    elif aware and awaretype == 'reg':
+        ValueError('reg MoCo loss has not been implemented yet')
     else:
         net = MoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize).to(device)
         dataset_train = MoCoDataset(purpose='training', local=local, toy=toy)
@@ -127,9 +134,11 @@ if __name__ == '__main__':
     parser.add_argument('--no-simple', dest='simple', action='store_false')
     parser.add_argument('--aware', action='store_true', help='whether or not to use the label aware MoCo')
     parser.add_argument('--no-aware', dest='aware', action='store_false')
+    parser.add_argument('--awaretype', default='clf', type=str, help='type of the loss function, choose from clf, reg, and ord')
+    parser.add_argument('--alpha', default=2, type=int, help='penalty factor for ord moco loss')
     args = parser.parse_args()
     # here we go
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, aware=args.aware,
-          local=args.local, batch_size=args.batchsize, job_id=args.jobid, simple_shuffle=args.simple, memsize=args.memsize)
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, aware=args.aware, awaretype=args.awaretype,
+          alpha=args.alpha, local=args.local, batch_size=args.batchsize, job_id=args.jobid, simple_shuffle=args.simple, memsize=args.memsize)
 
 
