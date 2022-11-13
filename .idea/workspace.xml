@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add .item() in metric calculation">
-      <change afterPath="$PROJECT_DIR$/gen_emb.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/emb.py" afterDir="false" />
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add gen emb">
+      <change afterPath="$PROJECT_DIR$/gen_emb_visual.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MoCo_clf_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_clf_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/MoCo.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loss.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/visualization/res_visual.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/visualization/res_visual.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/emb.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/emb.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +44,7 @@
       <recent name="$PROJECT_DIR$/utils" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.MoCo_clf_train">
+  <component name="RunManager" selected="Python.gen_emb_visual">
     <configuration name="MoCo_clf" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AutoLTS" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -134,7 +129,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="gen_emb_visual" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AutoLTS" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -146,7 +141,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/gen_emb_visual.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -157,11 +152,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.gen_emb_visual" />
         <item itemvalue="Python.MoCo_clf_train" />
         <item itemvalue="Python.MoCo_exam" />
         <item itemvalue="Python.MoCo_clf" />
         <item itemvalue="Python.MoCo_train" />
-        <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
   </component>
@@ -391,7 +386,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668195551685</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="add gen emb">
+      <created>1668291843524</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1668291843524</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -406,7 +408,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add preprocessing" />
     <MESSAGE value="successfully overfit small dataset" />
     <MESSAGE value="Start -- move to vector cluster" />
     <MESSAGE value="add validation to the training loop" />
@@ -431,7 +432,8 @@
     <MESSAGE value="remove color jitter from MoCoLabelDataset as it is too difficult for MoCo to learn from." />
     <MESSAGE value="update comprehensive test" />
     <MESSAGE value="add .item() in metric calculation" />
-    <option name="LAST_COMMIT_MESSAGE" value="add .item() in metric calculation" />
+    <MESSAGE value="add gen emb" />
+    <option name="LAST_COMMIT_MESSAGE" value="add gen emb" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
