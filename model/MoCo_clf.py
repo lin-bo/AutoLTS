@@ -60,5 +60,6 @@ class MoCoClfV2(nn.Module):
 
     def forward(self, x):
         x = self.emb(x)
+        x = nn.functional.normalize(x, dim=1)
         return self.proj(x)
 

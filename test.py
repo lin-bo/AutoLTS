@@ -4,7 +4,7 @@ from tqdm import tqdm
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader
 from utils import StreetviewDataset, accuracy, agg_accuracy, mae, mse, ob, kt
-from model import Res50FC, MoCoClf
+from model import Res50FC, MoCoClf, MoCoClfV2
 import argparse
 
 
@@ -13,6 +13,8 @@ def init_mdl(mdl_name, device):
         mdl = Res50FC(pretrained=False).to(device=device)
     elif mdl_name == 'MoCoClf':
         mdl = MoCoClf(vali=True).to(device=device)
+    elif mdl_name == 'MoCoClfV2':
+        mdl = MoCoClfV2(vali=True).to(device=device)
     else:
         ValueError(f'Model {mdl_name} not found')
     return mdl
@@ -75,7 +77,7 @@ if __name__ == '__main__':
     # set argparser
     parser = argparse.ArgumentParser()
     parser.add_argument('--checkpointname', type=str, help='the name of the model in the checkpoint folder w/o .pt')
-    parser.add_argument('--modelname', type=str, help='name of the architecture')
+    parser.add_argument('--modelname', type=str, help='name of the architecture, choose from Res50, MoCoClf, and MoCoClfV2')
     parser.add_argument('--local', action='store_true', help='is the training on a local device or not')
     parser.add_argument('--no-local', dest='local', action='store_false')
     parser.add_argument('--device', type=str, help='device name')
