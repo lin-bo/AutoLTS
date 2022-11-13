@@ -6,7 +6,7 @@ import numpy as np
 import time
 import argparse
 
-from model import MoCoClf
+from model import MoCoClf, MoCoClfV2
 from utils import StreetviewDataset, initialization
 from validate import validation
 
@@ -33,15 +33,16 @@ def train_one_epoch(net, optimizer, train_loader, device):
 
 
 def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None,
-          n_epoch=30, n_check=1, toy=False, local=False, aug=True, biased=False):
+          n_epoch=30, n_check=1, toy=False, local=False, version=1):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # initialize
-    net = MoCoClf(checkpoint_name=checkpoint, local=local).to(device)
+    if version == 1:
+        net = MoCoClf(checkpoint_name=checkpoint, local=local).to(device)
+    else:
+        net = MoCoClfV2(checkpoint_name=checkpoint, local=local).to(device)
     parameters = list(filter(lambda p: p.requires_grad, net.parameters()))
     optimizer = torch.optim.SGD(parameters, lr=lr, momentum=0.9, weight_decay=1e-4)
-    # optimizer = torch.optim.SGD(parameters, lr=lr)
-    # optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=True, biased_sampling=False), batch_size=batch_size, shuffle=False)
     vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False, biased_sampling=False), batch_size=batch_size, shuffle=False)
     # start training
@@ -80,11 +81,8 @@ if __name__ == '__main__':
     parser.add_argument('--local', action='store_true', help='is the training on a local device or not')
     parser.add_argument('--no-local', dest='local', action='store_false')
     parser.add_argument('--checkpoint', type=str, help='checkpoint name {JobID}_{Epoch}')
+    parser.add_argument('--version', type=int, default=1, help='MoCoClf version, choose from 1 and 2')
     args = parser.parse_args()
     # here we go
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy,
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, version=args.version,
           local=args.local, batch_size=args.batchsize, job_id=args.jobid, checkpoint=args.checkpoint)
-
-    # train(checkpoint='8618521_49', n_epoch=20, n_check=31, local=True, toy=True, aug=False, biased=False, batch_size=64,
-    #       lr=0.0003)
-

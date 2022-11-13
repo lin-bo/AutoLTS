@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add gen emb">
-      <change afterPath="$PROJECT_DIR$/gen_emb_visual.py" afterDir="false" />
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add emb visual">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/emb.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/emb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MoCo_clf_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_clf_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/MoCo_clf.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo_clf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -393,7 +393,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668291843524</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="add emb visual">
+      <created>1668302320842</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1668302320842</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -408,7 +415,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="successfully overfit small dataset" />
     <MESSAGE value="Start -- move to vector cluster" />
     <MESSAGE value="add validation to the training loop" />
     <MESSAGE value="add test" />
@@ -433,7 +439,8 @@
     <MESSAGE value="update comprehensive test" />
     <MESSAGE value="add .item() in metric calculation" />
     <MESSAGE value="add gen emb" />
-    <option name="LAST_COMMIT_MESSAGE" value="add gen emb" />
+    <MESSAGE value="add emb visual" />
+    <option name="LAST_COMMIT_MESSAGE" value="add emb visual" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
