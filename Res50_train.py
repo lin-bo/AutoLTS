@@ -6,64 +6,96 @@ from torch import nn
 from torch.utils.data import DataLoader
 import time
 
-from model import Res50FC
+from model import Res50FC, Res50FCFea
 from utils import initialization, StreetviewDataset
 
 
-def validation(net, vali_loader, device, criterion):
+def validation(net, vali_loader, device, criterion, speed):
     tot_cnt = 0
     corr_cnt = 0
     total_loss = 0.
     net.eval()
     with torch.no_grad():
-        for x, y in tqdm(vali_loader):
-            x, y = x.to(device), y.to(device)
-            # forward
-            outputs = net(x)
-            _, y_pred = torch.max(outputs, 1)
-            loss = criterion(outputs, y-1)
-            # log
-            total_loss += loss.item()
-            tot_cnt += y_pred.shape[0]
-            corr_cnt += (y_pred == y).sum().item()
+        if not speed:
+            for x, y in tqdm(vali_loader):
+                x, y = x.to(device), y.to(device)
+                # forward
+                outputs = net(x)
+                _, y_pred = torch.max(outputs, 1)
+                loss = criterion(outputs, y-1)
+                # log
+                total_loss += loss.item()
+                tot_cnt += y_pred.shape[0]
+                corr_cnt += (y_pred + 1 == y).sum().item()
+        else:
+            for x, s, y in tqdm(vali_loader):
+                x, s, y = x.to(device), s.to(device).to(torch.float), y.to(device)
+                # forward
+                outputs = net(x, s)
+                _, y_pred = torch.max(outputs, 1)
+                loss = criterion(outputs, y-1)
+                # log
+                total_loss += loss.item()
+                tot_cnt += y_pred.shape[0]
+                corr_cnt += (y_pred + 1 == y).sum().item()
     net.train()
     return total_loss, corr_cnt/tot_cnt * 100
 
 
-def train_one_epoch(net, optimizer, train_loader, criterion, device):
+def train_one_epoch(net, optimizer, train_loader, criterion, device, speed):
     net.train()
     total_loss = 0.
     tot_cnt = 0
     corr_cnt = 0
-    for x, y in tqdm(train_loader):
-        x, y = x.to(device), y.to(device)
-        # forward
-        net.zero_grad()
-        outputs = net.forward(x)
-        _, y_pred = torch.max(outputs, dim=1)
-        y_pred += 1
-        loss = criterion(outputs, y-1)
-        # backward
-        loss.backward()
-        optimizer.step()
-        # log
-        total_loss += loss.item()
-        tot_cnt += len(y_pred)
-        corr_cnt += (y_pred == y).sum().item()
+    if not speed:
+        for x, y in tqdm(train_loader):
+            x, y = x.to(device), y.to(device)
+            # forward
+            net.zero_grad()
+            outputs = net.forward(x)
+            _, y_pred = torch.max(outputs, dim=1)
+            y_pred += 1
+            loss = criterion(outputs, y-1)
+            # backward
+            loss.backward()
+            optimizer.step()
+            # log
+            total_loss += loss.item()
+            tot_cnt += len(y_pred)
+            corr_cnt += (y_pred == y).sum().item()
+    else:
+        for x, s, y in tqdm(train_loader):
+            x, s, y = x.to(device), s.to(device).to(torch.float), y.to(device)
+            # forward
+            net.zero_grad()
+            outputs = net.forward(x, s)
+            _, y_pred = torch.max(outputs, dim=1)
+            y_pred += 1
+            loss = criterion(outputs, y-1)
+            # backward
+            loss.backward()
+            optimizer.step()
+            # log
+            total_loss += loss.item()
+            tot_cnt += len(y_pred)
+            corr_cnt += (y_pred == y).sum().item()
     return total_loss, corr_cnt/tot_cnt * 100
 
 
 def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003,
-          job_id=None, toy=False, frozen=False, aug=False, biased=False):
+          job_id=None, toy=False, frozen=False, aug=False, biased=False, speed=False):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # load training data
-    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug, biased_sampling=biased),
+    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug, biased_sampling=biased, return_speed=speed),
                               batch_size=batch_size, shuffle=True)
-    vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False, biased_sampling=False),
+    vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False, biased_sampling=False, return_speed=speed),
                              batch_size=batch_size, shuffle=True)
     # initialization
-    net = Res50FC(pretrained=True, frozen=frozen).to(device)
+    if not speed:
+        net = Res50FC(pretrained=True, frozen=frozen).to(device)
+    else:
+        net = Res50FCFea(pretrained=True, frozen=frozen).to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss().to(device)
     loss_records = []
@@ -71,8 +103,8 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
     print(f'(Rs)Start training from epoch {init_epoch}')
     for epoch in range(init_epoch, n_epoch):
         tick = time.time()
-        train_loss, train_acc = train_one_epoch(net, optimizer, train_loader, criterion, device)
-        vali_loss, vali_acc = validation(net, vali_loader, device, criterion)
+        train_loss, train_acc = train_one_epoch(net, optimizer, train_loader, criterion, device, speed)
+        vali_loss, vali_acc = validation(net, vali_loader, device, criterion, speed)
         loss_records.append((train_loss, vali_loss))
         np.savetxt(check_path + f'{job_id}_loss.txt', loss_records, delimiter=',')
         if (epoch + 1) % n_check == 0:
@@ -106,6 +138,8 @@ if __name__ == '__main__':
     parser.add_argument('--no-aug', dest='aug', action='store_false')
     parser.add_argument('--biased', action='store_true', help='apply data augmentation or not')
     parser.add_argument('--no-biased', dest='biased', action='store_false')
+    parser.add_argument('--speed', action='store_true', help='apply data augmentation or not')
+    parser.add_argument('--no-speed', dest='speed', action='store_false')
     args = parser.parse_args()
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local, aug=args.aug,
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local, aug=args.aug, speed=args.speed,
           batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy, frozen=args.frozen, biased=args.biased)

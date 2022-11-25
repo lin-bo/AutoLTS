@@ -8,7 +8,7 @@ from utils import GaussianBlur
 
 class StreetviewDataset(Dataset):
 
-    def __init__(self, purpose='training', toy=False, local=True, augmentation=False, biased_sampling=False):
+    def __init__(self, purpose='training', toy=False, local=True, augmentation=False, biased_sampling=False, return_speed=False):
         super().__init__()
         # load indices
         indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
@@ -19,6 +19,16 @@ class StreetviewDataset(Dataset):
         # load labels
         lts = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
         self.y = lts[indi]
+        # posted speed
+        self.return_speed = return_speed
+        if return_speed:
+            speed = np.loadtxt('./data/road/speed_limit.txt').astype(np.double)
+            self.speed = speed[indi]
+            mu = self.speed.mean()
+            std = self.speed.std()
+            self.speed -= mu
+            self.speed /= std
+            self.speed = self.speed.astype(int)
         # load images
         if local:
             img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
@@ -48,13 +58,19 @@ class StreetviewDataset(Dataset):
             flag4 = (self.y == 4).astype(bool)
             y_series = [self.y, self.y[flag3], self.y[flag4], self.y[flag3], self.y[flag4]]
             x_series = [self.img_path, self.img_path[flag3], self.img_path[flag4], self.img_path[flag3], self.img_path[flag4]]
+            if return_speed:
+                speed_series = [self.speed, self.speed[flag3], self.speed[flag4], self.speed[flag3], self.speed[flag4]]
+                self.speed = np.concatenate(speed_series, axis=0)
             self.y = np.concatenate(y_series, axis=0)
             self.img_path = np.concatenate(x_series, axis=0)
 
     def __getitem__(self, idx):
         img = Image.open(self.img_path[idx])
         img = self.transform(img).float()
-        return img, torch.tensor(self.y[idx])
+        if self.return_speed:
+            return img, torch.tensor([self.speed[idx]]), torch.tensor(self.y[idx])
+        else:
+            return img, torch.tensor(self.y[idx])
 
     def __len__(self):
         return len(self.y)
