@@ -27,11 +27,12 @@ class Res50FCFea(nn.Module):
             for name, param in self.res50.named_parameters():
                 param.requires_grad = False
         dim = self.res50.fc.weight.shape[1]
-        self.res50.fc = nn.Sequential(nn.Linear(dim, 100), nn.ReLU(), nn.Linear(100, 4))
-        self.fea_emb = nn.Sequential(nn.Linear(n_fea, 4), nn.ReLU())
-        self.clf = nn.Linear(8, 4)
+        self.res50.fc = nn.Sequential(nn.Linear(dim, 100), nn.ReLU(), nn.Linear(100, 16))
+        self.fea_emb = nn.Sequential(nn.Linear(n_fea, 16), nn.ReLU())
+        self.clf = nn.Linear(16, 4)
 
     def forward(self, x, fea):
         x = self.res50(x)
         fea = self.fea_emb(fea)
-        return self.clf(torch.cat([x, fea], dim=1))
+        x = (x + fea) / 2
+        return self.clf(x)

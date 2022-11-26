@@ -34,3 +34,10 @@ class GaussianBlur(object):
         x = x.filter(ImageFilter.GaussianBlur(radius=sigma))
         return x
 
+
+def cal_dim(side_fea):
+    s2d = {'speed_limit': 1, 'n_lanes': 1, 'road_type': 9, 'cyc_infras': 1}
+    cnt = 0
+    for fea in side_fea:
+        cnt += s2d[fea]
+    return cnt

@@ -6,8 +6,9 @@ from torch import nn
 from torch.utils.data import DataLoader
 import time
 
+from model.naive import FeaFC
 from model import Res50FC, Res50FCFea
-from utils import initialization, StreetviewDataset
+from utils import initialization, StreetviewDataset, cal_dim
 
 
 def validation(net, vali_loader, device, criterion, speed):
@@ -65,7 +66,7 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, speed):
             corr_cnt += (y_pred == y).sum().item()
     else:
         for x, s, y in tqdm(train_loader):
-            x, s, y = x.to(device), s.to(device).to(torch.float), y.to(device)
+            x, s, y = x.to(device), s.to(device), y.to(device)
             # forward
             net.zero_grad()
             outputs = net.forward(x, s)
@@ -83,19 +84,20 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, speed):
 
 
 def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003,
-          job_id=None, toy=False, frozen=False, aug=False, biased=False, speed=False):
+          job_id=None, toy=False, frozen=False, aug=False, biased=False, side_fea=[]):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # load training data
-    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug, biased_sampling=biased, return_speed=speed),
+    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug, biased_sampling=biased, side_fea=side_fea),
                               batch_size=batch_size, shuffle=True)
-    vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False, biased_sampling=False, return_speed=speed),
+    vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False, biased_sampling=False, side_fea=side_fea),
                              batch_size=batch_size, shuffle=True)
     # initialization
-    if not speed:
+    if not side_fea:
         net = Res50FC(pretrained=True, frozen=frozen).to(device)
     else:
-        net = Res50FCFea(pretrained=True, frozen=frozen).to(device)
+        n_fea = cal_dim(side_fea)
+        net = Res50FCFea(pretrained=True, frozen=frozen, n_fea=n_fea).to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss().to(device)
     loss_records = []
@@ -103,8 +105,8 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
     print(f'(Rs)Start training from epoch {init_epoch}')
     for epoch in range(init_epoch, n_epoch):
         tick = time.time()
-        train_loss, train_acc = train_one_epoch(net, optimizer, train_loader, criterion, device, speed)
-        vali_loss, vali_acc = validation(net, vali_loader, device, criterion, speed)
+        train_loss, train_acc = train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea)
+        vali_loss, vali_acc = validation(net, vali_loader, device, criterion, side_fea)
         loss_records.append((train_loss, vali_loss))
         np.savetxt(check_path + f'{job_id}_loss.txt', loss_records, delimiter=',')
         if (epoch + 1) % n_check == 0:
@@ -140,6 +142,7 @@ if __name__ == '__main__':
     parser.add_argument('--no-biased', dest='biased', action='store_false')
     parser.add_argument('--speed', action='store_true', help='apply data augmentation or not')
     parser.add_argument('--no-speed', dest='speed', action='store_false')
+    parser.add_argument('--sidefea', nargs='+', type=str, help='side features that you want to consider, e.g. speed_limit, n_lanes')
     args = parser.parse_args()
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local, aug=args.aug, speed=args.speed,
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local, aug=args.aug, side_fea=args.sidefea,
           batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy, frozen=args.frozen, biased=args.biased)

@@ -8,7 +8,7 @@ from utils import GaussianBlur
 
 class StreetviewDataset(Dataset):
 
-    def __init__(self, purpose='training', toy=False, local=True, augmentation=False, biased_sampling=False, return_speed=False):
+    def __init__(self, purpose='training', toy=False, local=True, augmentation=False, biased_sampling=False, side_fea=[]):
         super().__init__()
         # load indices
         indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
@@ -20,15 +20,19 @@ class StreetviewDataset(Dataset):
         lts = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
         self.y = lts[indi]
         # posted speed
-        self.return_speed = return_speed
-        if return_speed:
-            speed = np.loadtxt('./data/road/speed_limit.txt').astype(np.double)
-            self.speed = speed[indi]
-            mu = self.speed.mean()
-            std = self.speed.std()
-            self.speed -= mu
-            self.speed /= std
-            self.speed = self.speed.astype(int)
+        self.side_fea = side_fea
+        if side_fea:
+            fea_list = []
+            for fea in side_fea:
+                vec = np.loadtxt(f'./data/road/{fea}.txt', delimiter=',').astype(np.single)
+                vec = vec.reshape((len(vec), -1))
+                vec = vec[indi]
+                fea_list.append(vec)
+            self.fea = np.concatenate(fea_list, axis=1)
+            mu = self.fea.mean(axis=0, keepdims=True)
+            std = self.fea.std(axis=0, keepdims=True)
+            self.fea -= mu
+            self.fea /= std
         # load images
         if local:
             img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
@@ -58,17 +62,17 @@ class StreetviewDataset(Dataset):
             flag4 = (self.y == 4).astype(bool)
             y_series = [self.y, self.y[flag3], self.y[flag4], self.y[flag3], self.y[flag4]]
             x_series = [self.img_path, self.img_path[flag3], self.img_path[flag4], self.img_path[flag3], self.img_path[flag4]]
-            if return_speed:
-                speed_series = [self.speed, self.speed[flag3], self.speed[flag4], self.speed[flag3], self.speed[flag4]]
-                self.speed = np.concatenate(speed_series, axis=0)
+            if side_fea:
+                fea_series = [self.fea, self.fea[flag3], self.fea[flag4], self.fea[flag3], self.fea[flag4]]
+                self.speed = np.concatenate(fea_series, axis=0)
             self.y = np.concatenate(y_series, axis=0)
             self.img_path = np.concatenate(x_series, axis=0)
 
     def __getitem__(self, idx):
         img = Image.open(self.img_path[idx])
         img = self.transform(img).float()
-        if self.return_speed:
-            return img, torch.tensor([self.speed[idx]]), torch.tensor(self.y[idx])
+        if self.side_fea:
+            return img, torch.tensor(self.fea[idx], dtype=torch.float32), torch.tensor(self.y[idx])
         else:
             return img, torch.tensor(self.y[idx])
 
