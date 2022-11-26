@@ -11,13 +11,13 @@ from model import Res50FC, Res50FCFea
 from utils import initialization, StreetviewDataset, cal_dim
 
 
-def validation(net, vali_loader, device, criterion, speed):
+def validation(net, vali_loader, device, criterion, side_fea):
     tot_cnt = 0
     corr_cnt = 0
     total_loss = 0.
     net.eval()
     with torch.no_grad():
-        if not speed:
+        if not side_fea:
             for x, y in tqdm(vali_loader):
                 x, y = x.to(device), y.to(device)
                 # forward
@@ -43,12 +43,12 @@ def validation(net, vali_loader, device, criterion, speed):
     return total_loss, corr_cnt/tot_cnt * 100
 
 
-def train_one_epoch(net, optimizer, train_loader, criterion, device, speed):
+def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea):
     net.train()
     total_loss = 0.
     tot_cnt = 0
     corr_cnt = 0
-    if not speed:
+    if not side_fea:
         for x, y in tqdm(train_loader):
             x, y = x.to(device), y.to(device)
             # forward
