@@ -34,3 +34,17 @@ def kt(y_pred, y_true):
     score = ((pred_mat == true_mat).sum() - y_true.shape[0])/2
     score /= ((y_pred.shape[0] - 1)** 2)
     return score.item()
+
+
+def fhr(y_pred, y_true):
+    n_low_stress = (y_true <= 2).sum()
+    false_high_stress = ((y_pred >= 3) * (y_true <= 2)).sum()
+    score = false_high_stress / n_low_stress
+    return score.item()
+
+
+def flr(y_pred, y_true):
+    n_high_stress = (y_true >= 3).sum()
+    false_low_stress = ((y_pred <= 2) * (y_true >= 3)).sum()
+    score = false_low_stress / n_high_stress
+    return score.item()

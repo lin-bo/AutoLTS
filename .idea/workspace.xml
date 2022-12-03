@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add side feature to res50_fc">
-      <change afterPath="$PROJECT_DIR$/ML_clf.ipynb" afterDir="false" />
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add side feature to MoCo_clf">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MoCo_clf_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_clf_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Res50_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/Res50_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/MoCo_clf.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo_clf.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/res50_fc.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/res50_fc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML_clf.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/ML_clf.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/visualization/res_visual.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/visualization/res_visual.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -442,7 +441,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669436724410</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="add side feature to MoCo_clf">
+      <created>1669442975420</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1669442975420</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -457,7 +463,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add frozen feature to res50fc" />
     <MESSAGE value="add checkpoint picker" />
     <MESSAGE value="add the augmentation option" />
     <MESSAGE value="add net.eval()" />
@@ -482,7 +487,8 @@
     <MESSAGE value="add batchnormalization in MoCoClfV2" />
     <MESSAGE value="add speed" />
     <MESSAGE value="add side feature to res50_fc" />
-    <option name="LAST_COMMIT_MESSAGE" value="add side feature to res50_fc" />
+    <MESSAGE value="add side feature to MoCo_clf" />
+    <option name="LAST_COMMIT_MESSAGE" value="add side feature to MoCo_clf" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
