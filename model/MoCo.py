@@ -198,8 +198,8 @@ class LabelMoCo(nn.Module):
 
 class OrdLabelMoCo(nn.Module):
 
-    def __init__(self, dim, queue_size=6400, momentum=0.999, temperature=0.07, n_chunk=4, alpha=2,
-                 mlp=True, local=True, device='mps', simple_shuffle=False):
+    def __init__(self, dim, queue_size=6400, momentum=0.999, temperature=0.07, n_chunk=4, alpha=1,
+                 mlp=True, local=True, device='mps', simple_shuffle=False, weight_func='exp'):
         super(OrdLabelMoCo, self).__init__()
         # initialize parameters
         self.queue_size = queue_size
@@ -225,6 +225,7 @@ class OrdLabelMoCo(nn.Module):
         self.register_buffer('queue_ptr', torch.zeros(1, dtype=torch.long))
         self.register_buffer('queue_lts', - torch.ones(self.queue_size, dtype=torch.long))
         self.vali = False
+        self.weight_func = weight_func
 
     def forward(self, im_q, im_k, label):
         batch_size = im_q.shape[0]
@@ -255,7 +256,12 @@ class OrdLabelMoCo(nn.Module):
         logits = torch.cat([l_pos, l_other], dim=1) / self.temperature
         # set the label to the positive key indicator
         with torch.no_grad():
-            targets = 1 / (torch.abs(self.queue_lts.repeat(batch_size, 1) - torch.unsqueeze(label, 1)) + 1) ** self.alpha
+            if self.weight_func == 'exp':
+                targets = torch.exp((- torch.abs(self.queue_lts.repeat(batch_size, 1) - torch.unsqueeze(label, 1)) * self.alpha).to(torch.float))
+            elif self.weight_func == 'rec':
+                targets = 1 / ((1 + torch.abs(self.queue_lts.repeat(batch_size, 1) - torch.unsqueeze(label, 1))) ** self.alpha)
+            else:
+                raise ValueError(f'weighting function {self.weight_func} not found')
             targets = torch.cat([torch.unsqueeze(torch.ones(batch_size, dtype=torch.float), 1).to(self.device), targets], dim=1)
         # dequeue and enqueue
         if not self.vali:
