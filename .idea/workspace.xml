@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add side feature to MoCo_clf">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add exp and rec weighting options">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML_clf.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/ML_clf.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/MoCo.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/res50_fc.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/res50_fc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/functions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/visualization/res_visual.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/visualization/res_visual.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -454,7 +456,14 @@
       <option name="project" value="LOCAL" />
       <updated>1670095126346</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="add exp and rec weighting options">
+      <created>1670272519657</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1670272519657</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -469,7 +478,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add checkpoint picker" />
     <MESSAGE value="add the augmentation option" />
     <MESSAGE value="add net.eval()" />
     <MESSAGE value="add biased sampling" />
@@ -494,7 +502,8 @@
     <MESSAGE value="add speed" />
     <MESSAGE value="add side feature to res50_fc" />
     <MESSAGE value="add side feature to MoCo_clf" />
-    <option name="LAST_COMMIT_MESSAGE" value="add side feature to MoCo_clf" />
+    <MESSAGE value="add exp and rec weighting options" />
+    <option name="LAST_COMMIT_MESSAGE" value="add exp and rec weighting options" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -64,7 +64,7 @@ def save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check, devic
 
 
 def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32, awaretype='clf', alpha=2,
-          job_id=None, local=False, simple_shuffle=False, aware=False, memsize=6400, weight_func='exp'):
+          job_id=None, local=False, simple_shuffle=False, aware=False, memsize=6400, weight_func='exp', start_point=None):
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     output_records = []
     # initialize the network, data loader, and loss function
@@ -92,7 +92,7 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
     # initialize optimizer and loss function
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     # load checkpoint if needed
-    init_epoch, loss_records, net, optimizer, output_records = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
+    init_epoch, loss_records, net, optimizer, output_records = initialization(check_path, n_check, n_epoch, job_id, net, optimizer, start_point)
     # here we go
     msg = f'------------------------------------\n(re)Start training from epoch {init_epoch}\n------------------------------------'
     print(msg)
@@ -137,9 +137,10 @@ if __name__ == '__main__':
     parser.add_argument('--awaretype', default='clf', type=str, help='type of the loss function, choose from clf, reg, and ord')
     parser.add_argument('--alpha', default=2, type=int, help='penalty factor for ord moco loss')
     parser.add_argument('-wf', '--weight_function', default='exp', type=str, help='weighting function, choose from exp and rec')
+    parser.add_argument('--start_point', default=None, type=str, help='starting point, must be saved in ./checkpoint/')
     args = parser.parse_args()
     # here we go
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, aware=args.aware, awaretype=args.awaretype,
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, aware=args.aware, awaretype=args.awaretype, start_point=args.start_point,
           weight_func=args.weight_function, alpha=args.alpha, local=args.local, batch_size=args.batchsize, job_id=args.jobid, simple_shuffle=args.simple, memsize=args.memsize)
 
 

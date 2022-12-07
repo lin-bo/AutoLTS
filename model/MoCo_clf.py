@@ -5,7 +5,7 @@ from torch import nn
 
 class MoCoClf(nn.Module):
 
-    def __init__(self, checkpoint_name=None, local=True, vali=False):
+    def __init__(self, checkpoint_name=None, local=True, vali=False, out_dim=4):
         super(MoCoClf, self).__init__()
         # initialize the model
         model = torchvision.models.resnet50(pretrained=True)
@@ -25,7 +25,7 @@ class MoCoClf(nn.Module):
             _ = model.load_state_dict(state_dict, strict=False)
         # add FC layers
         dim = model.fc.weight.shape[1]
-        model.fc = nn.Sequential(nn.Linear(dim, 100), nn.ReLU(), nn.Linear(100, 4))
+        model.fc = nn.Sequential(nn.Linear(dim, 100), nn.ReLU(), nn.Linear(100, out_dim))
         self.clf = model
 
     def forward(self, x):
@@ -34,7 +34,7 @@ class MoCoClf(nn.Module):
 
 class MoCoClfV2(nn.Module):
 
-    def __init__(self, checkpoint_name=None, local=True, vali=False):
+    def __init__(self, checkpoint_name=None, local=True, vali=False, out_dim=4):
         super(MoCoClfV2, self).__init__()
         # initialize the model
         model = torchvision.models.resnet50(pretrained=True)
@@ -56,7 +56,7 @@ class MoCoClfV2(nn.Module):
             _ = model.load_state_dict(state_dict, strict=False)
         # add FC layers
         self.emb = model
-        self.proj = nn.Sequential(nn.Linear(128, 32), nn.ReLU(), nn.Linear(32, 4))
+        self.proj = nn.Sequential(nn.Linear(128, 32), nn.ReLU(), nn.Linear(32, out_dim))
 
     def forward(self, x):
         x = self.emb(x)
@@ -66,7 +66,7 @@ class MoCoClfV2(nn.Module):
 
 class MoCoClfV2Fea(nn.Module):
 
-    def __init__(self, checkpoint_name=None, local=True, vali=False, n_fea=1):
+    def __init__(self, checkpoint_name=None, local=True, vali=False, n_fea=1, out_dim=4):
         super(MoCoClfV2Fea, self).__init__()
         # initialize the model
         model = torchvision.models.resnet50(pretrained=True)
@@ -90,7 +90,7 @@ class MoCoClfV2Fea(nn.Module):
         self.emb = model
         self.proj = nn.Sequential(nn.Linear(128, 16), nn.ReLU())
         self.fea_emb = nn.Sequential(nn.Linear(n_fea, 16), nn.ReLU())
-        self.clf = nn.Linear(16, 4)
+        self.clf = nn.Linear(16, out_dim)
 
     def forward(self, x, fea):
         x = self.emb(x)

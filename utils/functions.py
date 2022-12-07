@@ -4,23 +4,31 @@ from PIL import ImageFilter
 import torch
 
 
-def initialization(check_path, n_check, n_epoch, job_id, net, optimizer):
+def load_checkpoint(checkpoint_path, net, optimizer):
+    checkpoint = torch.load(checkpoint_path)
+    net.load_state_dict(checkpoint['model_state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    init_epoch = checkpoint['epoch'] + 1
+    loss_records = checkpoint['loss_records']
+    output_records = checkpoint['output_records'] if 'output_records' in checkpoint else []
+    if len(output_records) > 0:
+        for msg in output_records:
+            print(msg)
+    return init_epoch, loss_records, net, optimizer, output_records
+
+
+def initialization(check_path, n_check, n_epoch, job_id, net, optimizer, start_point=None):
     init_epoch = 0
     loss_records = []
     for epoch in list(range(n_epoch))[::-1]:
         if (epoch + 1) % n_check != 0:
             continue
-        if os.path.exists(check_path + f'{job_id}_{epoch}.pt'):
-            checkpoint = torch.load(check_path + f'{job_id}_{epoch}.pt')
-            net.load_state_dict(checkpoint['model_state_dict'])
-            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-            init_epoch = checkpoint['epoch'] + 1
-            loss_records = checkpoint['loss_records']
-            output_records = checkpoint['output_records'] if 'output_records' in checkpoint else []
-            if len(output_records) > 0:
-                for msg in output_records:
-                    print(msg)
-            return init_epoch, loss_records, net, optimizer, output_records
+        checkpoint_path = check_path + f'{job_id}_{epoch}.pt'
+        if os.path.exists(checkpoint_path):
+            return load_checkpoint(checkpoint_path, net, optimizer)
+    if start_point:
+        checkpoint_path = f'./checkpoint/{start_point}.pt'
+        return load_checkpoint(checkpoint_path, net, optimizer)
     return init_epoch, loss_records, net, optimizer, []
 
 
