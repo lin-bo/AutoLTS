@@ -20,7 +20,7 @@ class StreetviewDataset(Dataset):
         if label == 'lts':
             self.y = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
         elif label == 'speed_actual':
-            self.y = np.loadtxt('./data/road/speed_actual.txt').astype(float)
+            self.y = np.loadtxt('./data/road/speed_actual.txt').astype(np.single).reshape((-1, 1))
         else:
             raise ValueError(f'label {label} not found')
         self.y = self.y[indi]
