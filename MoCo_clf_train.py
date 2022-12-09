@@ -94,7 +94,7 @@ def train_one_epoch(net, optimizer, train_loader, device, side_fea, criterion, l
 
 
 def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, transform=False,
-          n_epoch=30, n_check=1, toy=False, local=False, version=1, side_fea=[], label='lts'):
+          n_epoch=30, n_check=1, toy=False, local=False, version=1, side_fea=[], label='lts', start_point=None):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # initialize
@@ -120,7 +120,7 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, 
                                                biased_sampling=False, side_fea=side_fea, label=label, transform=transform),
                              batch_size=batch_size, shuffle=False)
     # start training
-    init_epoch, loss_records, net, optimizer, _ = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
+    init_epoch, loss_records, net, optimizer, _ = initialization(check_path, n_check, n_epoch, job_id, net, optimizer, start_point)
     print(f'(Rs)Start training from epoch {init_epoch}')
     for epoch in range(init_epoch, n_epoch):
         tick = time.time()
@@ -163,7 +163,9 @@ if __name__ == '__main__':
     parser.add_argument('--label', type=str, default='lts', help='label to predict, choose from lts and speed_actual')
     parser.add_argument('--transform', default=False, action='store_true', help='apply data target log transformation or not')
     parser.add_argument('--no-transform', dest='transform', action='store_false')
+    parser.add_argument('--start_point', default=None, type=str, help='starting point, must be saved in ./checkpoint/')
     args = parser.parse_args()
     # here we go
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, version=args.version, side_fea=args.sidefea,
-          local=args.local, batch_size=args.batchsize, job_id=args.jobid, checkpoint=args.checkpoint, label=args.label, transform=args.transform)
+          local=args.local, batch_size=args.batchsize, job_id=args.jobid, checkpoint=args.checkpoint, label=args.label,
+          transform=args.transform, start_point=args.start_point)

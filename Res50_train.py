@@ -100,7 +100,7 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
 
 
 def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003, transform=False,
-          job_id=None, toy=False, frozen=False, aug=False, biased=False, side_fea=[], label='lts'):
+          job_id=None, toy=False, frozen=False, aug=False, biased=False, side_fea=[], label='lts', start_point=None):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # load training data
@@ -121,7 +121,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
     l2c = {'lts': nn.CrossEntropyLoss(reduction='mean'),
            'speed_actual': nn.MSELoss(reduction='mean')}
     criterion = l2c[label].to(device)
-    init_epoch, loss_records, net, optimizer, _ = initialization(check_path, n_check, n_epoch, job_id, net, optimizer)
+    init_epoch, loss_records, net, optimizer, _ = initialization(check_path, n_check, n_epoch, job_id, net, optimizer, start_point)
     print(f'(Rs)Start training from epoch {init_epoch}')
     for epoch in range(init_epoch, n_epoch):
         tick = time.time()
@@ -169,6 +169,8 @@ if __name__ == '__main__':
     parser.add_argument('--label', type=str, default='lts', help='label to predict, choose from lts and speed_actual')
     parser.add_argument('--transform', default=False, action='store_true', help='apply data target log transformation or not')
     parser.add_argument('--no-transform', dest='transform', action='store_false')
+    parser.add_argument('--start_point', default=None, type=str, help='starting point, must be saved in ./checkpoint/')
     args = parser.parse_args()
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local, aug=args.aug, side_fea=args.sidefea, label=args.label,
-          batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy, frozen=args.frozen, biased=args.biased, transform=args.transform)
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local, aug=args.aug, side_fea=args.sidefea,
+          label=args.label, batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy, frozen=args.frozen,
+          biased=args.biased, transform=args.transform, start_point=args.start_point)
