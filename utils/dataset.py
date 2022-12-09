@@ -8,7 +8,8 @@ from utils import GaussianBlur
 
 class StreetviewDataset(Dataset):
 
-    def __init__(self, purpose='training', toy=False, local=True, augmentation=False, biased_sampling=False, side_fea=[], label='lts'):
+    def __init__(self, purpose='training', toy=False, local=True, augmentation=False, biased_sampling=False, side_fea=[],
+                 label='lts', transform=False):
         super().__init__()
         # load indices
         indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
@@ -21,6 +22,8 @@ class StreetviewDataset(Dataset):
             self.y = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
         elif label == 'speed_actual':
             self.y = np.loadtxt('./data/road/speed_actual.txt').astype(np.single).reshape((-1, 1))
+            if transform:
+                self.y = np.log(self.y + 0.1)
         else:
             raise ValueError(f'label {label} not found')
         self.y = self.y[indi]

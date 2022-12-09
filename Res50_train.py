@@ -99,14 +99,16 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
         return total_loss/epoch_cnt, 0
 
 
-def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003,
+def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003, transform=False,
           job_id=None, toy=False, frozen=False, aug=False, biased=False, side_fea=[], label='lts'):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # load training data
-    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug, biased_sampling=biased, side_fea=side_fea, label=label),
+    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug, label=label,
+                                                biased_sampling=biased, side_fea=side_fea, transform=transform),
                               batch_size=batch_size, shuffle=True)
-    vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False, biased_sampling=False, side_fea=side_fea, label=label),
+    vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False, label=label,
+                                               biased_sampling=False, side_fea=side_fea, transform=transform),
                              batch_size=batch_size, shuffle=True)
     # initialization
     l2d = {'lts': 4, 'speed_actual': 1}
@@ -165,6 +167,8 @@ if __name__ == '__main__':
     parser.add_argument('--no-speed', dest='speed', action='store_false')
     parser.add_argument('--sidefea', nargs='+', type=str, help='side features that you want to consider, e.g. speed_limit, n_lanes')
     parser.add_argument('--label', type=str, default='lts', help='label to predict, choose from lts and speed_actual')
+    parser.add_argument('--transform', default=False, action='store_true', help='apply data target log transformation or not')
+    parser.add_argument('--no-transform', dest='transform', action='store_false')
     args = parser.parse_args()
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local, aug=args.aug, side_fea=args.sidefea, label=args.label,
-          batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy, frozen=args.frozen, biased=args.biased)
+          batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy, frozen=args.frozen, biased=args.biased, transform=args.transform)
