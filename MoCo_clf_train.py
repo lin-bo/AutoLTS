@@ -97,7 +97,7 @@ def train_one_epoch(net, optimizer, train_loader, device, side_fea, criterion, l
         return total_loss/epoch_cnt, 0
 
 
-def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, transform=False,
+def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, transform=False, biased=False,
           n_epoch=30, n_check=1, toy=False, local=False, version=1, side_fea=[], label='lts', start_point=None):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
@@ -120,7 +120,7 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, 
     criterion = nn.MSELoss(reduction='mean') if label in msefeas else nn.CrossEntropyLoss(reduction='sum')
     criterion = criterion.to(device)
     train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=True,
-                                                biased_sampling=False, side_fea=side_fea, label=label, transform=transform),
+                                                biased_sampling=biased, side_fea=side_fea, label=label, transform=transform),
                               batch_size=batch_size, shuffle=False)
     vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False,
                                                biased_sampling=False, side_fea=side_fea, label=label, transform=transform),
@@ -163,6 +163,8 @@ if __name__ == '__main__':
     parser.add_argument('--no-toy', dest='toy', action='store_false')
     parser.add_argument('--local', action='store_true', help='is the training on a local device or not')
     parser.add_argument('--no-local', dest='local', action='store_false')
+    parser.add_argument('--biased', action='store_true', default=False, help='apply data augmentation or not')
+    parser.add_argument('--no-biased', dest='biased', action='store_false')
     parser.add_argument('--checkpoint', type=str, help='checkpoint name {JobID}_{Epoch}')
     parser.add_argument('--version', type=int, default=1, help='MoCoClf version, choose from 1 and 2')
     parser.add_argument('--sidefea', nargs='+', type=str, help='side features that you want to consider, e.g. speed_limit, n_lanes')
@@ -174,4 +176,4 @@ if __name__ == '__main__':
     # here we go
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, version=args.version, side_fea=args.sidefea,
           local=args.local, batch_size=args.batchsize, job_id=args.jobid, checkpoint=args.checkpoint, label=args.label,
-          transform=args.transform, start_point=args.start_point)
+          transform=args.transform, start_point=args.start_point, biased=args.biased)

@@ -70,13 +70,22 @@ class StreetviewDataset(Dataset):
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
-        if biased_sampling:
+        if biased_sampling and label == 'lts':
             flag3 = (self.y == 3).astype(bool)
             flag4 = (self.y == 4).astype(bool)
             y_series = [self.y, self.y[flag3], self.y[flag4], self.y[flag3], self.y[flag4]]
             x_series = [self.img_path, self.img_path[flag3], self.img_path[flag4], self.img_path[flag3], self.img_path[flag4]]
             if side_fea:
                 fea_series = [self.fea, self.fea[flag3], self.fea[flag4], self.fea[flag3], self.fea[flag4]]
+                self.speed = np.concatenate(fea_series, axis=0)
+            self.y = np.concatenate(y_series, axis=0)
+            self.img_path = np.concatenate(x_series, axis=0)
+        elif biased_sampling and label == 'cyc_infras':
+            flag = (self.y == 1).astype(bool)
+            y_series = [self.y] + [self.y[flag] for _ in range(10)]
+            x_series = [self.img_path] + [self.img_path[flag] for _ in range(10)]
+            if side_fea:
+                fea_series = [self.fea] + [self.fea[flag] for _ in range(10)]
                 self.speed = np.concatenate(fea_series, axis=0)
             self.y = np.concatenate(y_series, axis=0)
             self.img_path = np.concatenate(x_series, axis=0)
