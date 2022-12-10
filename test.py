@@ -8,67 +8,93 @@ from model import Res50FC, MoCoClf, MoCoClfV2, MoCoClfV2Fea, Res50FCFea
 import argparse
 
 
-def init_mdl(mdl_name, device, side_fea):
+def init_mdl(mdl_name, device, side_fea, label):
+    l2d = {'lts': 4, 'speed_actual': 1, 'cyc_infras': 2, 'n_lanes': 1, 'n_lanes_onehot': 9, 'road_type': 9}
     if mdl_name == 'Res50':
-        mdl = Res50FC(pretrained=False).to(device=device)
+        mdl = Res50FC(pretrained=False, out_dim=l2d[label]).to(device=device)
     elif mdl_name == 'Res50Fea':
         n_fea = cal_dim(side_fea)
-        mdl = Res50FCFea(pretrained=False, n_fea=n_fea).to(device=device)
+        mdl = Res50FCFea(pretrained=False, n_fea=n_fea, out_dim=l2d[label]).to(device=device)
     elif mdl_name == 'MoCoClf':
-        mdl = MoCoClf(vali=True).to(device=device)
+        mdl = MoCoClf(vali=True, out_dim=l2d[label]).to(device=device)
     elif mdl_name == 'MoCoClfV2':
-        mdl = MoCoClfV2(vali=True).to(device=device)
+        mdl = MoCoClfV2(vali=True, out_dim=l2d[label]).to(device=device)
     elif mdl_name == 'MoCoClfFea':
         n_fea = cal_dim(side_fea)
-        mdl = MoCoClfV2Fea(vali=True, n_fea=n_fea).to(device=device)
+        mdl = MoCoClfV2Fea(vali=True, n_fea=n_fea, out_dim=l2d[label]).to(device=device)
     else:
         ValueError(f'Model {mdl_name} not found')
     return mdl
 
 
-def eval(net, test_loader, device, purpose, side_fea):
+def eval(net, test_loader, device, purpose, side_fea, label, criterion):
     net.eval()
     total_loss = 0.
-    criterion = nn.CrossEntropyLoss(reduction='sum')
     pred_records, true_records = [], []
     with torch.no_grad():
         if not side_fea:
             for x, y in tqdm(test_loader):
                 x, y = x.to(device), y.to(device)
                 outputs = net(x)
-                loss = criterion(outputs, y-1)
+                if label == 'lts':
+                    loss = criterion(outputs, y-1)
+                else:
+                    loss = criterion(outputs, y)
                 total_loss += loss.item()
-                _, predicted = torch.max(outputs, 1)
-                predicted += 1
+                if label != 'speed_actual':
+                    _, predicted = torch.max(outputs, 1)
+                else:
+                    predicted = outputs
+                if label == 'lts':
+                    predicted += 1
                 pred_records += predicted.tolist()
                 true_records += y.tolist()
         else:
             for x, s, y in tqdm(test_loader):
                 x, s, y = x.to(device), s.to(device).to(torch.float), y.to(device)
                 outputs = net(x, s)
-                loss = criterion(outputs, y-1)
+                if label == 'lts':
+                    loss = criterion(outputs, y-1)
+                else:
+                    loss = criterion(outputs, y)
                 total_loss += loss.item()
-                _, predicted = torch.max(outputs, 1)
-                predicted += 1
+                if label != 'speed_actual':
+                    _, predicted = torch.max(outputs, 1)
+                else:
+                    predicted = outputs
+                if label == 'lts':
+                    predicted += 1
                 pred_records += predicted.tolist()
                 true_records += y.tolist()
     pred_records, true_records = torch.tensor(pred_records).to(torch.float), torch.tensor(true_records).to(torch.float)
-    # accuracy
-    acc = accuracy(pred_records, true_records)
-    aggacc = agg_accuracy(pred_records, true_records)
-    mae_score = mae(pred_records, true_records)
-    mse_score = mse(pred_records, true_records)
-    ob_score = ob(pred_records, true_records)
-    fhr_score = fhr(pred_records, true_records)
-    flr_score = flr(pred_records, true_records)
-    if purpose != 'training':
+    # clf metrics
+    acc = accuracy(pred_records, true_records) if label not in {'n_lanes', 'speed_actual'} else 0
+    aggacc = agg_accuracy(pred_records, true_records) if label not in {'n_lanes', 'speed_actual'} else 0
+    ob_score = ob(pred_records, true_records) if label in {'n_lanes_onehot', 'lts'} else 0
+    # reg metrics
+    mae_score = mae(pred_records, true_records) if label not in {'road_type', 'cyc_infras'} else 0
+    mse_score = mse(pred_records, true_records) if label not in {'road_type', 'cyc_infras'} else 0
+    # imbalanced metrics
+    if label == 'lts':
+        fhr_score = fhr(pred_records, true_records)
+        flr_score = flr(pred_records, true_records)
+    elif label == 'cyc_infras':
+        fhr_score = fhr(pred_records + 2, true_records + 2)
+        flr_score = flr(pred_records + 2, true_records + 2)
+    else:
+        fhr_score, flr_score = 0, 0
+    # rank metrics
+    if purpose != 'training' and label == 'lts':
         # training matrix might be too big
         kt_score = kt(pred_records, true_records)
     else:
         kt_score = 0
     # aggregated accuracy
     # confusion matrix
-    conf_mat = confusion_matrix(y_pred=pred_records, y_true=true_records, normalize='true')
+    if label not in {'n_lanes', 'speed_actual'}:
+        conf_mat = confusion_matrix(y_pred=pred_records, y_true=true_records, normalize='true')
+    else:
+        conf_mat = 0
     res = {'conf_mat': conf_mat, 'total_loss': total_loss,
            'accuracy': acc, 'aggregated_accuracy': aggacc,
            'mae': mae_score, 'mse': mse_score,
@@ -77,22 +103,24 @@ def eval(net, test_loader, device, purpose, side_fea):
     return res
 
 
-def complete_eval(net, device, local, side_fea):
+def complete_eval(net, device, local, side_fea, label):
     # training
+    msefeas = {'speed_actual', 'n_lanes'}
+    criterion = criterion = nn.MSELoss(reduction='mean') if label in msefeas else nn.CrossEntropyLoss(reduction='sum')
     print('evaluating the training set')
-    loader_train = DataLoader(StreetviewDataset(purpose='training', local=local, toy=False, side_fea=side_fea),
+    loader_train = DataLoader(StreetviewDataset(purpose='training', local=local, toy=False, side_fea=side_fea, label=label),
                               batch_size=batch_size, shuffle=True)
-    res_train = eval(net, loader_train, device, 'training', side_fea=side_fea)
+    res_train = eval(net, loader_train, device, 'training', side_fea=side_fea, label=label, criterion=criterion)
     # validation
     print('evaluating the validation set')
-    loader_vali = DataLoader(StreetviewDataset(purpose='validation', local=local, toy=False, side_fea=side_fea),
+    loader_vali = DataLoader(StreetviewDataset(purpose='validation', local=local, toy=False, side_fea=side_fea, label=label),
                              batch_size=batch_size, shuffle=True)
-    res_vali = eval(net, loader_vali, device, 'validation', side_fea=side_fea)
+    res_vali = eval(net, loader_vali, device, 'validation', side_fea=side_fea, label=label, criterion=criterion)
     # test
     print('evaluating the test set')
-    loader_test = DataLoader(StreetviewDataset(purpose='test', local=local, toy=False, side_fea=side_fea),
+    loader_test = DataLoader(StreetviewDataset(purpose='test', local=local, toy=False, side_fea=side_fea, label=label),
                              batch_size=batch_size, shuffle=True)
-    res_test = eval(net, loader_test, device, 'test', side_fea=side_fea)
+    res_test = eval(net, loader_test, device, 'test', side_fea=side_fea, label=label, criterion=criterion)
     return res_train, res_vali, res_test
 
 
@@ -105,6 +133,7 @@ if __name__ == '__main__':
     parser.add_argument('--no-local', dest='local', action='store_false')
     parser.add_argument('--device', type=str, help='device name')
     parser.add_argument('--sidefea', nargs='+', type=str, help='side features that you want to consider, e.g. speed_limit, n_lanes')
+    parser.add_argument('--label', type=str, default='lts', help='label to predict, choose from lts and speed_actual')
     args = parser.parse_args()
     # load checkpoint
     if args.device == 'mps':
@@ -116,9 +145,9 @@ if __name__ == '__main__':
     batch_size = checkpoint['hyper-parameters']['batch_size']
     # initialization
     # net = Res50FC(pretrained=False).to(device=device)
-    net = init_mdl(args.modelname, device, args.sidefea)
+    net = init_mdl(args.modelname, device, args.sidefea, label=args.label)
     net.load_state_dict(checkpoint['model_state_dict'])
     # eval
-    res_train, res_vali, res_test = complete_eval(net, device, args.local, args.sidefea)
+    res_train, res_vali, res_test = complete_eval(net, device, args.local, args.sidefea, args.label)
     res = {'training': res_train, 'validation': res_vali, 'test': res_test}
     torch.save(res, f'./res/{args.checkpointname}_res.pt')
