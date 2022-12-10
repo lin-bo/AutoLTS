@@ -20,12 +20,17 @@ class StreetviewDataset(Dataset):
         # load labels
         if label == 'lts':
             self.y = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
-        elif label == 'speed_actual':
-            self.y = np.loadtxt('./data/road/speed_actual.txt').astype(np.single).reshape((-1, 1))
+        else:
+            true_label = label[:-7] if label[-7:] == '_onehot' else label
+            self.y = np.loadtxt(f'./data/road/{true_label}.txt', delimiter=',').astype(int)
+        # transform labels
+        if label == 'speed_actual' or label == 'n_lanes':
+            self.y = self.y.reshape((-1, 1))
+            self.y = self.y.astype(np.single)
             if transform:
                 self.y = np.log(self.y + 0.1)
-        else:
-            raise ValueError(f'label {label} not found')
+        elif label == 'road_type':
+            self.y = np.argmax(self.y, axis=1)
         self.y = self.y[indi]
         # posted speed
         self.side_fea = side_fea

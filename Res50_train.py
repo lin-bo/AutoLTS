@@ -28,9 +28,11 @@ def validation(net, vali_loader, device, criterion, side_fea, label):
                 total_loss += loss.item()
                 tot_cnt += len(y)
                 epoch_cnt += 1
-                if label == 'lts':
+                if label != 'speed_actual' and label != 'n_lanes':
                     _, y_pred = torch.max(outputs, 1)
-                    corr_cnt += (y_pred + 1 == y).sum().item()
+                    if label == 'lts':
+                        y_pred += 1
+                    corr_cnt += (y_pred == y).sum().item()
         else:
             for x, s, y in tqdm(vali_loader):
                 x, s, y = x.to(device), s.to(device).to(torch.float), y.to(device)
@@ -41,11 +43,13 @@ def validation(net, vali_loader, device, criterion, side_fea, label):
                 total_loss += loss.item()
                 tot_cnt += len(y)
                 epoch_cnt += 1
-                if label == 'lts':
+                if label != 'speed_actual' and label != 'n_lanes':
                     _, y_pred = torch.max(outputs, 1)
-                    corr_cnt += (y_pred + 1 == y).sum().item()
+                    if label == 'lts':
+                        y_pred += 1
+                    corr_cnt += (y_pred == y).sum().item()
     net.train()
-    if label == 'lts':
+    if label != 'speed_actual' and label != 'n_lanes':
         return total_loss, corr_cnt/tot_cnt * 100
     else:
         return total_loss/epoch_cnt, 0
@@ -71,9 +75,10 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
             total_loss += loss.item()
             tot_cnt += len(y)
             epoch_cnt += 1
-            if label == 'lts':
+            if label != 'speed_actual' and label != 'n_lanes':
                 _, y_pred = torch.max(outputs, dim=1)
-                y_pred += 1
+                if label == 'lts':
+                    y_pred += 1
                 corr_cnt += (y_pred == y).sum().item()
     else:
         for x, s, y in tqdm(train_loader):
@@ -89,11 +94,12 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
             total_loss += loss.item()
             tot_cnt += len(y)
             epoch_cnt += 1
-            if label == 'lts':
+            if label != 'speed_actual' and label != 'n_lanes':
                 _, y_pred = torch.max(outputs, dim=1)
-                y_pred += 1
+                if label == 'lts':
+                    y_pred += 1
                 corr_cnt += (y_pred == y).sum().item()
-    if label == 'lts':
+    if label != 'speed_actual' and label != 'n_lanes':
         return total_loss, corr_cnt/tot_cnt * 100
     else:
         return total_loss/epoch_cnt, 0
@@ -111,16 +117,19 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
                                                biased_sampling=False, side_fea=side_fea, transform=transform),
                              batch_size=batch_size, shuffle=True)
     # initialization
-    l2d = {'lts': 4, 'speed_actual': 1}
+    l2d = {'lts': 4, 'speed_actual': 1, 'cyc_infras': 2, 'n_lanes': 1, 'n_lanes_onehot': 9, 'road_type': 9}
     if not side_fea:
         net = Res50FC(pretrained=True, frozen=frozen, out_dim=l2d[label]).to(device)
     else:
         n_fea = cal_dim(side_fea)
         net = Res50FCFea(pretrained=True, frozen=frozen, n_fea=n_fea, out_dim=l2d[label]).to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr)
-    l2c = {'lts': nn.CrossEntropyLoss(reduction='mean'),
-           'speed_actual': nn.MSELoss(reduction='mean')}
-    criterion = l2c[label].to(device)
+    # l2c = {'lts': nn.CrossEntropyLoss(reduction='mean'),
+    #        'speed_actual': nn.MSELoss(reduction='mean')}
+    # criterion = l2c[label].to(device)
+    msefeas = {'speed_actual', 'n_lanes'}
+    criterion = nn.MSELoss(reduction='mean') if label in msefeas else nn.CrossEntropyLoss(reduction='sum')
+    criterion = criterion.to(device)
     init_epoch, loss_records, net, optimizer, _ = initialization(check_path, n_check, n_epoch, job_id, net, optimizer, start_point)
     print(f'(Rs)Start training from epoch {init_epoch}')
     for epoch in range(init_epoch, n_epoch):
@@ -137,7 +146,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
                         'hyper-parameters': {'n_epoch': n_epoch, 'n_check': n_check, 'device': device, 'batch_size': batch_size, 'lr': lr}
                         },
                        check_path + f'{job_id}_{epoch}.pt')
-        if label == 'lts':
+        if label != 'speed_actual' and label != 'n_lanes':
             print(f'Epoch: {epoch}, train loss: {train_loss:.4f}, train accuracy: {train_acc:.2f}%, vali loss: {vali_loss:.4f}, '
                   f'vali accuracy: {vali_acc:.2f}%, time: {time.time() - tick:.2f} sec')
         else:

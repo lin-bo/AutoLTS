@@ -25,9 +25,10 @@ def validation(net, vali_loader, device, side_fea, criterion, label):
                 total_loss += loss.item()
                 tot_cnt += y.shape[0]
                 epoch_cnt += 1
-                if label == 'lts':
+                if label != 'speed_actual' and label != 'n_lanes':
                     _, predicted = torch.max(outputs, 1)
-                    predicted += 1
+                    if label == 'lts':
+                        predicted += 1
                     corr_cnt += (predicted == y).sum().item()
         else:
             for x, s, y in tqdm(vali_loader):
@@ -37,12 +38,13 @@ def validation(net, vali_loader, device, side_fea, criterion, label):
                 total_loss += loss.item()
                 tot_cnt += y.shape[0]
                 epoch_cnt += 1
-                if label == 'lts':
+                if label != 'speed_actual' and label != 'n_lanes':
                     _, predicted = torch.max(outputs, 1)
-                    predicted += 1
+                    if label == 'lts':
+                        predicted += 1
                     corr_cnt += (predicted == y).sum().item()
     net.train()
-    if label == 'lts':
+    if label != 'speed_actual' and label != 'n_lanes':
         return total_loss, corr_cnt/tot_cnt * 100
     else:
         return total_loss/epoch_cnt, 0
@@ -65,9 +67,10 @@ def train_one_epoch(net, optimizer, train_loader, device, side_fea, criterion, l
             total_loss += loss.item()
             tot_cnt += len(y)
             epoch_cnt += 1
-            if label == 'lts':
+            if label != 'speed_actual' and label != 'n_lanes':
                 _, y_pred = torch.max(outputs, dim=1)
-                y_pred += 1
+                if label == 'lts':
+                    y_pred += 1
                 corr_cnt += (y_pred == y).sum().item()
     else:
         for x, s, y in tqdm(train_loader):
@@ -83,11 +86,12 @@ def train_one_epoch(net, optimizer, train_loader, device, side_fea, criterion, l
             total_loss += loss.item()
             tot_cnt += len(y)
             epoch_cnt += 1
-            if label == 'lts':
+            if label != 'speed_actual' and label != 'n_lanes':
                 _, y_pred = torch.max(outputs, dim=1)
-                y_pred += 1
+                if label == 'lts':
+                    y_pred += 1
                 corr_cnt += (y_pred == y).sum().item()
-    if label == 'lts':
+    if label != 'speed_actual' and label != 'n_lanes':
         return total_loss, corr_cnt/tot_cnt * 100
     else:
         return total_loss/epoch_cnt, 0
@@ -102,7 +106,7 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, 
     #     net = MoCoClf(checkpoint_name=checkpoint, local=local).to(device)
     # else:
     #     net = MoCoClfV2(checkpoint_name=checkpoint, local=local).to(device)
-    l2d = {'lts': 4, 'speed_actual': 1}
+    l2d = {'lts': 4, 'speed_actual': 1, 'cyc_infras': 2, 'n_lanes': 1, 'n_lanes_onehot': 9, 'road_type': 9}
     if side_fea:
         n_fea = cal_dim(side_fea)
         net = MoCoClfV2Fea(checkpoint_name=checkpoint, local=local, n_fea=n_fea, out_dim=l2d[label]).to(device)
@@ -110,9 +114,11 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, 
         net = MoCoClfV2(checkpoint_name=checkpoint, local=local, out_dim=l2d[label]).to(device)
     parameters = list(filter(lambda p: p.requires_grad, net.parameters()))
     optimizer = torch.optim.SGD(parameters, lr=lr, momentum=0.9, weight_decay=1e-4)
-    l2c = {'lts': nn.CrossEntropyLoss(reduction='mean'),
-           'speed_actual': nn.MSELoss(reduction='mean')}
-    criterion = l2c[label].to(device)
+    # l2c = {'lts': nn.CrossEntropyLoss(reduction='mean'), 'speed_actual': nn.MSELoss(reduction='mean')}
+    # criterion = l2c[label].to(device)
+    msefeas = {'speed_actual', 'n_lanes'}
+    criterion = nn.MSELoss(reduction='mean') if label in msefeas else nn.CrossEntropyLoss(reduction='sum')
+    criterion = criterion.to(device)
     train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=True,
                                                 biased_sampling=False, side_fea=side_fea, label=label, transform=transform),
                               batch_size=batch_size, shuffle=False)
@@ -136,7 +142,7 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, 
                         'hyper-parameters': {'n_epoch': n_epoch, 'n_check': n_check, 'device': device, 'batch_size': batch_size, 'lr': lr}
                         },
                        check_path + f'{job_id}_{epoch}.pt')
-        if label == 'lts':
+        if label != 'speed_actual' and label != 'n_lanes':
             print(f'Epoch: {epoch}, train loss: {train_loss:.4f}, train accuracy: {train_acc:.2f}%, '
                   f'vali loss: {vali_loss:.4f}, vali accuracy: {vali_acc:.2f}%, '
                   f'time: {time.time() - tick:.2f} sec')
