@@ -3,28 +3,9 @@ from torch import nn
 from tqdm import tqdm
 from sklearn.metrics import confusion_matrix
 from torch.utils.data import DataLoader
+from utils import init_mdl
 from utils import StreetviewDataset, accuracy, agg_accuracy, mae, mse, ob, kt, flr, fhr, cal_dim
-from model import Res50FC, MoCoClf, MoCoClfV2, MoCoClfV2Fea, Res50FCFea
 import argparse
-
-
-def init_mdl(mdl_name, device, side_fea, label):
-    l2d = {'lts': 4, 'speed_actual': 1, 'cyc_infras': 2, 'n_lanes': 1, 'n_lanes_onehot': 9, 'road_type': 9}
-    if mdl_name == 'Res50':
-        mdl = Res50FC(pretrained=False, out_dim=l2d[label]).to(device=device)
-    elif mdl_name == 'Res50Fea':
-        n_fea = cal_dim(side_fea)
-        mdl = Res50FCFea(pretrained=False, n_fea=n_fea, out_dim=l2d[label]).to(device=device)
-    elif mdl_name == 'MoCoClf':
-        mdl = MoCoClf(vali=True, out_dim=l2d[label]).to(device=device)
-    elif mdl_name == 'MoCoClfV2':
-        mdl = MoCoClfV2(vali=True, out_dim=l2d[label]).to(device=device)
-    elif mdl_name == 'MoCoClfFea':
-        n_fea = cal_dim(side_fea)
-        mdl = MoCoClfV2Fea(vali=True, n_fea=n_fea, out_dim=l2d[label]).to(device=device)
-    else:
-        ValueError(f'Model {mdl_name} not found')
-    return mdl
 
 
 def eval(net, test_loader, device, purpose, side_fea, label, criterion):

@@ -2,43 +2,53 @@
 # Author: Bo Lin
 
 import argparse
-import numpy as np
-import pandas as pd
 import torch
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 
-from model import Res50FC
-from utils import StreetviewDataset
+from utils import StreetviewDataset, init_mdl
 
 
-def load_net(model_name, model_state_dict):
-    if model_name == 'Res50FC':
-        net = Res50FC(pretrained=False).to(device=device)
-    else:
-        raise ValueError(f'model {model_name} is not found')
-    net.load_state_dict(model_state_dict)
-    return net
-
-
-def gen_prediction(net, device, local, dataset, batch_size, filename):
+def gen_prediction(net, device, local, purpose, batch_size, side_fea, label):
     # generate dataloader
-    print('evaluating the test set')
-    loader = DataLoader(StreetviewDataset(purpose=dataset, local=local, toy=False),
+    loader = DataLoader(StreetviewDataset(purpose=purpose, local=local, toy=False, side_fea=side_fea, label=label),
                         batch_size=batch_size, shuffle=False)
     pred_records, true_records = [], []
     net.eval()
     with torch.no_grad():
-        for x, y in tqdm(loader):
-            x, y = x.to(device), y.to(device)
-            outputs = net(x)
-            _, predicted = torch.max(outputs, 1)
-            predicted += 1
-            pred_records += predicted.tolist()
-            true_records += y.tolist()
-    idx = np.loadtxt(f'./data/{dataset}_idx.txt')
-    df = pd.DataFrame({'idx': idx, 'true': true_records, 'pred': pred_records})
-    df.to_csv(f'./res/prediction/{filename}_{dataset}.csv', index=False)
+        if side_fea:
+            for x, s, y in tqdm(loader):
+                x, s, y = x.to(device), s.to(device).to(torch.float), y.to(device)
+                outputs = net(x, s)
+                if label != 'speed_actual':
+                    _, predicted = torch.max(outputs, 1)
+                else:
+                    predicted = outputs
+                if label == 'lts':
+                    predicted += 1
+                pred_records += predicted.tolist()
+                true_records += y.tolist()
+        else:
+            for x, y in tqdm(loader):
+                x, y = x.to(device), y.to(device)
+                outputs = net(x)
+                if label != 'speed_actual':
+                    _, predicted = torch.max(outputs, 1)
+                else:
+                    predicted = outputs
+                if label == 'lts':
+                    predicted += 1
+                pred_records += predicted.tolist()
+                true_records += y.tolist()
+    return pred_records, true_records
+
+
+def gen_all_predictions(net, device, local, batch_size, side_fea, label):
+    for purpose in ['training', 'validation', 'test']:
+        print(f'generating {label} prediction for the {purpose} set')
+        y_pred, y_true = gen_prediction(net, device, local, purpose, batch_size, side_fea, label)
+        records = {'pred': y_pred, 'true': y_true}
+        torch.save(records, f'./pred/{label}_{purpose}.pt')
 
 
 if __name__ == '__main__':
@@ -46,18 +56,19 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--model', type=str, help='name of the prediction model, e.g. Res50FC.')
     parser.add_argument('-c', '--checkpoint', type=str, help='name of the checkpoint.')
-    parser.add_argument('-ds', '--dataset', type=str, help='theb dataset on which we are going to evaluate the model, training/validation/test.')
+    parser.add_argument('-bs', '--batchsize', type=int, help='batch size')
     parser.add_argument('--device', type=str, help='the device that is used to perform computation.')
     parser.add_argument('--local', action='store_true', help='is the training on a local device or not.')
     parser.add_argument('--no-local', dest='local', action='store_false')
+    parser.add_argument('--modelname', type=str, help='name of the architecture, choose from Res50, MoCoClf, and MoCoClfV2')
+    parser.add_argument('--sidefea', nargs='+', type=str, help='side features that you want to consider, e.g. speed_limit, n_lanes')
+    parser.add_argument('--label', type=str, default='lts', help='label to predict, choose from lts and speed_actual')
     args = parser.parse_args()
     # load checkpoint
     checkpoint = torch.load(f'./checkpoint/{args.checkpoint}.pt')
-    # set parameters
-    device = checkpoint['hyper-parameters']['device']
-    batch_size = checkpoint['hyper-parameters']['batch_size']
+    # init net
+    net = init_mdl(mdl_name=args.modelname, device=args.device, side_fea=args.sidefea, label=args.label)
     # load net
-    filename = f'{args.model}_{args.checkpoint}'
-    net = load_net(model_name=args.model, model_state_dict=checkpoint['model_state_dict'])
-    gen_prediction(net=net, device=device, local=args.local, dataset=args.dataset,
-                   batch_size=batch_size, filename=filename)
+    net.load_state_dict(checkpoint['model_state_dict'])
+    # generate
+    gen_all_predictions(net=net, device=args.device, local=args.local, batch_size=args.batchsize, side_fea=args.sidefea, label=args.label)
