@@ -11,6 +11,9 @@ from model import MoCo, LabelMoCo, OrdLabelMoCo
 from utils import MoCoDataset, LabelMoCoDataset, LabelMoCoLoss, OrdLabelMoCoLoss, initialization
 from torch.utils.data import DataLoader
 
+# set random seed
+torch.manual_seed(0)
+
 
 def train_one_epoch(loader_train, net, criterion, optimizer, device, aware=False):
     # switch to train

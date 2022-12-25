@@ -9,6 +9,9 @@ import argparse
 from model import MoCoClf, MoCoClfV2, MoCoClfV2Fea
 from utils import StreetviewDataset, initialization, cal_dim
 
+# set random seed
+torch.manual_seed(0)
+
 
 def validation(net, vali_loader, device, side_fea, criterion, label):
     tot_cnt = 0

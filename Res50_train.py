@@ -10,6 +10,9 @@ from model.naive import FeaFC
 from model import Res50FC, Res50FCFea
 from utils import initialization, StreetviewDataset, cal_dim
 
+# set random seed
+torch.manual_seed(0)
+
 
 def validation(net, vali_loader, device, criterion, side_fea, label):
     tot_cnt = 0
