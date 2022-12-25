@@ -45,7 +45,13 @@ class GaussianBlur(object):
 
 
 def cal_dim(side_fea):
-    s2d = {'speed_limit': 1, 'n_lanes': 1, 'road_type': 9, 'cyc_infras': 1}
+    # s2d = {'speed_limit': 1, 'n_lanes': 1, 'road_type': 9, 'cyc_infras': 1}
+    s2d = {'oneway': 1,
+           'oneway_onehot': 2,
+           'road_type_onehot': 4,
+           'cyc_infras_onehot': 4,
+           'speed_limit': 1,
+           'n_lanes': 1}
     cnt = 0
     for fea in side_fea:
         cnt += s2d[fea]

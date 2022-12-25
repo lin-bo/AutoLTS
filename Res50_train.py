@@ -124,9 +124,6 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
         n_fea = cal_dim(side_fea)
         net = Res50FCFea(pretrained=True, frozen=frozen, n_fea=n_fea, out_dim=l2d[label]).to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr)
-    # l2c = {'lts': nn.CrossEntropyLoss(reduction='mean'),
-    #        'speed_actual': nn.MSELoss(reduction='mean')}
-    # criterion = l2c[label].to(device)
     msefeas = {'speed_actual', 'n_lanes'}
     criterion = nn.MSELoss(reduction='mean') if label in msefeas else nn.CrossEntropyLoss(reduction='sum')
     criterion = criterion.to(device)
