@@ -89,6 +89,7 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
             # forward
             net.zero_grad()
             outputs = net.forward(x, s)
+            print(outputs)
             loss = criterion(outputs, y-1) if label == 'lts' else criterion(outputs, y)
             # backward
             loss.backward()
@@ -126,7 +127,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
     else:
         n_fea = cal_dim(side_fea)
         net = Res50FCFea(pretrained=True, frozen=frozen, n_fea=n_fea, out_dim=l2d[label]).to(device)
-    optimizer = torch.optim.SGD(net.parameters(), lr=lr)
+    optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     msefeas = {'speed_actual', 'n_lanes'}
     criterion = nn.MSELoss(reduction='mean') if label in msefeas else nn.CrossEntropyLoss(reduction='sum')
     criterion = criterion.to(device)

@@ -179,4 +179,4 @@ if __name__ == '__main__':
     # here we go
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, version=args.version, side_fea=args.sidefea,
           local=args.local, batch_size=args.batchsize, job_id=args.jobid, checkpoint=args.checkpoint, label=args.label,
-          transform=args.transform, start_point=args.start_point, biased=args.biased)
+          transform=args.transform, start_point=args.start_point, biased=args.biased, lr=args.lr)
