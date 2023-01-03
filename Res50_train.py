@@ -31,7 +31,7 @@ def validation(net, vali_loader, device, criterion, side_fea, label):
                 total_loss += loss.item()
                 tot_cnt += len(y)
                 epoch_cnt += 1
-                if label != 'speed_actual' and label != 'n_lanes':
+                if label == 'road_type' or label[-7:] == '_onehot':
                     _, y_pred = torch.max(outputs, 1)
                     if label == 'lts':
                         y_pred += 1
@@ -46,13 +46,13 @@ def validation(net, vali_loader, device, criterion, side_fea, label):
                 total_loss += loss.item()
                 tot_cnt += len(y)
                 epoch_cnt += 1
-                if label != 'speed_actual' and label != 'n_lanes':
+                if label == 'road_type' or label[-7:] == '_onehot':
                     _, y_pred = torch.max(outputs, 1)
                     if label == 'lts':
                         y_pred += 1
                     corr_cnt += (y_pred == y).sum().item()
     net.train()
-    if label != 'speed_actual' and label != 'n_lanes':
+    if label == 'road_type' or label[-7:] == '_onehot':
         return total_loss, corr_cnt/tot_cnt * 100
     else:
         return total_loss/epoch_cnt, 0
@@ -78,7 +78,7 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
             total_loss += loss.item()
             tot_cnt += len(y)
             epoch_cnt += 1
-            if label != 'speed_actual' and label != 'n_lanes':
+            if label == 'road_type' or label[-7:] == '_onehot':
                 _, y_pred = torch.max(outputs, dim=1)
                 if label == 'lts':
                     y_pred += 1
@@ -98,12 +98,12 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
             total_loss += loss.item()
             tot_cnt += len(y)
             epoch_cnt += 1
-            if label != 'speed_actual' and label != 'n_lanes':
+            if label == 'road_type' or label[-7:] == '_onehot':
                 _, y_pred = torch.max(outputs, dim=1)
                 if label == 'lts':
                     y_pred += 1
                 corr_cnt += (y_pred == y).sum().item()
-    if label != 'speed_actual' and label != 'n_lanes':
+    if label == 'road_type' or label[-7:] == '_onehot':
         return total_loss, corr_cnt/tot_cnt * 100
     else:
         return total_loss/epoch_cnt, 0
@@ -121,7 +121,14 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
                                                biased_sampling=False, side_fea=side_fea, transform=transform),
                              batch_size=batch_size, shuffle=True)
     # initialization
-    l2d = {'lts': 4, 'speed_actual': 1, 'cyc_infras': 2, 'n_lanes': 1, 'n_lanes_onehot': 9, 'road_type': 9}
+    l2d = {'lts': 4,
+           'oneway': 1, 'oneway_onehot': 2,
+           'parking': 1, 'parking_onehot': 2,
+           'volume': 1, 'volume_onehot': 2,
+           'speed_actual': 1, 'speed_actual_onehot': 3,
+           'cyc_infras': 2, 'cyc_infras_onehot': 4,
+           'n_lanes': 1, 'n_lanes_onehot': 5,
+           'road_type': 9, 'road_type_onehot': 4}
     if not side_fea:
         net = Res50FC(pretrained=True, frozen=frozen, out_dim=l2d[label]).to(device)
     else:
@@ -147,7 +154,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
                         'hyper-parameters': {'n_epoch': n_epoch, 'n_check': n_check, 'device': device, 'batch_size': batch_size, 'lr': lr}
                         },
                        check_path + f'{job_id}_{epoch}.pt')
-        if label != 'speed_actual' and label != 'n_lanes':
+        if label == 'road_type' or label[-7:] == '_onehot':
             print(f'Epoch: {epoch}, train loss: {train_loss:.4f}, train accuracy: {train_acc:.2f}%, vali loss: {vali_loss:.4f}, '
                   f'vali accuracy: {vali_acc:.2f}%, time: {time.time() - tick:.2f} sec')
         else:

@@ -59,7 +59,14 @@ def cal_dim(side_fea):
 
 
 def init_mdl(mdl_name, device, side_fea, label):
-    l2d = {'lts': 4, 'speed_actual': 1, 'cyc_infras': 2, 'n_lanes': 1, 'n_lanes_onehot': 9, 'road_type': 9}
+    l2d = {'lts': 4,
+           'oneway': 1, 'oneway_onehot': 2,
+           'parking': 1, 'parking_onehot': 2,
+           'volume': 1, 'volume_onehot': 2,
+           'speed_actual': 1, 'speed_actual_onehot': 3,
+           'cyc_infras': 2, 'cyc_infras_onehot': 4,
+           'n_lanes': 1, 'n_lanes_onehot': 5,
+           'road_type': 9, 'road_type_onehot': 4}
     if mdl_name == 'Res50':
         mdl = Res50FC(pretrained=False, out_dim=l2d[label]).to(device=device)
     elif mdl_name == 'Res50Fea':
