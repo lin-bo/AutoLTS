@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="update">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="update r2d dictionary">
+      <change afterPath="$PROJECT_DIR$/mask_former/img2emb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ML_clf.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/ML_clf.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MoCo_clf_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_clf_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Res50_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/Res50_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mask_former/demo/demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/mask_former/demo/demo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mask_former/mask_former/mask_former_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/mask_former/mask_former/mask_former_model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/functions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/visualization/res_visual.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/visualization/res_visual.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -42,6 +42,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2EGqyz9JXHvXXWzp7Xlr4LXED27" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -183,13 +184,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00005" summary="add test">
-      <created>1662584908163</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1662584908163</updated>
     </task>
     <task id="LOCAL-00006" summary="add frozen feature">
       <created>1662666366183</created>
@@ -527,7 +521,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672515502643</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="update r2d dictionary">
+      <created>1672713720919</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1672713720919</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -542,7 +543,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add scripts back" />
     <MESSAGE value="fixed a bug in moco. replace slice with = concat for queue update" />
     <MESSAGE value="remove softmax before cross entropy" />
     <MESSAGE value="add validation while training." />
@@ -567,7 +567,8 @@
     <MESSAGE value="add biased sampling for cyc_infras pred" />
     <MESSAGE value="add random seed control" />
     <MESSAGE value="update" />
-    <option name="LAST_COMMIT_MESSAGE" value="update" />
+    <MESSAGE value="update r2d dictionary" />
+    <option name="LAST_COMMIT_MESSAGE" value="update r2d dictionary" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

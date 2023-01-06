@@ -28,7 +28,7 @@ def validation(net, vali_loader, device, side_fea, criterion, label):
                 total_loss += loss.item()
                 tot_cnt += y.shape[0]
                 epoch_cnt += 1
-                if label == 'road_type' or label[-7:] == '_onehot':
+                if label == 'lts' or label == 'road_type' or label[-7:] == '_onehot':
                     _, predicted = torch.max(outputs, 1)
                     if label == 'lts':
                         predicted += 1
@@ -41,13 +41,13 @@ def validation(net, vali_loader, device, side_fea, criterion, label):
                 total_loss += loss.item()
                 tot_cnt += y.shape[0]
                 epoch_cnt += 1
-                if label == 'road_type' or label[-7:] == '_onehot':
+                if label == 'lts' or label == 'road_type' or label[-7:] == '_onehot':
                     _, predicted = torch.max(outputs, 1)
                     if label == 'lts':
                         predicted += 1
                     corr_cnt += (predicted == y).sum().item()
     net.train()
-    if label == 'road_type' or label[-7:] == '_onehot':
+    if label == 'lts' or label == 'road_type' or label[-7:] == '_onehot':
         return total_loss, corr_cnt/tot_cnt * 100
     else:
         return total_loss/epoch_cnt, 0
@@ -70,7 +70,7 @@ def train_one_epoch(net, optimizer, train_loader, device, side_fea, criterion, l
             total_loss += loss.item()
             tot_cnt += len(y)
             epoch_cnt += 1
-            if label == 'road_type' or label[-7:] == '_onehot':
+            if label == 'lts' or label == 'road_type' or label[-7:] == '_onehot':
                 _, y_pred = torch.max(outputs, dim=1)
                 if label == 'lts':
                     y_pred += 1
@@ -89,12 +89,12 @@ def train_one_epoch(net, optimizer, train_loader, device, side_fea, criterion, l
             total_loss += loss.item()
             tot_cnt += len(y)
             epoch_cnt += 1
-            if label == 'road_type' or label[-7:] == '_onehot':
+            if label == 'lts' or label == 'road_type' or label[-7:] == '_onehot':
                 _, y_pred = torch.max(outputs, dim=1)
                 if label == 'lts':
                     y_pred += 1
                 corr_cnt += (y_pred == y).sum().item()
-    if label == 'road_type' or label[-7:] == '_onehot':
+    if label == 'lts' or label == 'road_type' or label[-7:] == '_onehot':
         return total_loss, corr_cnt/tot_cnt * 100
     else:
         return total_loss/epoch_cnt, 0
@@ -152,7 +152,7 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, 
                         'hyper-parameters': {'n_epoch': n_epoch, 'n_check': n_check, 'device': device, 'batch_size': batch_size, 'lr': lr}
                         },
                        check_path + f'{job_id}_{epoch}.pt')
-        if label == 'road_type' or label[-7:] == '_onehot':
+        if label == 'lts' or label == 'road_type' or label[-7:] == '_onehot':
             print(f'Epoch: {epoch}, train loss: {train_loss:.4f}, train accuracy: {train_acc:.2f}%, '
                   f'vali loss: {vali_loss:.4f}, vali accuracy: {vali_acc:.2f}%, '
                   f'time: {time.time() - tick:.2f} sec')
