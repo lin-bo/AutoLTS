@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="ignore large file">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add mask former">
+      <change afterPath="$PROJECT_DIR$/gen_maskformer_pred.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/AutoLTS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AutoLTS.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +49,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "last_opened_file_path": "/Users/bolin",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -177,13 +181,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00006" summary="add frozen feature">
-      <created>1662666366183</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1662666366183</updated>
     </task>
     <task id="LOCAL-00007" summary="add frozen feature to res50fc">
       <created>1662666391563</created>
@@ -521,7 +518,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672713720919</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="add mask former">
+      <created>1673026167195</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1673026167195</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -539,7 +543,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="fixed a bug in moco. replace slice with = concat for queue update" />
     <MESSAGE value="remove softmax before cross entropy" />
     <MESSAGE value="add validation while training." />
     <MESSAGE value="remove color jitter from MoCoLabelDataset as it is too difficult for MoCo to learn from." />
@@ -564,7 +567,8 @@
     <MESSAGE value="add random seed control" />
     <MESSAGE value="update" />
     <MESSAGE value="update r2d dictionary" />
-    <option name="LAST_COMMIT_MESSAGE" value="update r2d dictionary" />
+    <MESSAGE value="add mask former" />
+    <option name="LAST_COMMIT_MESSAGE" value="add mask former" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

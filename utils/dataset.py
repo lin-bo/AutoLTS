@@ -102,6 +102,40 @@ class StreetviewDataset(Dataset):
         return len(self.y)
 
 
+class StreetviewDatasetMaskFormer(Dataset):
+
+    def __init__(self, purpose='training', toy=False, local=True):
+        super().__init__()
+        # load images and indices
+        if local:
+            img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
+            indi = np.loadtxt(f'/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/AutoLTS/data/{purpose}_idx.txt').astype(int)
+        else:
+            img_folder = './data/streetview/dataset'
+            indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+        if toy:
+            np.random.seed(31415926)
+            np.random.shuffle(indi)
+            indi = indi[:1000]
+        self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
+        # transforms
+        self.transform = transforms.Compose([
+                # transforms.PILToTensor(),
+                # transforms.Resize(224),
+                transforms.ToTensor(),
+                transforms.ConvertImageDtype(torch.float),
+                # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+            ])
+
+    def __getitem__(self, idx):
+        img = Image.open(self.img_path[idx])
+        img = self.transform(img)
+        return {"image": img, "height": img.shape[1], "width": img.shape[2]}
+
+    def __len__(self):
+        return len(self.img_path)
+
+
 class MoCoDataset(Dataset):
 
     def __init__(self, purpose='training', local=True, toy=False):
