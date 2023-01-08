@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="mask former done">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="correct speed categories!">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ML_clf.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/ML_clf.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MoCo_clf_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_clf_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Res50_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/Res50_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/visualization/res_visual.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/visualization/res_visual.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,13 +181,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00009" summary="add checkpoint picker">
-      <created>1662670219346</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1662670219346</updated>
     </task>
     <task id="LOCAL-00010" summary="add the augmentation option">
       <created>1662671178128</created>
@@ -526,7 +518,14 @@
       <option name="project" value="LOCAL" />
       <updated>1673151262589</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="correct speed categories!">
+      <created>1673159985210</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1673159985210</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -544,7 +543,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="remove color jitter from MoCoLabelDataset as it is too difficult for MoCo to learn from." />
     <MESSAGE value="update comprehensive test" />
     <MESSAGE value="add .item() in metric calculation" />
     <MESSAGE value="add gen emb" />
@@ -569,7 +567,8 @@
     <MESSAGE value="add mask former" />
     <MESSAGE value="get the mask former running within AutoLTS" />
     <MESSAGE value="mask former done" />
-    <option name="LAST_COMMIT_MESSAGE" value="mask former done" />
+    <MESSAGE value="correct speed categories!" />
+    <option name="LAST_COMMIT_MESSAGE" value="correct speed categories!" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
