@@ -113,7 +113,7 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, 
            'oneway': 1, 'oneway_onehot': 2,
            'parking': 1, 'parking_onehot': 2,
            'volume': 1, 'volume_onehot': 2,
-           'speed_actual': 1, 'speed_actual_onehot': 3,
+           'speed_actual': 1, 'speed_actual_onehot': 4,
            'cyc_infras': 2, 'cyc_infras_onehot': 4,
            'n_lanes': 1, 'n_lanes_onehot': 5,
            'road_type': 9, 'road_type_onehot': 4}
