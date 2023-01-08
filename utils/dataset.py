@@ -4,6 +4,8 @@ from torchvision.transforms import transforms
 import numpy as np
 from PIL import Image
 from utils import GaussianBlur
+import detectron2.data.transforms as T
+from detectron2.data.detection_utils import read_image
 
 
 class StreetviewDataset(Dataset):
@@ -104,15 +106,17 @@ class StreetviewDataset(Dataset):
 
 class StreetviewDatasetMaskFormer(Dataset):
 
-    def __init__(self, purpose='training', toy=False, local=True):
+    def __init__(self, cfg, toy=False, local=True, visual=False):
         super().__init__()
         # load images and indices
+        purposes = ['training', 'validation', 'test']
         if local:
             img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
-            indi = np.loadtxt(f'/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/AutoLTS/data/{purpose}_idx.txt').astype(int)
+            indi = [np.loadtxt(f'/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/AutoLTS/data/{purpose}_idx.txt').astype(int) for purpose in purposes]
         else:
             img_folder = './data/streetview/dataset'
-            indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+            indi = [np.loadtxt(f'./data/{purpose}_idx.txt').astype(int) for purpose in purposes]
+        indi = np.concatenate(indi)
         if toy:
             np.random.seed(31415926)
             np.random.shuffle(indi)
@@ -123,14 +127,24 @@ class StreetviewDatasetMaskFormer(Dataset):
                 # transforms.PILToTensor(),
                 # transforms.Resize(224),
                 transforms.ToTensor(),
-                transforms.ConvertImageDtype(torch.float),
+                # transforms.ConvertImageDtype(torch.float),
                 # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
+        self.aug = T.ResizeShortestEdge(
+            [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST
+        )
+        self.visual = visual
 
     def __getitem__(self, idx):
-        img = Image.open(self.img_path[idx])
-        img = self.transform(img)
-        return {"image": img, "height": img.shape[1], "width": img.shape[2]}
+        # img = Image.open(self.img_path[idx])
+        orig_img = read_image(self.img_path[idx], format="RGB")  # H x W x C (BGR)
+        height, width = orig_img.shape[:2]
+        img = self.aug.get_transform(orig_img).apply_image(orig_img)
+        img = torch.as_tensor(img.astype("float32").transpose(2, 0, 1))  # C (BGR) x H x W
+        if self.visual:
+            return {"image": img, "height": height, "width": width, "orig_img": orig_img}
+        else:
+            return {"image": img, "height": height, "width": width}
 
     def __len__(self):
         return len(self.img_path)
