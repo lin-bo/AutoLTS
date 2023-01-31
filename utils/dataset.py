@@ -48,7 +48,7 @@ class StreetviewDataset(Dataset):
             std = self.fea.std(axis=0, keepdims=True)
             self.fea -= mu
             self.fea /= std
-        elif side_fea[0] in {'sce1', 'sce2', 'sce3'}:
+        elif side_fea and side_fea[0] in {'sce1', 'sce2', 'sce3'}:
             self.fea = np.loadtxt(f'./data/step_one_feature/{side_fea[0]}_{purpose}.txt', delimiter=',').astype(np.single)
         # load images
         if local:
@@ -205,7 +205,7 @@ class LabelMoCoDataset(Dataset):
             img_folder = './data/streetview/dataset'
         self.transform = transforms.Compose([
             transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
-            # transforms.RandomApply([transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)], p=0.8),
+            transforms.RandomApply([transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)], p=0.8),
             transforms.RandomGrayscale(p=0.2),
             transforms.RandomApply([GaussianBlur(sigma=[.1, 2.])], p=0.5),
             transforms.RandomHorizontalFlip(),
