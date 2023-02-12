@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add scenario features to side feature">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add color jittering to MoCo dataset">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Res50_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/Res50_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/MoCo_clf.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo_clf.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/visualization/res_visual.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/visualization/res_visual.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,13 +179,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00011" summary="add net.eval()">
-      <created>1662746147878</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1662746147878</updated>
     </task>
     <task id="LOCAL-00012" summary="add biased sampling">
       <created>1662774345096</created>
@@ -525,7 +516,14 @@
       <option name="project" value="LOCAL" />
       <updated>1673211377722</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="add color jittering to MoCo dataset">
+      <created>1675132200337</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1675132200338</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -543,7 +541,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="add .item() in metric calculation" />
     <MESSAGE value="add gen emb" />
     <MESSAGE value="add emb visual" />
     <MESSAGE value="add MoCoClfV2" />
@@ -568,17 +565,7 @@
     <MESSAGE value="mask former done" />
     <MESSAGE value="correct speed categories!" />
     <MESSAGE value="add scenario features to side feature" />
-    <option name="LAST_COMMIT_MESSAGE" value="add scenario features to side feature" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/model/MoCo.py</url>
-          <line>122</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="add color jittering to MoCo dataset" />
+    <option name="LAST_COMMIT_MESSAGE" value="add color jittering to MoCo dataset" />
   </component>
 </project>

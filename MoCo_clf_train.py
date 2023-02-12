@@ -6,7 +6,7 @@ import numpy as np
 import time
 import argparse
 
-from model import MoCoClf, MoCoClfV2, MoCoClfV2Fea
+from model import MoCoClf, MoCoClfV2, MoCoClfV3, MoCoClfV2Fea
 from utils import StreetviewDataset, initialization, cal_dim
 
 # set random seed
@@ -101,7 +101,7 @@ def train_one_epoch(net, optimizer, train_loader, device, side_fea, criterion, l
 
 
 def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, transform=False, biased=False,
-          n_epoch=30, n_check=1, toy=False, local=False, version=1, side_fea=[], label='lts', start_point=None):
+          n_epoch=30, n_check=1, toy=False, local=False, version=1, side_fea=[], label='lts', start_point=None, MoCoV=2):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # initialize
@@ -121,7 +121,12 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, 
         n_fea = cal_dim(side_fea)
         net = MoCoClfV2Fea(checkpoint_name=checkpoint, local=local, n_fea=n_fea, out_dim=l2d[label]).to(device)
     else:
-        net = MoCoClfV2(checkpoint_name=checkpoint, local=local, out_dim=l2d[label]).to(device)
+        if MoCoV == 2:
+            net = MoCoClfV2(checkpoint_name=checkpoint, local=local, out_dim=l2d[label]).to(device)
+        elif MoCoV == 3:
+            net = MoCoClfV3(checkpoint_name=checkpoint, local=local, out_dim=l2d[label]).to(device)
+        else:
+            raise ValueError('MoCo Version not found')
     parameters = list(filter(lambda p: p.requires_grad, net.parameters()))
     optimizer = torch.optim.SGD(parameters, lr=lr, momentum=0.9, weight_decay=1e-4)
     # l2c = {'lts': nn.CrossEntropyLoss(reduction='mean'), 'speed_actual': nn.MSELoss(reduction='mean')}
@@ -182,8 +187,9 @@ if __name__ == '__main__':
     parser.add_argument('--transform', default=False, action='store_true', help='apply data target log transformation or not')
     parser.add_argument('--no-transform', dest='transform', action='store_false')
     parser.add_argument('--start_point', default=None, type=str, help='starting point, must be saved in ./checkpoint/')
+    parser.add_argument('--MoCoVersion', default=2, type=int, help='Version of MoCo, choose from 2 and 3, default 2')
     args = parser.parse_args()
     # here we go
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, version=args.version, side_fea=args.sidefea,
           local=args.local, batch_size=args.batchsize, job_id=args.jobid, checkpoint=args.checkpoint, label=args.label,
-          transform=args.transform, start_point=args.start_point, biased=args.biased, lr=args.lr)
+          transform=args.transform, start_point=args.start_point, biased=args.biased, lr=args.lr, MoCoV=args.MoCoVersion)
