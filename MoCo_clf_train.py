@@ -101,7 +101,7 @@ def train_one_epoch(net, optimizer, train_loader, device, side_fea, criterion, l
 
 
 def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, transform=False, biased=False,
-          n_epoch=30, n_check=1, toy=False, local=False, version=1, side_fea=[], label='lts', start_point=None, MoCoV=2):
+          n_epoch=30, n_check=1, toy=False, local=False, side_fea=[], label='lts', start_point=None, MoCoV=2):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # initialize
@@ -181,7 +181,6 @@ if __name__ == '__main__':
     parser.add_argument('--biased', action='store_true', default=False, help='apply data augmentation or not')
     parser.add_argument('--no-biased', dest='biased', action='store_false')
     parser.add_argument('--checkpoint', type=str, help='checkpoint name {JobID}_{Epoch}')
-    parser.add_argument('--version', type=int, default=1, help='MoCoClf version, choose from 1 and 2')
     parser.add_argument('--sidefea', nargs='+', type=str, help='side features that you want to consider, e.g. speed_limit, n_lanes')
     parser.add_argument('--label', type=str, default='lts', help='label to predict, choose from lts and speed_actual')
     parser.add_argument('--transform', default=False, action='store_true', help='apply data target log transformation or not')
@@ -190,6 +189,6 @@ if __name__ == '__main__':
     parser.add_argument('--MoCoVersion', default=2, type=int, help='Version of MoCo, choose from 2 and 3, default 2')
     args = parser.parse_args()
     # here we go
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, version=args.version, side_fea=args.sidefea,
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, side_fea=args.sidefea,
           local=args.local, batch_size=args.batchsize, job_id=args.jobid, checkpoint=args.checkpoint, label=args.label,
           transform=args.transform, start_point=args.start_point, biased=args.biased, lr=args.lr, MoCoV=args.MoCoVersion)
