@@ -66,23 +66,23 @@ def save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check, devic
                check_path + f'{job_id}_{epoch}.pt')
 
 
-def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32, awaretype='clf', alpha=2,
+def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32, awaretype='clf', alpha=2, aug_method='SimCLR',
           job_id=None, local=False, simple_shuffle=False, aware=False, memsize=6400, weight_func='exp', start_point=None):
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     output_records = []
     # initialize the network, data loader, and loss function
     if aware and awaretype == 'clf':
         net = LabelMoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize).to(device)
-        dataset_train = LabelMoCoDataset(purpose='training', local=local, toy=toy)
-        dataset_vali = LabelMoCoDataset(purpose='validation', local=local, toy=toy)
+        dataset_train = LabelMoCoDataset(purpose='training', local=local, toy=toy, aug_method=aug_method)
+        dataset_vali = LabelMoCoDataset(purpose='validation', local=local, toy=toy, aug_method=aug_method)
         criterion = LabelMoCoLoss().to(device)
     elif aware and awaretype == 'ord':
         net = OrdLabelMoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize, alpha=alpha, weight_func=weight_func).to(device)
-        dataset_train = LabelMoCoDataset(purpose='training', local=local, toy=toy)
-        dataset_vali = LabelMoCoDataset(purpose='validation', local=local, toy=toy)
+        dataset_train = LabelMoCoDataset(purpose='training', local=local, toy=toy, aug_method=aug_method)
+        dataset_vali = LabelMoCoDataset(purpose='validation', local=local, toy=toy, aug_method=aug_method)
         criterion = OrdLabelMoCoLoss().to(device)
     elif aware and awaretype == 'reg':
-        ValueError('reg MoCo loss has not been implemented yet')
+        raise ValueError('reg MoCo loss has not been implemented yet')
     else:
         net = MoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize).to(device)
         dataset_train = MoCoDataset(purpose='training', local=local, toy=toy)
@@ -141,9 +141,11 @@ if __name__ == '__main__':
     parser.add_argument('--alpha', default=2, type=int, help='penalty factor for ord moco loss')
     parser.add_argument('-wf', '--weight_function', default='exp', type=str, help='weighting function, choose from exp and rec')
     parser.add_argument('--start_point', default=None, type=str, help='starting point, must be saved in ./checkpoint/')
+    parser.add_argument('--aug_method', type=str, default='SimCLR', help='augmentation method, choose from SimCLR and Auto')
     args = parser.parse_args()
     # here we go
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, aware=args.aware, awaretype=args.awaretype, start_point=args.start_point,
-          weight_func=args.weight_function, alpha=args.alpha, local=args.local, batch_size=args.batchsize, job_id=args.jobid, simple_shuffle=args.simple, memsize=args.memsize)
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, aware=args.aware, awaretype=args.awaretype,
+          start_point=args.start_point, weight_func=args.weight_function, alpha=args.alpha, local=args.local, batch_size=args.batchsize,
+          job_id=args.jobid, simple_shuffle=args.simple, memsize=args.memsize, aug_method=args.aug_method)
 
 

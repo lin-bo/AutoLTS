@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add MoCo version selection in MoCoClf and MoCoClf_train">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="Update MoCoV3 such that we discard the trained projection layer in MoCo">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MoCo_clf_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_clf_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/MoCo_clf.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo_clf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,13 +180,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00013" summary="add MoCo - w/o distributed yet">
-      <created>1662997870822</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1662997870822</updated>
     </task>
     <task id="LOCAL-00014" summary="add MoCo - w/o distributed yet">
       <created>1663005389532</created>
@@ -524,7 +517,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676170953379</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="Update MoCoV3 such that we discard the trained projection layer in MoCo">
+      <created>1676175892960</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1676175892960</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -542,7 +542,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="add emb visual" />
     <MESSAGE value="add MoCoClfV2" />
     <MESSAGE value="add batchnormalization in MoCoClfV2" />
     <MESSAGE value="add speed" />
@@ -567,6 +566,7 @@
     <MESSAGE value="add scenario features to side feature" />
     <MESSAGE value="add color jittering to MoCo dataset" />
     <MESSAGE value="add MoCo version selection in MoCoClf and MoCoClf_train" />
-    <option name="LAST_COMMIT_MESSAGE" value="add MoCo version selection in MoCoClf and MoCoClf_train" />
+    <MESSAGE value="Update MoCoV3 such that we discard the trained projection layer in MoCo" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update MoCoV3 such that we discard the trained projection layer in MoCo" />
   </component>
 </project>
