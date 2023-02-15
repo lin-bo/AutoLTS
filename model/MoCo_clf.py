@@ -69,10 +69,10 @@ class MoCoClfV3(nn.Module):
     def __init__(self, checkpoint_name=None, local=True, vali=False, out_dim=4):
         super(MoCoClfV3, self).__init__()
         # initialize the model
-        model = torchvision.models.resnet50(pretrained=True)
-        dim_mlp = model.fc.weight.shape[1]
-        model.fc = nn.Sequential(nn.Linear(dim_mlp, dim_mlp), nn.ReLU())
-        for name, param in model.named_parameters():
+        self.encoder = torchvision.models.resnet50(pretrained=True)
+        dim_mlp = self.encoder.fc.weight.shape[1]
+        self.encoder = torch.nn.Sequential(*(list(self.encoder.children())[:-1]), nn.ReLU())
+        for name, param in self.encoder.named_parameters():
             param.requires_grad = False
         # # load the checkpoint
         if not vali:
@@ -82,19 +82,18 @@ class MoCoClfV3(nn.Module):
                 checkpoint = torch.load(f'./checkpoint/{checkpoint_name}.pt')
             state_dict = checkpoint['model_state_dict']
             for k in list(state_dict.keys()):
-                if k.startswith('encoder_q') and k != 'encoder_q.fc.2.weight' and k != 'encoder_q.fc.2.bias':
-                    print(k)
+                if k.startswith('encoder_q'):
                     state_dict[k[len('encoder_q.'):]] = state_dict[k]
                 del state_dict[k]
-            _ = model.load_state_dict(state_dict, strict=False)
+            _ = self.encoder.load_state_dict(state_dict, strict=False)
         # add FC layers
-        self.emb = model
-        self.proj = nn.Sequential(nn.Linear(dim_mlp, 128), nn.ReLU(), nn.Linear(128, out_dim))
+        self.predictor = nn.Sequential(nn.Linear(dim_mlp, 128), nn.ReLU(), nn.Linear(128, out_dim))
 
     def forward(self, x):
-        x = self.emb(x)
+        x = self.encoder(x)
         x = nn.functional.normalize(x, dim=1)
-        return self.proj(x)
+        x = torch.flatten(x, 1)
+        return self.predictor(x)
 
 
 class MoCoClfV2Fea(nn.Module):
