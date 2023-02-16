@@ -6,7 +6,7 @@ import numpy as np
 import time
 import argparse
 
-from model import MoCoClf, MoCoClfV2, MoCoClfV3, MoCoClfV2Fea
+from model import MoCoClf, MoCoClfV2, MoCoClfV3, MoCoClfV2Fea, MoCoClfV3Fea
 from utils import StreetviewDataset, initialization, cal_dim
 
 # set random seed
@@ -117,9 +117,12 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, 
            'cyc_infras': 2, 'cyc_infras_onehot': 4,
            'n_lanes': 1, 'n_lanes_onehot': 5,
            'road_type': 9, 'road_type_onehot': 4}
-    if side_fea:
+    if side_fea and MoCoV == 2:
         n_fea = cal_dim(side_fea)
         net = MoCoClfV2Fea(checkpoint_name=checkpoint, local=local, n_fea=n_fea, out_dim=l2d[label]).to(device)
+    elif side_fea and MoCoV == 3:
+        n_fea = cal_dim(side_fea)
+        net = MoCoClfV3Fea(checkpoint_name=checkpoint, local=local, n_fea=n_fea, out_dim=l2d[label]).to(device)
     else:
         if MoCoV == 2:
             net = MoCoClfV2(checkpoint_name=checkpoint, local=local, out_dim=l2d[label]).to(device)

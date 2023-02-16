@@ -2,7 +2,7 @@ import random
 import os
 from PIL import ImageFilter
 import torch
-from model import Res50FC, MoCoClf, MoCoClfV2, MoCoClfV3, MoCoClfV2Fea, Res50FCFea
+from model import Res50FC, MoCoClf, MoCoClfV2, MoCoClfV3, MoCoClfV2Fea, MoCoClfV3Fea, Res50FCFea
 
 
 def load_checkpoint(checkpoint_path, net, optimizer):
@@ -79,9 +79,12 @@ def init_mdl(mdl_name, device, side_fea, label):
         mdl = MoCoClfV2(vali=True, out_dim=l2d[label]).to(device=device)
     elif mdl_name == 'MoCoClfV3':
         mdl = MoCoClfV3(vali=True, out_dim=l2d[label]).to(device=device)
-    elif mdl_name == 'MoCoClfFea':
+    elif mdl_name == 'MoCoClfFeaV2':
         n_fea = cal_dim(side_fea)
         mdl = MoCoClfV2Fea(vali=True, n_fea=n_fea, out_dim=l2d[label]).to(device=device)
+    elif mdl_name == 'MoCoClfFeaV3':
+        n_fea = cal_dim(side_fea)
+        mdl = MoCoClfV3Fea(vali=True, n_fea=n_fea, out_dim=l2d[label]).to(device=device)
     else:
-        ValueError(f'Model {mdl_name} not found')
+        raise ValueError(f'Model {mdl_name} not found')
     return mdl
