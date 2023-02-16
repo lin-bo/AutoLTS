@@ -109,7 +109,7 @@ if __name__ == '__main__':
     # set argparser
     parser = argparse.ArgumentParser()
     parser.add_argument('--checkpointname', type=str, help='the name of the model in the checkpoint folder w/o .pt')
-    parser.add_argument('--modelname', type=str, help='name of the architecture, choose from Res50, MoCoClf, and MoCoClfV2')
+    parser.add_argument('--modelname', type=str, help='name of the architecture, choose from Res50, MoCoClf, MoCoClfV2, and MoCoClfV3')
     parser.add_argument('--local', action='store_true', help='is the training on a local device or not')
     parser.add_argument('--no-local', dest='local', action='store_false')
     parser.add_argument('--device', type=str, help='device name')
