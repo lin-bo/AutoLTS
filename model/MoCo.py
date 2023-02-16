@@ -673,3 +673,34 @@ class MoCoEmb(nn.Module):
         q = self.encoder_q(img)
         q = nn.functional.normalize(q, dim=1)
         return q
+
+
+class MoCoEmbV3(nn.Module):
+
+    def __init__(self, dim, device='mps', checkpoint_name=None, local=False):
+        super(MoCoEmbV3, self).__init__()
+        # initialize parameters
+        self.device = device
+        # initialize the model
+        self.img_encoder = torchvision.models.resnet50(pretrained=True)
+        self.img_encoder = torch.nn.Sequential(*(list(self.img_encoder.children())[:-1]), nn.ReLU())
+        for name, param in self.img_encoder.named_parameters():
+            param.requires_grad = False
+        # # load the checkpoint
+        if local:
+            checkpoint = torch.load(f'./checkpoint/{checkpoint_name}.pt', map_location='cpu')
+        else:
+            checkpoint = torch.load(f'./checkpoint/{checkpoint_name}.pt')
+        state_dict = checkpoint['model_state_dict']
+        for k in list(state_dict.keys()):
+            if k.startswith('encoder_q'):
+                state_dict[k[len('encoder_q.'):]] = state_dict[k]
+            del state_dict[k]
+        _ = self.img_encoder.load_state_dict(state_dict, strict=False)
+
+    def forward(self, img):
+        # compute query features
+        q = self.img_encoder(img)
+        q = torch.flatten(q, 1)
+        q = nn.functional.normalize(q, dim=1)
+        return q

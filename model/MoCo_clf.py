@@ -139,7 +139,7 @@ class MoCoClfV3Fea(nn.Module):
         super(MoCoClfV3Fea, self).__init__()
         # initialize the model
         self.img_encoder = torchvision.models.resnet50(pretrained=True)
-        dim_mlp = self.encoder.fc.weight.shape[1]
+        dim_mlp = self.img_encoder.fc.weight.shape[1]
         self.img_encoder = torch.nn.Sequential(*(list(self.img_encoder.children())[:-1]), nn.ReLU())
         for name, param in self.img_encoder.named_parameters():
             param.requires_grad = False
