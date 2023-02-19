@@ -113,7 +113,7 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
         msg = f'epoch {epoch}, training loss: {loss_train}, vali loss: {loss_vali}, time: {time.time() - tick:.2f} sec'
         output_records.append(msg)
         print(msg)
-        if epoch % n_check == 0:
+        if (epoch + 1) % n_check == 0:
             np.savetxt(check_path + f'{job_id}_loss.txt', loss_records, delimiter=',')
             save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check,
                             device, batch_size, lr, check_path, job_id, output_records)
