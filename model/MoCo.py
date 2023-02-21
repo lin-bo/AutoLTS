@@ -529,7 +529,7 @@ class OrdLabelMoCoV0(nn.Module):
 class OrdLabelMoCo(nn.Module):
 
     def __init__(self, dim, queue_size=6400, momentum=0.999, temperature=0.07, n_chunk=4, alpha=1,
-                 mlp=True, local=True, device='mps', simple_shuffle=False, weight_func='exp'):
+                 mlp=True, local=True, device='mps', simple_shuffle=False, weight_func='exp', inc_hl_dist=True):
         super(OrdLabelMoCo, self).__init__()
         # initialize parameters
         self.queue_size = queue_size
@@ -540,6 +540,7 @@ class OrdLabelMoCo(nn.Module):
         self.n_chunk = n_chunk
         self.alpha = alpha
         self.mlp = mlp
+        self.inc_hl_dist = inc_hl_dist
         # initialize encoders
         self.encoder_q = torchvision.models.resnet50(pretrained=True)
         self.encoder_k = torchvision.models.resnet50(pretrained=True)
@@ -587,7 +588,8 @@ class OrdLabelMoCo(nn.Module):
                 k = self.encoder_k(im_k)
             k = nn.functional.normalize(k, dim=1)
         # increase the label by one if high stress
-        label += (label >= 3)
+        if self.inc_hl_dist:
+            label += (label >= 3)
         # go through the projector
         if self.mlp:
             q = torch.flatten(q, 1)
