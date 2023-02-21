@@ -100,7 +100,7 @@ def train_one_epoch(net, optimizer, train_loader, device, side_fea, criterion, l
         return total_loss/epoch_cnt, 0
 
 
-def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, transform=False, biased=False,
+def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, transform=False, biased=False, enc_frozen=True,
           n_epoch=30, n_check=1, toy=False, local=False, side_fea=[], label='lts', start_point=None, MoCoV=2):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
@@ -117,17 +117,17 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, 
            'cyc_infras': 2, 'cyc_infras_onehot': 4,
            'n_lanes': 1, 'n_lanes_onehot': 5,
            'road_type': 9, 'road_type_onehot': 4}
-    if side_fea and MoCoV == 2:
+    if side_fea:
         n_fea = cal_dim(side_fea)
-        net = MoCoClfV2Fea(checkpoint_name=checkpoint, local=local, n_fea=n_fea, out_dim=l2d[label]).to(device)
-    elif side_fea and MoCoV == 3:
-        n_fea = cal_dim(side_fea)
-        net = MoCoClfV3Fea(checkpoint_name=checkpoint, local=local, n_fea=n_fea, out_dim=l2d[label]).to(device)
+        if MoCoV == 2:
+            net = MoCoClfV2Fea(checkpoint_name=checkpoint, local=local, n_fea=n_fea, out_dim=l2d[label]).to(device)
+        elif MoCoV == 3:
+            net = MoCoClfV3Fea(checkpoint_name=checkpoint, local=local, n_fea=n_fea, out_dim=l2d[label], enc_frozen=enc_frozen).to(device)
     else:
         if MoCoV == 2:
             net = MoCoClfV2(checkpoint_name=checkpoint, local=local, out_dim=l2d[label]).to(device)
         elif MoCoV == 3:
-            net = MoCoClfV3(checkpoint_name=checkpoint, local=local, out_dim=l2d[label]).to(device)
+            net = MoCoClfV3(checkpoint_name=checkpoint, local=local, out_dim=l2d[label], enc_frozen=enc_frozen).to(device)
         else:
             raise ValueError('MoCo Version not found')
     parameters = list(filter(lambda p: p.requires_grad, net.parameters()))
@@ -190,8 +190,10 @@ if __name__ == '__main__':
     parser.add_argument('--no-transform', dest='transform', action='store_false')
     parser.add_argument('--start_point', default=None, type=str, help='starting point, must be saved in ./checkpoint/')
     parser.add_argument('--MoCoVersion', default=2, type=int, help='Version of MoCo, choose from 2 and 3, default 2')
+    parser.add_argument('--frozen', default=True, action='store_true', help='apply data target log transformation or not')
+    parser.add_argument('--no-frozen', dest='frozen', action='store_false')
     args = parser.parse_args()
     # here we go
-    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, side_fea=args.sidefea,
+    train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, side_fea=args.sidefea, enc_frozen=args.frozen,
           local=args.local, batch_size=args.batchsize, job_id=args.jobid, checkpoint=args.checkpoint, label=args.label,
           transform=args.transform, start_point=args.start_point, biased=args.biased, lr=args.lr, MoCoV=args.MoCoVersion)

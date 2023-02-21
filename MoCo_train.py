@@ -144,7 +144,7 @@ if __name__ == '__main__':
     parser.add_argument('--start_point', default=None, type=str, help='starting point, must be saved in ./checkpoint/')
     parser.add_argument('--aug_method', type=str, default='SimCLR', help='augmentation method, choose from SimCLR and Auto')
     parser.add_argument('--hlinc', action='store_true', default=True, help='is the training on a local device or not')
-    parser.add_argument('--no-hlinc', dest='local', action='store_false')
+    parser.add_argument('--no-hlinc', dest='hlinc', action='store_false')
     args = parser.parse_args()
     # here we go
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, aware=args.aware, awaretype=args.awaretype,

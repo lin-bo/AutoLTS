@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="update MoCo checkpoint rule to avoid accident re-start from 0">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add hl-inc option in MoCo train to control whether or not to increase the dist between LTS2 and LTS3">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MoCo_clf_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_clf_train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/MoCo.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/MoCo_clf.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo_clf.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -180,13 +181,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00021" summary="add models back">
-      <created>1664138415275</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1664138415275</updated>
     </task>
     <task id="LOCAL-00022" summary="add scripts back">
       <created>1664138856165</created>
@@ -524,7 +518,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676841915272</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="add hl-inc option in MoCo train to control whether or not to increase the dist between LTS2 and LTS3">
+      <created>1676952572124</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1676952572124</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -542,7 +543,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="add label option to the streetview dataset so that it can output speed label and optentially others as well." />
     <MESSAGE value="add label option to MoCoClf" />
     <MESSAGE value="add transform" />
     <MESSAGE value="add startpoint to all trainers" />
@@ -567,6 +567,7 @@
     <MESSAGE value="add MoCoCLfFeaV3 as an option" />
     <MESSAGE value="add MoCoV3 to gen_emb" />
     <MESSAGE value="update MoCo checkpoint rule to avoid accident re-start from 0" />
-    <option name="LAST_COMMIT_MESSAGE" value="update MoCo checkpoint rule to avoid accident re-start from 0" />
+    <MESSAGE value="add hl-inc option in MoCo train to control whether or not to increase the dist between LTS2 and LTS3" />
+    <option name="LAST_COMMIT_MESSAGE" value="add hl-inc option in MoCo train to control whether or not to increase the dist between LTS2 and LTS3" />
   </component>
 </project>

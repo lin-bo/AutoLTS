@@ -66,14 +66,15 @@ class MoCoClfV2(nn.Module):
 
 class MoCoClfV3(nn.Module):
 
-    def __init__(self, checkpoint_name=None, local=True, vali=False, out_dim=4):
+    def __init__(self, checkpoint_name=None, local=True, vali=False, out_dim=4, enc_frozen=True):
         super(MoCoClfV3, self).__init__()
         # initialize the model
         self.encoder = torchvision.models.resnet50(pretrained=True)
         dim_mlp = self.encoder.fc.weight.shape[1]
         self.encoder = torch.nn.Sequential(*(list(self.encoder.children())[:-1]), nn.ReLU())
-        for name, param in self.encoder.named_parameters():
-            param.requires_grad = False
+        if enc_frozen:
+            for name, param in self.encoder.named_parameters():
+                param.requires_grad = False
         # # load the checkpoint
         if not vali:
             if local:
@@ -135,14 +136,15 @@ class MoCoClfV2Fea(nn.Module):
 
 class MoCoClfV3Fea(nn.Module):
 
-    def __init__(self, checkpoint_name=None, local=True, vali=False, n_fea=1, out_dim=4):
+    def __init__(self, checkpoint_name=None, local=True, vali=False, n_fea=1, out_dim=4, enc_frozen=True):
         super(MoCoClfV3Fea, self).__init__()
         # initialize the model
         self.img_encoder = torchvision.models.resnet50(pretrained=True)
         dim_mlp = self.img_encoder.fc.weight.shape[1]
         self.img_encoder = torch.nn.Sequential(*(list(self.img_encoder.children())[:-1]), nn.ReLU())
-        for name, param in self.img_encoder.named_parameters():
-            param.requires_grad = False
+        if enc_frozen:
+            for name, param in self.img_encoder.named_parameters():
+                param.requires_grad = False
         # # load the checkpoint
         if not vali:
             if local:
