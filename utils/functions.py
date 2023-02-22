@@ -88,3 +88,39 @@ def init_mdl(mdl_name, device, side_fea, label):
     else:
         raise ValueError(f'Model {mdl_name} not found')
     return mdl
+
+
+def fea2dim(fea):
+    l2d = {'lts': 4,
+           'oneway': 1, 'oneway_onehot': 2,
+           'parking': 1, 'parking_onehot': 2,
+           'volume': 1, 'volume_onehot': 2,
+           'speed_actual': 1, 'speed_actual_onehot': 4,
+           'cyc_infras': 2, 'cyc_infras_onehot': 4,
+           'n_lanes': 1, 'n_lanes_onehot': 5,
+           'road_type': 9, 'road_type_onehot': 4}
+    return l2d[fea]
+
+
+def assess_batch_pred(preds, trues, feas, device):
+    mse_fea = {'speed_actual', 'n_lanes'}
+    cnts = torch.zeros(len(feas)).to(device)
+    for idx, fea in enumerate(feas):
+        if fea in mse_fea:
+            cnts[idx] = torch.abs(preds[idx] - trues[idx]).sum()
+        else:
+            _, pred = torch.max(preds[idx], dim=1)
+            cnts[idx] += (pred == trues[idx]).sum()
+    return cnts
+
+
+def save_checkpoint(net, optimizer, epoch, loss_records, n_epoch, n_check, device,
+                    batch_size, lr, check_path, job_id, output_records):
+    torch.save({'epoch': epoch,
+                'model_state_dict': net.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss_records': loss_records,
+                'output_records': output_records,
+                'hyper-parameters': {'n_epoch': n_epoch, 'n_check': n_check, 'device': device, 'batch_size': batch_size, 'lr': lr}
+                },
+               check_path + f'{job_id}_{epoch}.pt')

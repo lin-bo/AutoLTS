@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import Dataset
 from torchvision.transforms import transforms
-from torchvision.transforms import AutoAugment
+# from torchvision.transforms import AutoAugment
 import numpy as np
 from PIL import Image
 from utils import GaussianBlur
@@ -231,6 +231,67 @@ class LabelMoCoDataset(Dataset):
         q = self.transform(img)
         k = self.transform(img)
         return q, k, self.y[idx]
+
+    def __len__(self):
+        return len(self.img_path)
+
+
+class MultitaskEncDataset(Dataset):
+
+    def __init__(self, purpose='training', local=True, toy=False, aug_method='SimCLR', target_features=None):
+        super().__init__()
+        # load index and labels
+        indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+        if toy:
+            np.random.seed(31415926)
+            np.random.shuffle(indi)
+            indi = indi[:1000]
+        # load images
+        if local:
+            img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
+        else:
+            img_folder = './data/streetview/dataset'
+        if aug_method == 'SimCLR':
+            self.transform = transforms.Compose([
+                transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
+                transforms.RandomApply([transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)], p=0.8),
+                transforms.RandomGrayscale(p=0.2),
+                transforms.RandomApply([GaussianBlur(sigma=[.1, 2.])], p=0.5),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+                ])
+        elif aug_method == 'Auto':
+            self.transform = transforms.Compose([
+                transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
+                AutoAugment()
+                ])
+        else:
+            raise ValueError('Augmentation method not found')
+        self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
+        # load LTS label
+        lts = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
+        self.y = lts[indi]
+
+        # load prediction targets
+        self.target_features = target_features
+        self.targets = {}
+        for target in target_features:
+            data = np.loadtxt(f'./data/road/{target}.txt', delimiter=',').astype(int)
+            # transform labels
+            if target == 'speed_actual' or target == 'n_lanes':
+                data = data.reshape((-1, 1))
+                data = data.astype(np.single)
+            elif target == 'road_type' or target[-7:] == '_onehot':
+                data = np.argmax(data, axis=1)
+            data = data[indi]
+            self.targets[target] = data
+
+    def __getitem__(self, idx):
+        img = Image.open(self.img_path[idx])
+        q = self.transform(img)
+        k = self.transform(img)
+        return q, k, self.y[idx], [self.targets[fea][idx] for fea in self.target_features]
 
     def __len__(self):
         return len(self.img_path)

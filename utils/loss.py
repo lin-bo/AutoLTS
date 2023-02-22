@@ -59,3 +59,39 @@ class OrdLabelMoCoLoss(nn.Module):
         logits = - torch.log(logits)
         logits = logits * targets
         return logits.sum()
+
+
+class MultitaskLoss(nn.Module):
+
+    def __init__(self, contras='SupMoCo', weights=None, target_features=None):
+        super(MultitaskLoss, self).__init__()
+        self.weights = weights
+        self.target_features = target_features
+        # contrastive loss
+        if contras == 'MoCo':
+            self.contras_loss = 0
+        elif contras == 'SupMoCo':
+            self.contras_loss = LabelMoCoLoss()
+        elif contras == 'OrdMoCo':
+            self.contras_loss = OrdLabelMoCoLoss()
+        # prediction losses
+        mse_fea = {'speed_actual', 'n_lanes'}
+        self.pred_losses = nn.ModuleList()
+        for fea in target_features:
+            loss = nn.MSELoss(reduction='mean') if fea in mse_fea else nn.CrossEntropyLoss(reduction='mean')
+            self.pred_losses.append(loss)
+
+    def forward(self, logits, targets, preds, trues):
+        """
+        :param logits: N_batchsize x N_queuesize
+        :param targets: N_batchsize x N_queuesize
+        :param preds: a list of [N_batchsize]
+        :param trues: a list of [N_batchsize]
+        :return:
+        """
+        # contrastive loss
+        loss = self.weights[0] * self.contras_loss(logits, targets)
+        # prediction losses
+        for idx, fea in enumerate(self.target_features):
+            loss += self.weights[idx+1] * self.pred_losses[idx](preds[idx], trues[idx])
+        return loss

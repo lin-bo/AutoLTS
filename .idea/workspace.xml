@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add hl-inc option in MoCo train to control whether or not to increase the dist between LTS2 and LTS3">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add frozen/no-frozen option to MoCo_Clf_train. This only applies to MoCoClfV3 onward">
+      <change afterPath="$PROJECT_DIR$/MultitaskEnc_train.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/MultitaskEncoder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MoCo_clf_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_clf_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/MoCo_clf.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo_clf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MoCo_clf.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loss.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,13 +185,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00022" summary="add scripts back">
-      <created>1664138856165</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1664138856165</updated>
     </task>
     <task id="LOCAL-00023" summary="fixed a bug in moco. replace slice with = concat for queue update">
       <created>1664514195485</created>
@@ -525,7 +522,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676952572124</updated>
     </task>
-    <option name="localTasksCounter" value="71" />
+    <task id="LOCAL-00071" summary="add frozen/no-frozen option to MoCo_Clf_train. This only applies to MoCoClfV3 onward">
+      <created>1676998448015</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1676998448015</updated>
+    </task>
+    <option name="localTasksCounter" value="72" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -543,7 +547,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="add label option to MoCoClf" />
     <MESSAGE value="add transform" />
     <MESSAGE value="add startpoint to all trainers" />
     <MESSAGE value="update acc calculations for Classification problems" />
@@ -568,6 +571,7 @@
     <MESSAGE value="add MoCoV3 to gen_emb" />
     <MESSAGE value="update MoCo checkpoint rule to avoid accident re-start from 0" />
     <MESSAGE value="add hl-inc option in MoCo train to control whether or not to increase the dist between LTS2 and LTS3" />
-    <option name="LAST_COMMIT_MESSAGE" value="add hl-inc option in MoCo train to control whether or not to increase the dist between LTS2 and LTS3" />
+    <MESSAGE value="add frozen/no-frozen option to MoCo_Clf_train. This only applies to MoCoClfV3 onward" />
+    <option name="LAST_COMMIT_MESSAGE" value="add frozen/no-frozen option to MoCo_Clf_train. This only applies to MoCoClfV3 onward" />
   </component>
 </project>
