@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add frozen/no-frozen option to MoCo_Clf_train. This only applies to MoCoClfV3 onward">
-      <change afterPath="$PROJECT_DIR$/MultitaskEnc_train.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model/MultitaskEncoder.py" afterDir="false" />
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add multi task encoder">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MoCo_clf.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MultitaskEnc_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MultitaskEnc_train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/functions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loss.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -185,13 +179,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00023" summary="fixed a bug in moco. replace slice with = concat for queue update">
-      <created>1664514195485</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1664514195485</updated>
     </task>
     <task id="LOCAL-00024" summary="update">
       <created>1665256253040</created>
@@ -529,7 +516,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676998448015</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="add multi task encoder">
+      <created>1677040943588</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1677040943588</updated>
+    </task>
+    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -547,7 +541,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="add transform" />
     <MESSAGE value="add startpoint to all trainers" />
     <MESSAGE value="update acc calculations for Classification problems" />
     <MESSAGE value="update test for all attri predictions" />
@@ -572,6 +565,7 @@
     <MESSAGE value="update MoCo checkpoint rule to avoid accident re-start from 0" />
     <MESSAGE value="add hl-inc option in MoCo train to control whether or not to increase the dist between LTS2 and LTS3" />
     <MESSAGE value="add frozen/no-frozen option to MoCo_Clf_train. This only applies to MoCoClfV3 onward" />
-    <option name="LAST_COMMIT_MESSAGE" value="add frozen/no-frozen option to MoCo_Clf_train. This only applies to MoCoClfV3 onward" />
+    <MESSAGE value="add multi task encoder" />
+    <option name="LAST_COMMIT_MESSAGE" value="add multi task encoder" />
   </component>
 </project>

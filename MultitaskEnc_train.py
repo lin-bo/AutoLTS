@@ -88,12 +88,19 @@ def train(toy=True, local=True, batch_size=32, lr=0.003, device='mps', job_id=No
             loss_vali = loss_records[-1][1]
         loss_records.append((loss_train, loss_vali))
         # print record
-        msg = f'epoch {epoch} -- train loss: {loss_train:.2f}, vali loss: {loss_vali:.2f} '
+        msg = f'epoch {epoch}\ntrain loss: {loss_train:.2f}, vali loss: {loss_vali:.2f}\n'
+        std_names = {'n_lanes': 'lanes',
+                     'speed_actual': 'speed',
+                     'oneway': 'onewy',
+                     'cyc_infras': 'infra',
+                     'road_type': 'rtype',
+                     'volume': 'volum',
+                     'parking': 'parki'}
         for idx, fea in enumerate(target_features):
             if fea[-7:] == '_onehot' or fea == 'oneway':
-                msg += f'|| **{fea[:-7]}** train: {metrics_train[idx] * 100:.2f}%, vali: {metrics_vali[idx] * 100:.2f}% '
+                msg += f'|| **{std_names[fea[:-7]]}** train: {metrics_train[idx] * 100:.2f}%, vali: {metrics_vali[idx] * 100:.2f}%\n'
             else:
-                msg += f'|| **{fea}** train: {metrics_train[idx]:.4f}, vali: {metrics_vali[idx]:.4f} '
+                msg += f'|| **{std_names[fea]}** train: {metrics_train[idx]:.4f}, vali: {metrics_vali[idx]:.4f}\n'
         msg += f'|| time: {time.time() - tick:.2f} sec'
         output_records.append(msg)
         print(msg)
