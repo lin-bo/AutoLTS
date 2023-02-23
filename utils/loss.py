@@ -89,9 +89,14 @@ class MultitaskLoss(nn.Module):
         :param trues: a list of [N_batchsize]
         :return:
         """
+        records = []
         # contrastive loss
         loss = self.weights[0] * self.contras_loss(logits, targets)
+        records.append(loss.item())
         # prediction losses
         for idx, fea in enumerate(self.target_features):
-            loss += self.weights[idx+1] * self.pred_losses[idx](preds[idx], trues[idx])
-        return loss
+            val = self.pred_losses[idx](preds[idx], trues[idx])
+            records.append(val.item())
+            loss += self.weights[idx+1] * val
+        records.append(loss.item())
+        return loss, records

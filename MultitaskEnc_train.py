@@ -16,44 +16,44 @@ torch.manual_seed(0)
 def validate(net, vali_loader, device, criterion, target_features):
     net.eval()
     net.vali = True
-    total_loss = 0.
+    records_cumu = np.zeros(len(target_features) + 2)
     cnts = torch.zeros(len(target_features)).to(device)
     dt_cnt = 0
     for img_q, img_k, lts, trues in tqdm(vali_loader):
         img_q, img_k, lts, trues = img_q.to(device), img_k.to(device), lts.to(device), [t.to(device) for t in trues]
         # forward
         logits, targets, preds = net(img_q, img_k, lts)
-        loss = criterion(logits, targets, preds, trues)
+        loss, records = criterion(logits, targets, preds, trues)
         # backward
-        total_loss += loss.item()
+        records_cumu += np.array(records)
         # calculate accuracy
         with torch.no_grad():
             cnts += assess_batch_pred(preds, trues, target_features, device)
             dt_cnt += len(lts)
     net.vali = False
-    return total_loss, cnts/dt_cnt
+    return records_cumu, cnts/dt_cnt
 
 
 def train_one_epoch(net, train_loader, device, criterion, optimizer, target_features):
     net.train()
-    total_loss = 0.
     cnts = torch.zeros(len(target_features)).to(device)
     dt_cnt = 0
+    records_cumu = np.zeros(len(target_features) + 2, dtype=float)
     for img_q, img_k, lts, trues in tqdm(train_loader):
         img_q, img_k, lts, trues = img_q.to(device), img_k.to(device), lts.to(device), [t.to(device) for t in trues]
         # forward
         logits, targets, preds = net(img_q, img_k, lts)
-        loss = criterion(logits, targets, preds, trues)
+        loss, records = criterion(logits, targets, preds, trues)
         # backward
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        total_loss += loss.item()
+        records_cumu += np.array(records)
         # calculate accuracy
         with torch.no_grad():
             cnts += assess_batch_pred(preds, trues, target_features, device)
             dt_cnt += len(lts)
-    return total_loss, cnts/dt_cnt
+    return records_cumu, cnts/dt_cnt
 
 
 def train(toy=True, local=True, batch_size=32, lr=0.003, device='mps', job_id=None, weights=None, n_check=100, n_epoch=1,
@@ -79,14 +79,14 @@ def train(toy=True, local=True, batch_size=32, lr=0.003, device='mps', job_id=No
     output_records.append(msg)
     for epoch in range(init_epoch, n_epoch):
         tick = time.time()
-        loss_train, metrics_train = train_one_epoch(net, train_loader, device, criterion, optimizer, target_features)
-        loss_train = loss_train / n_train  # normalize
-        if epoch % n_check == 0:
-            loss_vali, metrics_vali = validate(net, vali_loader, device, criterion, target_features)
-            loss_vali = loss_vali / n_vali
+        losses_train, metrics_train = train_one_epoch(net, train_loader, device, criterion, optimizer, target_features)
+        loss_train = losses_train[-1] / n_train  # normalize
+        if (epoch + 1) % n_check == 0 or epoch == 0:
+            losses_vali, metrics_vali = validate(net, vali_loader, device, criterion, target_features)
+            loss_vali = losses_vali[-1] / n_vali
         else:
             loss_vali = loss_records[-1][1]
-        loss_records.append((loss_train, loss_vali))
+        loss_records.append(np.concatenate([losses_train / n_train, losses_vali / n_vali], 0))
         # print record
         msg = f'epoch {epoch}\ntrain loss: {loss_train:.2f}, vali loss: {loss_vali:.2f}\n'
         std_names = {'n_lanes': 'lanes',
