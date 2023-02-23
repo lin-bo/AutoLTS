@@ -85,7 +85,10 @@ def train(toy=True, local=True, batch_size=32, lr=0.003, device='mps', job_id=No
             losses_vali, metrics_vali = validate(net, vali_loader, device, criterion, target_features)
             loss_vali = losses_vali[-1] / n_vali
         else:
-            loss_vali = loss_records[-1][1]
+            losses_vali = loss_records[-1]
+            losses_vali = losses_vali[int(len(losses_vali)/2):]
+            metrics_vali = np.zeros(len(target_features), dtype=float)  # just a placeholder, doesn't mean anything
+            loss_vali = loss_records[-1][-1]
         loss_records.append(np.concatenate([losses_train / n_train, losses_vali / n_vali], 0))
         # print record
         msg = f'epoch {epoch}\ntrain loss: {loss_train:.2f}, vali loss: {loss_vali:.2f}\n'

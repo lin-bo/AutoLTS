@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="standardized output from multitaskencoder loss">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="store losses for all tasks for multitask encoder">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MultitaskEnc_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MultitaskEnc_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loss.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,13 +178,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00025" summary="remove softmax before cross entropy">
-      <created>1665261672002</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1665261672002</updated>
     </task>
     <task id="LOCAL-00026" summary="remove softmax before cross entropy">
       <created>1666746423645</created>
@@ -524,7 +515,14 @@
       <option name="project" value="LOCAL" />
       <updated>1677044206919</updated>
     </task>
-    <option name="localTasksCounter" value="74" />
+    <task id="LOCAL-00074" summary="store losses for all tasks for multitask encoder">
+      <created>1677129134058</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1677129134058</updated>
+    </task>
+    <option name="localTasksCounter" value="75" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -542,7 +540,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="update acc calculations for Classification problems" />
     <MESSAGE value="update test for all attri predictions" />
     <MESSAGE value="add biased sampling for cyc_infras pred" />
     <MESSAGE value="add random seed control" />
@@ -567,6 +564,7 @@
     <MESSAGE value="add frozen/no-frozen option to MoCo_Clf_train. This only applies to MoCoClfV3 onward" />
     <MESSAGE value="add multi task encoder" />
     <MESSAGE value="standardized output from multitaskencoder loss" />
-    <option name="LAST_COMMIT_MESSAGE" value="standardized output from multitaskencoder loss" />
+    <MESSAGE value="store losses for all tasks for multitask encoder" />
+    <option name="LAST_COMMIT_MESSAGE" value="store losses for all tasks for multitask encoder" />
   </component>
 </project>
