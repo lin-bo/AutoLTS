@@ -1,5 +1,4 @@
 import torch
-from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 import numpy as np
@@ -80,10 +79,10 @@ def train(toy=True, local=True, batch_size=32, lr=0.003, device='mps', job_id=No
     for epoch in range(init_epoch, n_epoch):
         tick = time.time()
         losses_train, metrics_train = train_one_epoch(net, train_loader, device, criterion, optimizer, target_features)
-        loss_train = losses_train[-1] / n_train  # normalize
+        loss_train = losses_train[-1]  # normalize
         if (epoch + 1) % n_check == 0 or epoch == init_epoch:
             losses_vali, metrics_vali = validate(net, vali_loader, device, criterion, target_features)
-            loss_vali = losses_vali[-1] / n_vali
+            loss_vali = losses_vali[-1]
         else:
             losses_vali = loss_records[-1]
             losses_vali = losses_vali[int(len(losses_vali)/2):]
