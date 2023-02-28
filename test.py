@@ -84,22 +84,22 @@ def eval(net, test_loader, device, purpose, side_fea, label, criterion):
     return res
 
 
-def complete_eval(net, device, local, side_fea, label):
+def complete_eval(net, device, local, side_fea, label, loc):
     # training
     msefeas = {'speed_actual', 'n_lanes'}
     criterion = criterion = nn.MSELoss(reduction='mean') if label in msefeas else nn.CrossEntropyLoss(reduction='sum')
     print('evaluating the training set')
-    loader_train = DataLoader(StreetviewDataset(purpose='training', local=local, toy=False, side_fea=side_fea, label=label),
+    loader_train = DataLoader(StreetviewDataset(purpose='training', local=local, toy=False, side_fea=side_fea, label=label, loc=loc),
                               batch_size=batch_size, shuffle=True)
     res_train = eval(net, loader_train, device, 'training', side_fea=side_fea, label=label, criterion=criterion)
     # validation
     print('evaluating the validation set')
-    loader_vali = DataLoader(StreetviewDataset(purpose='validation', local=local, toy=False, side_fea=side_fea, label=label),
+    loader_vali = DataLoader(StreetviewDataset(purpose='validation', local=local, toy=False, side_fea=side_fea, label=label, loc=loc),
                              batch_size=batch_size, shuffle=True)
     res_vali = eval(net, loader_vali, device, 'validation', side_fea=side_fea, label=label, criterion=criterion)
     # test
     print('evaluating the test set')
-    loader_test = DataLoader(StreetviewDataset(purpose='test', local=local, toy=False, side_fea=side_fea, label=label),
+    loader_test = DataLoader(StreetviewDataset(purpose='test', local=local, toy=False, side_fea=side_fea, label=label, loc=loc),
                              batch_size=batch_size, shuffle=True)
     res_test = eval(net, loader_test, device, 'test', side_fea=side_fea, label=label, criterion=criterion)
     return res_train, res_vali, res_test
@@ -115,6 +115,7 @@ if __name__ == '__main__':
     parser.add_argument('--device', type=str, help='device name')
     parser.add_argument('--sidefea', nargs='+', type=str, help='side features that you want to consider, e.g. speed_limit, n_lanes')
     parser.add_argument('--label', type=str, default='lts', help='label to predict, choose from lts and speed_actual')
+    parser.add_argument('--location', default=None, type=str, help='the location of the test network, choose from None, scarborough, york, and etobicoke')
     args = parser.parse_args()
     # load checkpoint
     if args.device == 'mps':
@@ -129,6 +130,6 @@ if __name__ == '__main__':
     net = init_mdl(args.modelname, device, args.sidefea, label=args.label)
     net.load_state_dict(checkpoint['model_state_dict'])
     # eval
-    res_train, res_vali, res_test = complete_eval(net, device, args.local, args.sidefea, args.label)
+    res_train, res_vali, res_test = complete_eval(net, device, args.local, args.sidefea, args.label, loc=args.location)
     res = {'training': res_train, 'validation': res_vali, 'test': res_test}
     torch.save(res, f'./res/{args.checkpointname}_res.pt')

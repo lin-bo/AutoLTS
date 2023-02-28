@@ -108,16 +108,16 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
         return total_loss/epoch_cnt, 0
 
 
-def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003, transform=False,
-          job_id=None, toy=False, frozen=False, aug=False, biased=False, side_fea=[], label='lts', start_point=None):
+def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0003, transform=False, loc=None,
+          job_id=None, toy=False, frozen=False, aug=False, biased=False, side_fea=None, label='lts', start_point=None):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # load training data
     train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=aug, label=label,
-                                                biased_sampling=biased, side_fea=side_fea, transform=transform),
+                                                biased_sampling=biased, side_fea=side_fea, transform=transform, loc=loc),
                               batch_size=batch_size, shuffle=True)
     vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False, label=label,
-                                               biased_sampling=False, side_fea=side_fea, transform=transform),
+                                               biased_sampling=False, side_fea=side_fea, transform=transform, loc=loc),
                              batch_size=batch_size, shuffle=True)
     # initialization
     l2d = {'lts': 4,
@@ -186,7 +186,8 @@ if __name__ == '__main__':
     parser.add_argument('--transform', default=False, action='store_true', help='apply data target log transformation or not')
     parser.add_argument('--no-transform', dest='transform', action='store_false')
     parser.add_argument('--start_point', default=None, type=str, help='starting point, must be saved in ./checkpoint/')
+    parser.add_argument('--location', default=None, type=str, help='the location of the test network, choose from None, scarborough, york, and etobicoke')
     args = parser.parse_args()
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, local=args.local, aug=args.aug, side_fea=args.sidefea,
           label=args.label, batch_size=args.batchsize, lr=args.lr, job_id=args.jobid, toy=args.toy, frozen=args.frozen,
-          biased=args.biased, transform=args.transform, start_point=args.start_point)
+          biased=args.biased, transform=args.transform, start_point=args.start_point, loc=args.location)

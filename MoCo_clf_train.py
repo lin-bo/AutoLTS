@@ -101,7 +101,7 @@ def train_one_epoch(net, optimizer, train_loader, device, side_fea, criterion, l
 
 
 def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, transform=False, biased=False, enc_frozen=True,
-          n_epoch=30, n_check=1, toy=False, local=False, side_fea=[], label='lts', start_point=None, MoCoV=2):
+          n_epoch=30, n_check=1, toy=False, local=False, side_fea=[], label='lts', start_point=None, MoCoV=2, loc=None):
     # set parameters
     check_path = './checkpoint/' if local else f'/checkpoint/linbo/{job_id}/'
     # initialize
@@ -137,10 +137,10 @@ def train(checkpoint=None, lr=0.0003, device='mps', batch_size=64, job_id=None, 
     msefeas = {'speed_actual', 'n_lanes'}
     criterion = nn.MSELoss(reduction='mean') if label in msefeas else nn.CrossEntropyLoss(reduction='sum')
     criterion = criterion.to(device)
-    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=True,
+    train_loader = DataLoader(StreetviewDataset(purpose='training', toy=toy, local=local, augmentation=True, loc=loc,
                                                 biased_sampling=biased, side_fea=side_fea, label=label, transform=transform),
                               batch_size=batch_size, shuffle=False)
-    vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False,
+    vali_loader = DataLoader(StreetviewDataset(purpose='validation', toy=toy, local=local, augmentation=False, loc=loc,
                                                biased_sampling=False, side_fea=side_fea, label=label, transform=transform),
                              batch_size=batch_size, shuffle=False)
     # start training
@@ -192,8 +192,9 @@ if __name__ == '__main__':
     parser.add_argument('--MoCoVersion', default=2, type=int, help='Version of MoCo, choose from 2 and 3, default 2')
     parser.add_argument('--frozen', default=True, action='store_true', help='apply data target log transformation or not')
     parser.add_argument('--no-frozen', dest='frozen', action='store_false')
+    parser.add_argument('--location', default=None, type=str, help='the location of the test network, choose from None, scarborough, york, and etobicoke')
     args = parser.parse_args()
     # here we go
     train(device=args.device, n_epoch=args.nepoch, n_check=args.ncheck, toy=args.toy, side_fea=args.sidefea, enc_frozen=args.frozen,
           local=args.local, batch_size=args.batchsize, job_id=args.jobid, checkpoint=args.checkpoint, label=args.label,
-          transform=args.transform, start_point=args.start_point, biased=args.biased, lr=args.lr, MoCoV=args.MoCoVersion)
+          transform=args.transform, start_point=args.start_point, biased=args.biased, lr=args.lr, MoCoV=args.MoCoVersion, loc=args.location)

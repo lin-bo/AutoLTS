@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="solve the re-start issue for MultitaskEnc_train">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="remove loss normalization for the multitask training so that the training and vali loss scales are consistent across different epochs.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ML_clf.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/ML_clf.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MultitaskEnc_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MultitaskEnc_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/MoCo.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/visualization/pred_visual.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/visualization/pred_visual.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MoCo_clf_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_clf_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Res50_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/Res50_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gen_emb.py" beforeDir="false" afterPath="$PROJECT_DIR$/gen_emb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,20 +183,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00027" summary="remove softmax before cross entropy">
-      <created>1666746438893</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1666746438893</updated>
-    </task>
-    <task id="LOCAL-00028" summary="add validation while training.">
-      <created>1667406639083</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1667406639083</updated>
     </task>
     <task id="LOCAL-00029" summary="remove color jitter from MoCoLabelDataset as it is too difficult for MoCo to learn from.">
       <created>1668024004949</created>
@@ -526,7 +513,21 @@
       <option name="project" value="LOCAL" />
       <updated>1677182582548</updated>
     </task>
-    <option name="localTasksCounter" value="76" />
+    <task id="LOCAL-00076" summary="solve the re-start issue for MultitaskEnc_train">
+      <created>1677600643710</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1677600643710</updated>
+    </task>
+    <task id="LOCAL-00077" summary="remove loss normalization for the multitask training so that the training and vali loss scales are consistent across different epochs.">
+      <created>1677600766818</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1677600766818</updated>
+    </task>
+    <option name="localTasksCounter" value="78" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -544,7 +545,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="add biased sampling for cyc_infras pred" />
     <MESSAGE value="add random seed control" />
     <MESSAGE value="update" />
     <MESSAGE value="update r2d dictionary" />
@@ -569,6 +569,7 @@
     <MESSAGE value="standardized output from multitaskencoder loss" />
     <MESSAGE value="store losses for all tasks for multitask encoder" />
     <MESSAGE value="solve the re-start issue for MultitaskEnc_train" />
-    <option name="LAST_COMMIT_MESSAGE" value="solve the re-start issue for MultitaskEnc_train" />
+    <MESSAGE value="remove loss normalization for the multitask training so that the training and vali loss scales are consistent across different epochs." />
+    <option name="LAST_COMMIT_MESSAGE" value="remove loss normalization for the multitask training so that the training and vali loss scales are consistent across different epochs." />
   </component>
 </project>

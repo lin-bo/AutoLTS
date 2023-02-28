@@ -12,10 +12,13 @@ from detectron2.data.detection_utils import read_image
 class StreetviewDataset(Dataset):
 
     def __init__(self, purpose='training', toy=False, local=True, augmentation=False, biased_sampling=False, side_fea=[],
-                 label='lts', transform=False):
+                 label='lts', transform=False, loc=None):
         super().__init__()
         # load indices
-        indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+        if not loc:
+            indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+        else:
+            indi = np.loadtxt(f'./data/{loc}_{purpose}_idx.txt').astype(int)
         if toy:
             np.random.seed(31415926)
             np.random.shuffle(indi)
@@ -155,10 +158,13 @@ class StreetviewDatasetMaskFormer(Dataset):
 
 class MoCoDataset(Dataset):
 
-    def __init__(self, purpose='training', local=True, toy=False):
+    def __init__(self, purpose='training', local=True, toy=False, loc=None):
         super().__init__()
         # load index and labels
-        indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+        if not loc:
+            indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+        else:
+            indi = np.loadtxt(f'./data/{loc}_{purpose}_idx.txt').astype(int)
         if toy:
             np.random.seed(31415926)
             np.random.shuffle(indi)
@@ -191,10 +197,13 @@ class MoCoDataset(Dataset):
 
 class LabelMoCoDataset(Dataset):
 
-    def __init__(self, purpose='training', local=True, toy=False, aug_method='SimCLR'):
+    def __init__(self, purpose='training', local=True, toy=False, aug_method='SimCLR', loc=None):
         super().__init__()
         # load index and labels
-        indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+        if not loc:
+            indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+        else:
+            indi = np.loadtxt(f'./data/{loc}_{purpose}_idx.txt').astype(int)
         if toy:
             np.random.seed(31415926)
             np.random.shuffle(indi)
@@ -214,11 +223,11 @@ class LabelMoCoDataset(Dataset):
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
                 ])
-        elif aug_method == 'Auto':
-            self.transform = transforms.Compose([
-                transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
-                AutoAugment()
-                ])
+        # elif aug_method == 'Auto':
+        #     self.transform = transforms.Compose([
+        #         transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
+        #         AutoAugment()
+        #         ])
         else:
             raise ValueError('Augmentation method not found')
         self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
@@ -238,10 +247,13 @@ class LabelMoCoDataset(Dataset):
 
 class MultitaskEncDataset(Dataset):
 
-    def __init__(self, purpose='training', local=True, toy=False, aug_method='SimCLR', target_features=None):
+    def __init__(self, purpose='training', local=True, toy=False, aug_method='SimCLR', target_features=None, loc=None):
         super().__init__()
         # load index and labels
-        indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+        if not loc:
+            indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
+        else:
+            indi = np.loadtxt(f'./data/{loc}_{purpose}_idx.txt').astype(int)
         if toy:
             np.random.seed(31415926)
             np.random.shuffle(indi)
@@ -261,11 +273,11 @@ class MultitaskEncDataset(Dataset):
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
                 ])
-        elif aug_method == 'Auto':
-            self.transform = transforms.Compose([
-                transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
-                AutoAugment()
-                ])
+        # elif aug_method == 'Auto':
+        #     self.transform = transforms.Compose([
+        #         transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
+        #         AutoAugment()
+        #         ])
         else:
             raise ValueError('Augmentation method not found')
         self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
