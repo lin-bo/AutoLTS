@@ -588,8 +588,9 @@ class OrdLabelMoCo(nn.Module):
                 k = self.encoder_k(im_k)
             k = nn.functional.normalize(k, dim=1)
         # increase the label by one if high stress
-        if self.inc_hl_dist:
-            label += (label >= 3)
+        with torch.no_grad():
+            if self.inc_hl_dist:
+                label += (label >= 3)
         # go through the projector
         if self.mlp:
             q = torch.flatten(q, 1)
