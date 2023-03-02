@@ -5,9 +5,26 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import numpy as np
 import argparse
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
 from utils import StreetviewDataset
 from model import MoCoEmb, MoCoEmbV3
+
+
+def dim_reduction( feature, method='tsne'):
+    if method == 'svd':
+        centered = feature - np.mean(feature, axis=0)
+        covariance = 1.0 / feature.shape[0] * centered.T.dot(centered)
+        U, S, V = np.linalg.svd(covariance)
+        coord = centered.dot(U[:, 0:2])
+    elif method == 'pca':
+        coord = PCA(random_state=0).fit_transform(feature)[:, :2]
+    elif method == 'tsne':
+        coord = TSNE(2, verbose=0, learning_rate='auto', init='random').fit_transform(feature)
+    else:
+        raise ValueError('method not found')
+    return coord
 
 
 def gen_emb(dim=128, device='mps', checkpoint_name=None, local=False, purpose='test', toy=False, batch_size=32, MoCoVersion=2, loc=None):
@@ -28,7 +45,7 @@ def gen_emb(dim=128, device='mps', checkpoint_name=None, local=False, purpose='t
         net.zero_grad()
         emb = net.forward(x)
         embs += emb.to(device='cpu').tolist()
-    embs = np.array(embs)
+    embs = dim_reduction(np.array(embs), method='tsne')
     np.savetxt(f'./emb/{checkpoint_name}_{purpose}.txt', embs, delimiter=',')
 
 
