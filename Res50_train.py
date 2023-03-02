@@ -138,12 +138,13 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
     criterion = nn.MSELoss(reduction='mean') if label in msefeas else nn.CrossEntropyLoss(reduction='sum')
     criterion = criterion.to(device)
     init_epoch, loss_records, net, optimizer, _ = initialization(check_path, n_check, n_epoch, job_id, net, optimizer, start_point)
+    n_train, n_vali = len(train_loader), len(vali_loader)
     print(f'(Rs)Start training from epoch {init_epoch}')
     for epoch in range(init_epoch, n_epoch):
         tick = time.time()
         train_loss, train_acc = train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, label)
         vali_loss, vali_acc = validation(net, vali_loader, device, criterion, side_fea, label)
-        loss_records.append((train_loss, vali_loss))
+        loss_records.append((train_loss/n_train, vali_loss/n_vali))
         np.savetxt(check_path + f'{job_id}_loss.txt', loss_records, delimiter=',')
         if (epoch + 1) % n_check == 0:
             torch.save({'epoch': epoch,
