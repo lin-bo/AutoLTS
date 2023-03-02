@@ -45,7 +45,7 @@ def gen_emb(dim=128, device='mps', checkpoint_name=None, local=False, purpose='t
         net.zero_grad()
         emb = net.forward(x)
         embs += emb.to(device='cpu').tolist()
-    embs = dim_reduction(np.array(embs), method='tsne')
+    embs = dim_reduction(np.array(embs).astype(float), method='tsne')
     np.savetxt(f'./emb/{checkpoint_name}_{purpose}.txt', embs, delimiter=',')
 
 
