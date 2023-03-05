@@ -65,6 +65,7 @@ def gen_all_predictions(net, device, local, batch_size, side_fea, label, loc, pr
             else:
                 torch.save(records, f'./pred/{label}_{purpose}.pt')
 
+
 if __name__ == '__main__':
     # set parser
     parser = argparse.ArgumentParser()

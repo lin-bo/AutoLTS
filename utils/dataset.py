@@ -49,7 +49,7 @@ class StreetviewDataset(Dataset):
                 fea_list.append(vec)
             self.fea = np.concatenate(fea_list, axis=1)
             mu = self.fea.mean(axis=0, keepdims=True)
-            std = self.fea.std(axis=0, keepdims=True)
+            std = self.fea.std(axis=0, keepdims=True) + 1e-5
             self.fea -= mu
             self.fea /= std
         elif side_fea and side_fea[0] in {'sce1', 'sce2', 'sce3'}:

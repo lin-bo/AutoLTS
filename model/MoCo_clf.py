@@ -158,8 +158,8 @@ class MoCoClfV3Fea(nn.Module):
                 del state_dict[k]
             _ = self.img_encoder.load_state_dict(state_dict, strict=False)
         # add FC layers
-        self.fea_encoder = nn.Sequential(nn.Linear(n_fea, 128), nn.ReLU())
-        self.clf = nn.Linear(128, out_dim)
+        self.fea_encoder = nn.Sequential(nn.Linear(n_fea, 2048), nn.ReLU())
+        self.clf = nn.Linear(2048, out_dim)
 
     def forward(self, x, fea):
         x = self.img_encoder(x)
