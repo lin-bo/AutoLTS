@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="update gen_emb so that we only save the projected embedding (2d). This is to save disc space.">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add epsilon to streetview dataset when normalizing the sidefeatures to avoid zero dominators">
+      <change afterPath="$PROJECT_DIR$/eval/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/eval/functions.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/eval/predictors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/AutoLTS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AutoLTS.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gen_prediction.py" beforeDir="false" afterPath="$PROJECT_DIR$/gen_prediction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/MoCo_clf.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo_clf.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
     </list>
@@ -44,14 +47,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/bolin&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "/Users/bolin",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/utils" />
@@ -181,13 +184,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00033" summary="add emb visual">
-      <created>1668302320842</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1668302320842</updated>
     </task>
     <task id="LOCAL-00034" summary="add MoCoClfV2">
       <created>1668303820050</created>
@@ -525,7 +521,14 @@
       <option name="project" value="LOCAL" />
       <updated>1677792802979</updated>
     </task>
-    <option name="localTasksCounter" value="82" />
+    <task id="LOCAL-00082" summary="add epsilon to streetview dataset when normalizing the sidefeatures to avoid zero dominators">
+      <created>1678037999386</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1678037999386</updated>
+    </task>
+    <option name="localTasksCounter" value="83" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -543,7 +546,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="add mask former" />
     <MESSAGE value="get the mask former running within AutoLTS" />
     <MESSAGE value="mask former done" />
     <MESSAGE value="correct speed categories!" />
@@ -568,6 +570,7 @@
     <MESSAGE value="add location option to dataset" />
     <MESSAGE value="normalize vali loss for res50" />
     <MESSAGE value="update gen_emb so that we only save the projected embedding (2d). This is to save disc space." />
-    <option name="LAST_COMMIT_MESSAGE" value="update gen_emb so that we only save the projected embedding (2d). This is to save disc space." />
+    <MESSAGE value="add epsilon to streetview dataset when normalizing the sidefeatures to avoid zero dominators" />
+    <option name="LAST_COMMIT_MESSAGE" value="add epsilon to streetview dataset when normalizing the sidefeatures to avoid zero dominators" />
   </component>
 </project>

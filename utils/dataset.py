@@ -88,12 +88,13 @@ class StreetviewDataset(Dataset):
                 self.speed = np.concatenate(fea_series, axis=0)
             self.y = np.concatenate(y_series, axis=0)
             self.img_path = np.concatenate(x_series, axis=0)
-        elif biased_sampling and label == 'cyc_infras':
+        elif biased_sampling and (label == 'cyc_infras' or label == 'volume_onehot'):
+            scalers = {'cyc_infras': 10, 'volume_onehot': 3}
             flag = (self.y == 1).astype(bool)
-            y_series = [self.y] + [self.y[flag] for _ in range(10)]
-            x_series = [self.img_path] + [self.img_path[flag] for _ in range(10)]
+            y_series = [self.y] + [self.y[flag] for _ in range(scalers[label])]
+            x_series = [self.img_path] + [self.img_path[flag] for _ in range(scalers[label])]
             if side_fea:
-                fea_series = [self.fea] + [self.fea[flag] for _ in range(10)]
+                fea_series = [self.fea] + [self.fea[flag] for _ in range(scalers[label])]
                 self.speed = np.concatenate(fea_series, axis=0)
             self.y = np.concatenate(y_series, axis=0)
             self.img_path = np.concatenate(x_series, axis=0)
