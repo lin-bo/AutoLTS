@@ -5,8 +5,8 @@ from torchvision.transforms import transforms
 import numpy as np
 from PIL import Image
 from utils import GaussianBlur
-import detectron2.data.transforms as T
-from detectron2.data.detection_utils import read_image
+# import detectron2.data.transforms as T
+# from detectron2.data.detection_utils import read_image
 
 
 class StreetviewDataset(Dataset):
@@ -26,6 +26,8 @@ class StreetviewDataset(Dataset):
         # load labels
         if label == 'lts':
             self.y = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
+        elif label == 'lts_wo_volume':
+            self.y = np.loadtxt('./data/LTS/lts_labels_wo_volume.txt').astype(int)
         else:
             # true_label = label[:-7] if label[-7:] == '_onehot' else label
             self.y = np.loadtxt(f'./data/road/{label}.txt', delimiter=',').astype(int)
@@ -111,50 +113,50 @@ class StreetviewDataset(Dataset):
         return len(self.y)
 
 
-class StreetviewDatasetMaskFormer(Dataset):
-
-    def __init__(self, cfg, toy=False, local=True, visual=False):
-        super().__init__()
-        # load images and indices
-        purposes = ['training', 'validation', 'test']
-        if local:
-            img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
-            indi = [np.loadtxt(f'/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/AutoLTS/data/{purpose}_idx.txt').astype(int) for purpose in purposes]
-        else:
-            img_folder = './data/streetview/dataset'
-            indi = [np.loadtxt(f'./data/{purpose}_idx.txt').astype(int) for purpose in purposes]
-        indi = np.concatenate(indi)
-        if toy:
-            np.random.seed(31415926)
-            np.random.shuffle(indi)
-            indi = indi[:1000]
-        self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
-        # transforms
-        self.transform = transforms.Compose([
-                # transforms.PILToTensor(),
-                # transforms.Resize(224),
-                transforms.ToTensor(),
-                # transforms.ConvertImageDtype(torch.float),
-                # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-            ])
-        self.aug = T.ResizeShortestEdge(
-            [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST
-        )
-        self.visual = visual
-
-    def __getitem__(self, idx):
-        # img = Image.open(self.img_path[idx])
-        orig_img = read_image(self.img_path[idx], format="RGB")  # H x W x C (BGR)
-        height, width = orig_img.shape[:2]
-        img = self.aug.get_transform(orig_img).apply_image(orig_img)
-        img = torch.as_tensor(img.astype("float32").transpose(2, 0, 1))  # C (BGR) x H x W
-        if self.visual:
-            return {"image": img, "height": height, "width": width, "orig_img": orig_img}
-        else:
-            return {"image": img, "height": height, "width": width}
-
-    def __len__(self):
-        return len(self.img_path)
+# class StreetviewDatasetMaskFormer(Dataset):
+#
+#     def __init__(self, cfg, toy=False, local=True, visual=False):
+#         super().__init__()
+#         # load images and indices
+#         purposes = ['training', 'validation', 'test']
+#         if local:
+#             img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
+#             indi = [np.loadtxt(f'/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/AutoLTS/data/{purpose}_idx.txt').astype(int) for purpose in purposes]
+#         else:
+#             img_folder = './data/streetview/dataset'
+#             indi = [np.loadtxt(f'./data/{purpose}_idx.txt').astype(int) for purpose in purposes]
+#         indi = np.concatenate(indi)
+#         if toy:
+#             np.random.seed(31415926)
+#             np.random.shuffle(indi)
+#             indi = indi[:1000]
+#         self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
+#         # transforms
+#         self.transform = transforms.Compose([
+#                 # transforms.PILToTensor(),
+#                 # transforms.Resize(224),
+#                 transforms.ToTensor(),
+#                 # transforms.ConvertImageDtype(torch.float),
+#                 # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+#             ])
+#         self.aug = T.ResizeShortestEdge(
+#             [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST
+#         )
+#         self.visual = visual
+#
+#     def __getitem__(self, idx):
+#         # img = Image.open(self.img_path[idx])
+#         orig_img = read_image(self.img_path[idx], format="RGB")  # H x W x C (BGR)
+#         height, width = orig_img.shape[:2]
+#         img = self.aug.get_transform(orig_img).apply_image(orig_img)
+#         img = torch.as_tensor(img.astype("float32").transpose(2, 0, 1))  # C (BGR) x H x W
+#         if self.visual:
+#             return {"image": img, "height": height, "width": width, "orig_img": orig_img}
+#         else:
+#             return {"image": img, "height": height, "width": width}
+#
+#     def __len__(self):
+#         return len(self.img_path)
 
 
 class MoCoDataset(Dataset):
@@ -198,7 +200,7 @@ class MoCoDataset(Dataset):
 
 class LabelMoCoDataset(Dataset):
 
-    def __init__(self, purpose='training', local=True, toy=False, aug_method='SimCLR', loc=None):
+    def __init__(self, purpose='training', local=True, toy=False, aug_method='SimCLR', loc=None, label='lts'):
         super().__init__()
         # load index and labels
         if not loc:
@@ -233,7 +235,12 @@ class LabelMoCoDataset(Dataset):
             raise ValueError('Augmentation method not found')
         self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
         # load LTS label
-        lts = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
+        if label == 'lts':
+            lts = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
+        elif label == 'lts_wo_volume':
+            lts = np.loadtxt('./data/LTS/lts_labels_wo_volume.txt').astype(int)
+        else:
+            raise ValueError('label not found')
         self.y = lts[indi]
 
     def __getitem__(self, idx):
@@ -248,7 +255,7 @@ class LabelMoCoDataset(Dataset):
 
 class MultitaskEncDataset(Dataset):
 
-    def __init__(self, purpose='training', local=True, toy=False, aug_method='SimCLR', target_features=None, loc=None):
+    def __init__(self, purpose='training', local=True, toy=False, aug_method='SimCLR', target_features=None, loc=None, label='lts'):
         super().__init__()
         # load index and labels
         if not loc:
@@ -283,7 +290,12 @@ class MultitaskEncDataset(Dataset):
             raise ValueError('Augmentation method not found')
         self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
         # load LTS label
-        lts = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
+        if label == 'lts':
+            lts = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
+        elif label == 'lts_wo_volume':
+            lts = np.loadtxt('./data/LTS/lts_labels_wo_volume.txt').astype(int)
+        else:
+            raise ValueError('label not found')
         self.y = lts[indi]
 
         # load prediction targets

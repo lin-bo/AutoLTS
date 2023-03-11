@@ -6,7 +6,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 import time
 
-from model.naive import FeaFC
+# from model.naive import FeaFC
 from model import Res50FC, Res50FCFea
 from utils import initialization, StreetviewDataset, cal_dim
 
@@ -26,14 +26,14 @@ def validation(net, vali_loader, device, criterion, side_fea, label):
                 x, y = x.to(device), y.to(device)
                 # forward
                 outputs = net(x)
-                loss = criterion(outputs, y-1) if label == 'lts' else criterion(outputs, y)
+                loss = criterion(outputs, y-1) if (label == 'lts' or label == 'lts_wo_volume') else criterion(outputs, y)
                 # log
                 total_loss += loss.item()
                 tot_cnt += len(y)
                 epoch_cnt += 1
-                if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts':
+                if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts' or label == 'lts_wo_volume':
                     _, y_pred = torch.max(outputs, 1)
-                    if label == 'lts':
+                    if label == 'lts' or label == 'lts_wo_volume':
                         y_pred += 1
                     corr_cnt += (y_pred == y).sum().item()
         else:
@@ -41,18 +41,18 @@ def validation(net, vali_loader, device, criterion, side_fea, label):
                 x, s, y = x.to(device), s.to(device).to(torch.float), y.to(device)
                 # forward
                 outputs = net(x, s)
-                loss = criterion(outputs, y-1) if label == 'lts' else criterion(outputs, y)
+                loss = criterion(outputs, y-1) if (label == 'lts' or label == 'lts_wo_volume') else criterion(outputs, y)
                 # log
                 total_loss += loss.item()
                 tot_cnt += len(y)
                 epoch_cnt += 1
-                if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts':
+                if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts' or label == 'lts_wo_volume':
                     _, y_pred = torch.max(outputs, 1)
-                    if label == 'lts':
+                    if label == 'lts' or label == 'lts_wo_volume':
                         y_pred += 1
                     corr_cnt += (y_pred == y).sum().item()
     net.train()
-    if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts':
+    if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts' or label == 'lts_wo_volume':
         return total_loss, corr_cnt/tot_cnt * 100
     else:
         return total_loss/epoch_cnt, 0
@@ -70,7 +70,7 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
             # forward
             net.zero_grad()
             outputs = net.forward(x)
-            loss = criterion(outputs, y-1) if label == 'lts' else criterion(outputs, y)
+            loss = criterion(outputs, y-1) if (label == 'lts' or label == 'lts_wo_volume') else criterion(outputs, y)
             # backward
             loss.backward()
             optimizer.step()
@@ -78,9 +78,9 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
             total_loss += loss.item()
             tot_cnt += len(y)
             epoch_cnt += 1
-            if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts':
+            if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts' or label == 'lts_wo_volume':
                 _, y_pred = torch.max(outputs, dim=1)
-                if label == 'lts':
+                if label == 'lts' or label == 'lts_wo_volume':
                     y_pred += 1
                 corr_cnt += (y_pred == y).sum().item()
     else:
@@ -89,7 +89,7 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
             # forward
             net.zero_grad()
             outputs = net.forward(x, s)
-            loss = criterion(outputs, y-1) if label == 'lts' else criterion(outputs, y)
+            loss = criterion(outputs, y-1) if (label == 'lts' or label == 'lts_wo_volume') else criterion(outputs, y)
             # backward
             loss.backward()
             optimizer.step()
@@ -97,12 +97,12 @@ def train_one_epoch(net, optimizer, train_loader, criterion, device, side_fea, l
             total_loss += loss.item()
             tot_cnt += len(y)
             epoch_cnt += 1
-            if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts':
+            if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts' or label == 'lts_wo_volume':
                 _, y_pred = torch.max(outputs, dim=1)
-                if label == 'lts':
+                if label == 'lts' or label == 'lts_wo_volume':
                     y_pred += 1
                 corr_cnt += (y_pred == y).sum().item()
-    if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts':
+    if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts' or label == 'lts_wo_volume':
         return total_loss, corr_cnt/tot_cnt * 100
     else:
         return total_loss/epoch_cnt, 0
@@ -120,7 +120,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
                                                biased_sampling=False, side_fea=side_fea, transform=transform, loc=loc),
                              batch_size=batch_size, shuffle=True)
     # initialization
-    l2d = {'lts': 4,
+    l2d = {'lts': 4, 'lts_wo_volume': 4,
            'oneway': 1, 'oneway_onehot': 2,
            'parking': 1, 'parking_onehot': 2,
            'volume': 1, 'volume_onehot': 2,
@@ -154,7 +154,7 @@ def train(device='mps', n_epoch=10, n_check=5, local=True, batch_size=32, lr=0.0
                         'hyper-parameters': {'n_epoch': n_epoch, 'n_check': n_check, 'device': device, 'batch_size': batch_size, 'lr': lr}
                         },
                        check_path + f'{job_id}_{epoch}.pt')
-        if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts':
+        if label == 'road_type' or label[-7:] == '_onehot' or label == 'lts' or label == 'lts_wo_volume':
             print(f'Epoch: {epoch}, train loss: {train_loss:.4f}, train accuracy: {train_acc:.2f}%, vali loss: {vali_loss:.4f}, '
                   f'vali accuracy: {vali_acc:.2f}%, time: {time.time() - tick:.2f} sec')
         else:

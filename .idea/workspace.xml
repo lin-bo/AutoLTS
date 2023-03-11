@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add epsilon to streetview dataset when normalizing the sidefeatures to avoid zero dominators">
-      <change afterPath="$PROJECT_DIR$/eval/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/eval/functions.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/eval/predictors.py" afterDir="false" />
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add evaluation code to the codebase">
       <change beforePath="$PROJECT_DIR$/.idea/AutoLTS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AutoLTS.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MoCo_clf_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_clf_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Res50_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/Res50_train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/functions.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,14 +49,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/Users/bolin",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/bolin&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/utils" />
@@ -184,13 +186,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00034" summary="add MoCoClfV2">
-      <created>1668303820050</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1668303820050</updated>
     </task>
     <task id="LOCAL-00035" summary="add batchnormalization in MoCoClfV2">
       <created>1668310051859</created>
@@ -528,7 +523,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678037999386</updated>
     </task>
-    <option name="localTasksCounter" value="83" />
+    <task id="LOCAL-00083" summary="add evaluation code to the codebase">
+      <created>1678476076409</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1678476076409</updated>
+    </task>
+    <option name="localTasksCounter" value="84" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -546,7 +548,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="get the mask former running within AutoLTS" />
     <MESSAGE value="mask former done" />
     <MESSAGE value="correct speed categories!" />
     <MESSAGE value="add scenario features to side feature" />
@@ -571,6 +572,7 @@
     <MESSAGE value="normalize vali loss for res50" />
     <MESSAGE value="update gen_emb so that we only save the projected embedding (2d). This is to save disc space." />
     <MESSAGE value="add epsilon to streetview dataset when normalizing the sidefeatures to avoid zero dominators" />
-    <option name="LAST_COMMIT_MESSAGE" value="add epsilon to streetview dataset when normalizing the sidefeatures to avoid zero dominators" />
+    <MESSAGE value="add evaluation code to the codebase" />
+    <option name="LAST_COMMIT_MESSAGE" value="add evaluation code to the codebase" />
   </component>
 </project>

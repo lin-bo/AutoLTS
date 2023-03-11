@@ -60,7 +60,7 @@ def cal_dim(side_fea):
 
 
 def init_mdl(mdl_name, device, side_fea, label):
-    l2d = {'lts': 4,
+    l2d = {'lts': 4, 'lts_wo_volume': 4,
            'oneway': 1, 'oneway_onehot': 2,
            'parking': 1, 'parking_onehot': 2,
            'volume': 1, 'volume_onehot': 2,

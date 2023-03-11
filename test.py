@@ -17,7 +17,7 @@ def eval(net, test_loader, device, purpose, side_fea, label, criterion):
             for x, y in tqdm(test_loader):
                 x, y = x.to(device), y.to(device)
                 outputs = net(x)
-                if label == 'lts':
+                if label == 'lts' or label == 'lts_wo_volume':
                     loss = criterion(outputs, y-1)
                 else:
                     loss = criterion(outputs, y)
@@ -26,7 +26,7 @@ def eval(net, test_loader, device, purpose, side_fea, label, criterion):
                     _, predicted = torch.max(outputs, 1)
                 else:
                     predicted = outputs
-                if label == 'lts':
+                if label == 'lts' or label == 'lts_wo_volume':
                     predicted += 1
                 pred_records += predicted.tolist()
                 true_records += y.tolist()
@@ -34,7 +34,7 @@ def eval(net, test_loader, device, purpose, side_fea, label, criterion):
             for x, s, y in tqdm(test_loader):
                 x, s, y = x.to(device), s.to(device).to(torch.float), y.to(device)
                 outputs = net(x, s)
-                if label == 'lts':
+                if label == 'lts' or label == 'lts_wo_volume':
                     loss = criterion(outputs, y-1)
                 else:
                     loss = criterion(outputs, y)
@@ -43,7 +43,7 @@ def eval(net, test_loader, device, purpose, side_fea, label, criterion):
                     _, predicted = torch.max(outputs, 1)
                 else:
                     predicted = outputs
-                if label == 'lts':
+                if label == 'lts' or label == 'lts_wo_volume':
                     predicted += 1
                 pred_records += predicted.tolist()
                 true_records += y.tolist()
@@ -56,7 +56,7 @@ def eval(net, test_loader, device, purpose, side_fea, label, criterion):
     mae_score = mae(pred_records, true_records) if label not in {'road_type', 'cyc_infras'} else 0
     mse_score = mse(pred_records, true_records) if label not in {'road_type', 'cyc_infras'} else 0
     # imbalanced metrics
-    if label == 'lts':
+    if label == 'lts' or label == 'lts_wo_volume':
         fhr_score = fhr(pred_records, true_records)
         flr_score = flr(pred_records, true_records)
     elif label == 'cyc_infras':
@@ -65,7 +65,7 @@ def eval(net, test_loader, device, purpose, side_fea, label, criterion):
     else:
         fhr_score, flr_score = 0, 0
     # rank metrics
-    if purpose != 'training' and label == 'lts':
+    if purpose != 'training' and (label == 'lts' or label == 'lts_wo_volume'):
         # training matrix might be too big
         kt_score = kt(pred_records, true_records)
     else:
