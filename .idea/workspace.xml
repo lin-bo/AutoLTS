@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add evaluation code to the codebase">
-      <change beforePath="$PROJECT_DIR$/.idea/AutoLTS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AutoLTS.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add lts_wo_volume as a new label">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MoCo_clf_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_clf_train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Res50_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/Res50_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/predictors.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/predictors.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/functions.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -186,13 +180,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00035" summary="add batchnormalization in MoCoClfV2">
-      <created>1668310051859</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1668310051859</updated>
     </task>
     <task id="LOCAL-00036" summary="add speed">
       <created>1669391417335</created>
@@ -530,7 +517,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678476076409</updated>
     </task>
-    <option name="localTasksCounter" value="84" />
+    <task id="LOCAL-00084" summary="add lts_wo_volume as a new label">
+      <created>1678562456055</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1678562456055</updated>
+    </task>
+    <option name="localTasksCounter" value="85" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -548,7 +542,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="mask former done" />
     <MESSAGE value="correct speed categories!" />
     <MESSAGE value="add scenario features to side feature" />
     <MESSAGE value="add color jittering to MoCo dataset" />
@@ -573,6 +566,7 @@
     <MESSAGE value="update gen_emb so that we only save the projected embedding (2d). This is to save disc space." />
     <MESSAGE value="add epsilon to streetview dataset when normalizing the sidefeatures to avoid zero dominators" />
     <MESSAGE value="add evaluation code to the codebase" />
-    <option name="LAST_COMMIT_MESSAGE" value="add evaluation code to the codebase" />
+    <MESSAGE value="add lts_wo_volume as a new label" />
+    <option name="LAST_COMMIT_MESSAGE" value="add lts_wo_volume as a new label" />
   </component>
 </project>

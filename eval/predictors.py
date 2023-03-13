@@ -115,10 +115,10 @@ def lts_prediction_wo_volume(df):
                     return 1
                 else:
                     return 2
-            elif df['speed_actual'] <= 56:
-                # if df['Arterial'] != 1:
-                #     return 2
-                # else:
+            elif df['speed_actual'] <= 50:
+                if df['Arterial'] != 1:
+                    return 2
+                else:
                     return 3
             else:
                 return 4
