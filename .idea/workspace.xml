@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add lts_wo_volume as a new label">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="fix the bug when master problem is not solved to optimality (b/c of reaching the pre-set time limit)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/predictors.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/predictors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/functions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loss.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,13 +182,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00036" summary="add speed">
-      <created>1669391417335</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1669391417335</updated>
     </task>
     <task id="LOCAL-00037" summary="add side feature to res50_fc">
       <created>1669436724410</created>
@@ -524,7 +519,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678562456055</updated>
     </task>
-    <option name="localTasksCounter" value="85" />
+    <task id="LOCAL-00085" summary="fix the bug when master problem is not solved to optimality (b/c of reaching the pre-set time limit)">
+      <created>1678727357944</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1678727357944</updated>
+    </task>
+    <option name="localTasksCounter" value="86" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -542,7 +544,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="correct speed categories!" />
     <MESSAGE value="add scenario features to side feature" />
     <MESSAGE value="add color jittering to MoCo dataset" />
     <MESSAGE value="add MoCo version selection in MoCoClf and MoCoClf_train" />
@@ -567,6 +568,7 @@
     <MESSAGE value="add epsilon to streetview dataset when normalizing the sidefeatures to avoid zero dominators" />
     <MESSAGE value="add evaluation code to the codebase" />
     <MESSAGE value="add lts_wo_volume as a new label" />
-    <option name="LAST_COMMIT_MESSAGE" value="add lts_wo_volume as a new label" />
+    <MESSAGE value="fix the bug when master problem is not solved to optimality (b/c of reaching the pre-set time limit)" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix the bug when master problem is not solved to optimality (b/c of reaching the pre-set time limit)" />
   </component>
 </project>
