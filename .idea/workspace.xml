@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="change default loss for supervised contrastive loss from inner to outer">
-      <change afterPath="$PROJECT_DIR$/postprocessing.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/postprocessing/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/postprocessing/causal.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/postprocessing/functions.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/postprocessing/vote.py" afterDir="false" />
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add the post-processing modules">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loss.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,13 +178,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00039" summary="add side feature to MoCo_clf">
-      <created>1670095126346</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1670095126346</updated>
     </task>
     <task id="LOCAL-00040" summary="add exp and rec weighting options">
       <created>1670272519657</created>
@@ -526,7 +515,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679083012816</updated>
     </task>
-    <option name="localTasksCounter" value="88" />
+    <task id="LOCAL-00088" summary="add the post-processing modules">
+      <created>1679085969544</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1679085969544</updated>
+    </task>
+    <option name="localTasksCounter" value="89" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -544,7 +540,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="add MoCo version selection in MoCoClf and MoCoClf_train" />
     <MESSAGE value="Update MoCoV3 such that we discard the trained projection layer in MoCo" />
     <MESSAGE value="added autoaug to LabelMoCoDataset" />
     <MESSAGE value="update linear projector in MoCo models" />
@@ -569,6 +564,7 @@
     <MESSAGE value="fix the bug when master problem is not solved to optimality (b/c of reaching the pre-set time limit)" />
     <MESSAGE value="update loss agg method. Change from sum to mean to avoid numerical issues." />
     <MESSAGE value="change default loss for supervised contrastive loss from inner to outer" />
-    <option name="LAST_COMMIT_MESSAGE" value="change default loss for supervised contrastive loss from inner to outer" />
+    <MESSAGE value="add the post-processing modules" />
+    <option name="LAST_COMMIT_MESSAGE" value="add the post-processing modules" />
   </component>
 </project>

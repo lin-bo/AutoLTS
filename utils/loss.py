@@ -12,7 +12,7 @@ class LabelMoCoLoss(nn.Module):
     inner = False: take summation outside log
     """
 
-    def __init__(self, inner=True):
+    def __init__(self, inner=False):
         super(LabelMoCoLoss, self).__init__()
         self.inner = inner
 
@@ -26,12 +26,13 @@ class LabelMoCoLoss(nn.Module):
         targets = targets.to(torch.float)
         denominator = logits.sum(dim=1, keepdim=True)
         logits = logits / denominator
-        logits = logits * targets
         if self.inner:
+            logits = logits * targets
             logits = logits.sum(dim=1) / targets.sum(dim=1)
             logits = - torch.log(logits)
         else:
-            logits = - torch.log(logits).sum(dim=1) / targets.sum(dim=1)
+            logits = torch.log(logits) * targets
+            logits = - logits.sum(dim=1) / targets.sum(dim=1)
         return logits.mean()
 
 
@@ -42,7 +43,7 @@ class OrdLabelMoCoLoss(nn.Module):
     inner = False: take summation outside log
     """
 
-    def __init__(self, inner=True):
+    def __init__(self, inner=False):
         super(OrdLabelMoCoLoss, self).__init__()
         self.inner = inner
 
@@ -56,9 +57,10 @@ class OrdLabelMoCoLoss(nn.Module):
         logits = torch.exp(logits)
         denominator = logits.sum(dim=1, keepdim=True)
         logits = logits / denominator
-        logits = - torch.log(logits)
+        logits = torch.log(logits)
         logits = logits * targets
-        return logits.mean(dim=1).mean()
+        logits = - logits.sum(dim=1) / targets.sum(dim=1)
+        return logits.mean()
 
 
 class MultitaskLoss(nn.Module):
