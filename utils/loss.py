@@ -58,7 +58,7 @@ class OrdLabelMoCoLoss(nn.Module):
         logits = logits / denominator
         logits = - torch.log(logits)
         logits = logits * targets
-        return logits.mean()
+        return logits.mean(dim=1).mean()
 
 
 class MultitaskLoss(nn.Module):
