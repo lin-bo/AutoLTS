@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="update">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add hierarchical OrdMoCo">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/MoCo.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/MoCo.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/postprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/postprocessing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/postprocessing/causal.py" beforeDir="false" afterPath="$PROJECT_DIR$/postprocessing/causal.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loss.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -183,13 +181,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00042" summary="add label option to the streetview dataset so that it can output speed label and optentially others as well.">
-      <created>1670448113999</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1670448113999</updated>
     </task>
     <task id="LOCAL-00043" summary="add label option to the streetview dataset so that it can output speed label and optentially others as well.">
       <created>1670529044716</created>
@@ -527,7 +518,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680487782613</updated>
     </task>
-    <option name="localTasksCounter" value="91" />
+    <task id="LOCAL-00091" summary="add hierarchical OrdMoCo">
+      <created>1680495316159</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1680495316159</updated>
+    </task>
+    <option name="localTasksCounter" value="92" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -545,7 +543,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="update linear projector in MoCo models" />
     <MESSAGE value="update MoCoClfV3 according to the updated MoCo class (with normalization and flatten before linear projector)" />
     <MESSAGE value="update the model initialization function in functions to include MoCoClfV3 as an option" />
     <MESSAGE value="add MoCoCLfFeaV3 as an option" />
@@ -570,6 +567,7 @@
     <MESSAGE value="add the post-processing modules" />
     <MESSAGE value="update loss calculation to align Sup-Clf and Sup-Ord" />
     <MESSAGE value="update" />
-    <option name="LAST_COMMIT_MESSAGE" value="update" />
+    <MESSAGE value="add hierarchical OrdMoCo" />
+    <option name="LAST_COMMIT_MESSAGE" value="add hierarchical OrdMoCo" />
   </component>
 </project>

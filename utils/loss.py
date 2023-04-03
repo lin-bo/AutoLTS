@@ -70,8 +70,9 @@ class OrdLabelMoCoHierarchyLoss(nn.Module):
     inner = False: take summation outside log
     """
 
-    def __init__(self):
+    def __init__(self, lambd=0.5):
         super(OrdLabelMoCoHierarchyLoss, self).__init__()
+        self.lambd = lambd
 
     def forward(self, logits, targets):
         """
@@ -88,12 +89,12 @@ class OrdLabelMoCoHierarchyLoss(nn.Module):
         # level 1
         with torch.no_grad():
             flag = (targets == targets[:, [0]]).to(torch.long)
-        loss += ((logits * flag).sum(dim=1) / flag.sum(dim=1)).mean()
+        loss += self.lambd * ((logits * flag).sum(dim=1) / flag.sum(dim=1)).mean()
         # level 2
         with torch.no_grad():
             targets = (targets <= 2).to(torch.long)
             flag = (targets == targets[:, [0]]).to(torch.long)
-        loss += ((logits * flag).sum(dim=1) / flag.sum(dim=1)).mean()
+        loss += (1 - self.lambd) * ((logits * flag).sum(dim=1) / flag.sum(dim=1)).mean()
         return loss
 
 
