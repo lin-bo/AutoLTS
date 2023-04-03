@@ -154,7 +154,7 @@ class MoCoDataset(Dataset):
 
 class LabelMoCoDataset(Dataset):
 
-    def __init__(self, purpose='training', local=True, toy=False, aug_method='SimCLR', loc=None, label='lts'):
+    def __init__(self, purpose='training', local=True, toy=False, aug_method='SimCLR', loc=None, label='lts', biased_sampling=False):
         super().__init__()
         # load index and labels
         if not loc:
@@ -180,14 +180,8 @@ class LabelMoCoDataset(Dataset):
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
                 ])
-        # elif aug_method == 'Auto':
-        #     self.transform = transforms.Compose([
-        #         transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
-        #         AutoAugment()
-        #         ])
         else:
             raise ValueError('Augmentation method not found')
-        self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
         # load LTS label
         if label == 'lts':
             lts = np.loadtxt('./data/LTS/lts_labels.txt').astype(int)
@@ -196,6 +190,15 @@ class LabelMoCoDataset(Dataset):
         else:
             raise ValueError('label not found')
         self.y = lts[indi]
+        self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
+        # biased sampling
+        if biased_sampling:
+            flag3 = (self.y == 3).astype(bool)
+            flag4 = (self.y == 4).astype(bool)
+            y_series = [self.y, self.y[flag3], self.y[flag4], self.y[flag3], self.y[flag4]]
+            x_series = [self.img_path, self.img_path[flag3], self.img_path[flag4], self.img_path[flag3], self.img_path[flag4]]
+            self.y = np.concatenate(y_series, axis=0)
+            self.img_path = np.concatenate(x_series, axis=0)
 
     def __getitem__(self, idx):
         img = Image.open(self.img_path[idx])

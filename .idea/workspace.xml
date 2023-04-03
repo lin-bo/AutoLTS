@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add the post-processing modules">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="update loss calculation to align Sup-Clf and Sup-Ord">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loss.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML_clf.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/ML_clf.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/postprocessing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postprocessing/causal.py" beforeDir="false" afterPath="$PROJECT_DIR$/postprocessing/causal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postprocessing/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/postprocessing/functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,13 +185,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00040" summary="add exp and rec weighting options">
-      <created>1670272519657</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1670272519657</updated>
     </task>
     <task id="LOCAL-00041" summary="add output dimension option to models so that we can use it for arttribute prediction">
       <created>1670446595793</created>
@@ -522,7 +522,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679085969544</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="update loss calculation to align Sup-Clf and Sup-Ord">
+      <created>1679087622180</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1679087622180</updated>
+    </task>
+    <option name="localTasksCounter" value="90" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -540,7 +547,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="Update MoCoV3 such that we discard the trained projection layer in MoCo" />
     <MESSAGE value="added autoaug to LabelMoCoDataset" />
     <MESSAGE value="update linear projector in MoCo models" />
     <MESSAGE value="update MoCoClfV3 according to the updated MoCo class (with normalization and flatten before linear projector)" />
@@ -565,6 +571,7 @@
     <MESSAGE value="update loss agg method. Change from sum to mean to avoid numerical issues." />
     <MESSAGE value="change default loss for supervised contrastive loss from inner to outer" />
     <MESSAGE value="add the post-processing modules" />
-    <option name="LAST_COMMIT_MESSAGE" value="add the post-processing modules" />
+    <MESSAGE value="update loss calculation to align Sup-Clf and Sup-Ord" />
+    <option name="LAST_COMMIT_MESSAGE" value="update loss calculation to align Sup-Clf and Sup-Ord" />
   </component>
 </project>

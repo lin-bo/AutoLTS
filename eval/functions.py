@@ -6,11 +6,15 @@ from sklearn.metrics import confusion_matrix
 
 def load_fea(key, purpose, loc=None, updated=False, w_lts_pred=False):
     if loc is None:
-        speed = torch.load(f'../pred/speed_actual_onehot_{purpose}.pt')[key]
+        if updated:
+            speed = np.loadtxt(f'../pred/speed_actual_onehot_{purpose}_updated.txt')
+            n_lanes = np.loadtxt(f'../pred/n_lanes_onehot_{purpose}_updated.txt')
+        else:
+            speed = torch.load(f'../pred/speed_actual_onehot_{purpose}.pt')[key]
+            n_lanes = torch.load(f'../pred/n_lanes_onehot_{purpose}.pt')[key]
         parking = torch.load(f'../pred/parking_onehot_{purpose}.pt')[key]
         oneway = torch.load(f'../pred/oneway_onehot_{purpose}.pt')[key]
         cyc_infras = torch.load(f'../pred/cyc_infras_onehot_{purpose}.pt')[key]
-        n_lanes = torch.load(f'../pred/n_lanes_onehot_{purpose}.pt')[key]
         road_type = torch.load(f'../pred/road_type_onehot_{purpose}.pt')[key]
         volume = torch.load(f'../pred/volume_onehot_{purpose}.pt')[key]
         if w_lts_pred:
