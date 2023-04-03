@@ -53,7 +53,7 @@ class OrdLabelMoCoLoss(nn.Module):
         :param targets: N_batchsize x N_queuesize
         :return:
         """
-        # transform logits to probabilities
+        # transform logit to probabilities
         logits = torch.exp(logits)
         denominator = logits.sum(dim=1, keepdim=True)
         logits = logits / denominator
@@ -61,6 +61,40 @@ class OrdLabelMoCoLoss(nn.Module):
         logits = logits * targets
         logits = - logits.sum(dim=1) / targets.sum(dim=1)
         return logits.mean()
+
+
+class OrdLabelMoCoHierarchyLoss(nn.Module):
+    """
+    label aware MoCo loss
+    inner = True: take summation within log
+    inner = False: take summation outside log
+    """
+
+    def __init__(self):
+        super(OrdLabelMoCoHierarchyLoss, self).__init__()
+
+    def forward(self, logits, targets):
+        """
+        :param logits: N_batchsize x N_queuesize
+        :param targets: N_batchsize x N_queuesize
+        :return:
+        """
+        loss = 0
+        # transform logit to probabilities
+        logits = torch.exp(logits)
+        denominator = logits.sum(dim=1, keepdim=True)
+        logits = logits / denominator
+        logits = - torch.log(logits)
+        # level 1
+        with torch.no_grad():
+            flag = (targets == targets[:, [0]]).to(torch.long)
+        loss += ((logits * flag).sum(dim=1) / flag.sum(dim=1)).mean()
+        # level 2
+        with torch.no_grad():
+            targets = (targets <= 2).to(torch.long)
+            flag = (targets == targets[:, [0]]).to(torch.long)
+        loss += ((logits * flag).sum(dim=1) / flag.sum(dim=1)).mean()
+        return loss
 
 
 class MultitaskLoss(nn.Module):

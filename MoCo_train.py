@@ -7,8 +7,9 @@ import argparse
 import numpy as np
 import time
 
-from model import MoCo, LabelMoCo, OrdLabelMoCo
-from utils import MoCoDataset, LabelMoCoDataset, LabelMoCoLoss, OrdLabelMoCoLoss, initialization
+from model import MoCo, LabelMoCo, OrdLabelMoCo, OrdLabelMoCoHierarchy
+from utils import MoCoDataset, LabelMoCoDataset, LabelMoCoLoss, OrdLabelMoCoLoss, OrdLabelMoCoHierarchyLoss
+from utils import initialization
 from torch.utils.data import DataLoader
 
 # set random seed
@@ -82,6 +83,12 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
         dataset_train = LabelMoCoDataset(purpose='training', local=local, toy=toy, aug_method=aug_method, loc=loc, label=label, biased_sampling=biased)
         dataset_vali = LabelMoCoDataset(purpose='validation', local=local, toy=toy, aug_method=aug_method, loc=loc, label=label)
         criterion = OrdLabelMoCoLoss().to(device)
+    elif aware and awaretype == 'hie':
+        net = OrdLabelMoCoHierarchy(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize,
+                                    alpha=alpha, weight_func=weight_func, inc_hl_dist=hlinc, temperature=temperature).to(device)
+        dataset_train = LabelMoCoDataset(purpose='training', local=local, toy=toy, aug_method=aug_method, loc=loc, label=label, biased_sampling=biased)
+        dataset_vali = LabelMoCoDataset(purpose='validation', local=local, toy=toy, aug_method=aug_method, loc=loc, label=label)
+        criterion = OrdLabelMoCoHierarchyLoss().to(device)
     elif aware and awaretype == 'reg':
         raise ValueError('reg MoCo loss has not been implemented yet')
     else:
@@ -138,7 +145,7 @@ if __name__ == '__main__':
     parser.add_argument('--no-simple', dest='simple', action='store_false')
     parser.add_argument('--aware', action='store_true', help='whether or not to use the label aware MoCo')
     parser.add_argument('--no-aware', dest='aware', action='store_false')
-    parser.add_argument('--awaretype', default='clf', type=str, help='type of the loss function, choose from clf, reg, and ord')
+    parser.add_argument('--awaretype', default='clf', type=str, help='type of the loss function, choose from clf, reg, ord, hie')
     parser.add_argument('--alpha', default=2, type=int, help='penalty factor for ord moco loss')
     parser.add_argument('-wf', '--weight_function', default='exp', type=str, help='weighting function, choose from exp and rec')
     parser.add_argument('--start_point', default=None, type=str, help='starting point, must be saved in ./checkpoint/')
