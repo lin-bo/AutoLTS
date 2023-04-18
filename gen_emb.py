@@ -27,7 +27,7 @@ def dim_reduction( feature, method='tsne'):
     return coord
 
 
-def gen_emb(dim=128, device='mps', checkpoint_name=None, local=False, purpose='test', toy=False, batch_size=32, MoCoVersion=2, loc=None):
+def gen_emb(dim=128, device='mps', checkpoint_name=None, local=False, purpose='test', toy=False, batch_size=32, MoCoVersion=2, loc=None, reduction=True):
     if MoCoVersion == 2:
         net = MoCoEmb(dim, device=device, checkpoint_name=checkpoint_name, local=local).to(device)
     elif MoCoVersion == 3:
@@ -45,7 +45,9 @@ def gen_emb(dim=128, device='mps', checkpoint_name=None, local=False, purpose='t
         net.zero_grad()
         emb = net.forward(x)
         embs += emb.to(device='cpu').tolist()
-    embs = dim_reduction(np.array(embs).astype(float), method='tsne')
+    embs = np.array(embs).astype(float)
+    if reduction:
+        embs = dim_reduction(embs, method='tsne')
     np.savetxt(f'./emb/{checkpoint_name}_{purpose}.txt', embs, delimiter=',')
 
 
@@ -60,13 +62,15 @@ if __name__ == '__main__':
     parser.add_argument('--no-toy', dest='toy', action='store_false')
     parser.add_argument('-bs', '--batchsize', type=int, help='batch size')
     parser.add_argument('--MoCoVersion', default=2, type=int, help='choose from 2 and 3')
+    parser.add_argument('--reduction', default=True, type=bool, help='reduction')
+    parser.add_argument('--no-reduction', dest='reduction', action='store_false')
     parser.add_argument('--location', default=None, type=str, help='the location of the test network, choose from None, scarborough, york, and etobicoke')
     args = parser.parse_args()
 
     gen_emb(dim=128, device=args.device, checkpoint_name=args.checkpoint, local=args.local, loc=args.location,
-            purpose='training', toy=args.toy, batch_size=args.batchsize, MoCoVersion=args.MoCoVersion)
+            purpose='training', toy=args.toy, batch_size=args.batchsize, MoCoVersion=args.MoCoVersion, reduction=args.reduction)
     gen_emb(dim=128, device=args.device, checkpoint_name=args.checkpoint, local=args.local, loc=args.location,
-            purpose='validation', toy=args.toy, batch_size=args.batchsize, MoCoVersion=args.MoCoVersion)
+            purpose='validation', toy=args.toy, batch_size=args.batchsize, MoCoVersion=args.MoCoVersion, reduction=args.reduction)
     gen_emb(dim=128, device=args.device, checkpoint_name=args.checkpoint, local=args.local, loc=args.location,
-            purpose='test', toy=args.toy, batch_size=args.batchsize, MoCoVersion=args.MoCoVersion)
+            purpose='test', toy=args.toy, batch_size=args.batchsize, MoCoVersion=args.MoCoVersion, reduction=args.reduction)
 
