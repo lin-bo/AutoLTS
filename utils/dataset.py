@@ -42,7 +42,7 @@ class StreetviewDataset(Dataset):
         self.y = self.y[indi]
         # posted speed
         self.side_fea = side_fea
-        if side_fea and side_fea[0] not in {'sce1', 'sce2', 'sce3'}:
+        if side_fea and side_fea[0] not in {'sce1', 'sce2', 'sce3', 'sce1_prob', 'sce2_prob', 'sce3_prob'}:
             fea_list = []
             for fea in side_fea:
                 vec = np.loadtxt(f'./data/road/{fea}.txt', delimiter=',').astype(np.single)
@@ -54,7 +54,7 @@ class StreetviewDataset(Dataset):
             std = self.fea.std(axis=0, keepdims=True) + 1e-5
             self.fea -= mu
             self.fea /= std
-        elif side_fea and side_fea[0] in {'sce1', 'sce2', 'sce3'}:
+        elif side_fea and side_fea[0] in {'sce1', 'sce2', 'sce3', 'sce1_prob', 'sce2_prob', 'sce3_prob'}:
             self.fea = np.loadtxt(f'./data/step_one_feature/{side_fea[0]}_{purpose}.txt', delimiter=',').astype(np.single)
         # load images
         if local:

@@ -52,7 +52,9 @@ def cal_dim(side_fea):
            'cyc_infras_onehot': 4,
            'speed_limit': 1,
            'n_lanes': 1,
-           'sce1': 12, 'sce2': 12, 'sce3': 12}
+           'sce1': 12, 'sce2': 12, 'sce3': 12,
+           'sce1_prob': 4, 'sce2_prob': 4, 'sce3_prob': 4
+           }
     cnt = 0
     for fea in side_fea:
         cnt += s2d[fea]

@@ -30,10 +30,10 @@ if __name__ == '__main__':
     # generate results
     clf = DecisionTreeClassifier(random_state=0, max_depth=6, min_samples_split=0.01, criterion='entropy').fit(X_train, y_train)
     y_pred = clf.predict(X_test)
-    print('Scenario two model eval:')
-    res_sce2, conf_mat_sce2 = model_eval(y_test, y_pred)
-    print(res_sce2)
-    print(conf_mat_sce2)
+    print('Scenario one model eval:')
+    res_sce1, conf_mat_sce1 = model_eval(y_test, y_pred)
+    print(res_sce1)
+    print(conf_mat_sce1)
 
     print('\n\n')
     # scenario three: road type, cyc type, oneway

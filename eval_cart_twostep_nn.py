@@ -13,6 +13,15 @@ def load_feature(sce):
     return X_train, X_vali, X_test
 
 
+def save_prob(clf, sce, X_train, X_vali, X_test):
+    prob_train = clf.predict_proba(X_train)
+    prob_vali = clf.predict_proba(X_vali)
+    prob_test = clf.predict_proba(X_test)
+    np.savetxt(f'./data/step_one_feature/sce{sce}_prob_training.txt', prob_train, delimiter=',')
+    np.savetxt(f'./data/step_one_feature/sce{sce}_prob_vali.txt', prob_vali, delimiter=',')
+    np.savetxt(f'./data/step_one_feature/sce{sce}_prob_test.txt', prob_test, delimiter=',')
+
+
 if __name__ == '__main__':
     indi_train = np.loadtxt(f'./data/training_idx.txt').astype(int)
     indi_vali = np.loadtxt(f'./data/validation_idx.txt').astype(int)
@@ -40,6 +49,7 @@ if __name__ == '__main__':
     res_sce, conf_mat_sce = model_eval(y_test, y_pred)
     print(res_sce)
     print(conf_mat_sce)
+    save_prob(clf, 1, X_train, X_vali, X_test)
 
     print('\n\n')
     # scenario 2
@@ -61,6 +71,7 @@ if __name__ == '__main__':
     res_sce, conf_mat_sce = model_eval(y_test, y_pred)
     print(res_sce)
     print(conf_mat_sce)
+    save_prob(clf, 2, X_train, X_vali, X_test)
 
     print('\n\n')
     # scenario 3
@@ -82,4 +93,4 @@ if __name__ == '__main__':
     res_sce, conf_mat_sce = model_eval(y_test, y_pred)
     print(res_sce)
     print(conf_mat_sce)
-
+    save_prob(clf, 3, X_train, X_vali, X_test)
