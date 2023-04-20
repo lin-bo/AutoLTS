@@ -92,16 +92,19 @@ def complete_eval(net, device, local, side_fea, label, loc):
     loader_train = DataLoader(StreetviewDataset(purpose='training', local=local, toy=False, side_fea=side_fea, label=label, loc=loc),
                               batch_size=batch_size, shuffle=True)
     res_train = eval(net, loader_train, device, 'training', side_fea=side_fea, label=label, criterion=criterion)
+    print(res_train)
     # validation
     print('evaluating the validation set')
     loader_vali = DataLoader(StreetviewDataset(purpose='validation', local=local, toy=False, side_fea=side_fea, label=label, loc=loc),
                              batch_size=batch_size, shuffle=True)
     res_vali = eval(net, loader_vali, device, 'validation', side_fea=side_fea, label=label, criterion=criterion)
+    print(res_vali)
     # test
     print('evaluating the test set')
     loader_test = DataLoader(StreetviewDataset(purpose='test', local=local, toy=False, side_fea=side_fea, label=label, loc=loc),
                              batch_size=batch_size, shuffle=True)
     res_test = eval(net, loader_test, device, 'test', side_fea=side_fea, label=label, criterion=criterion)
+    print(res_test)
     return res_train, res_vali, res_test
 
 

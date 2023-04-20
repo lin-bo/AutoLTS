@@ -49,7 +49,7 @@ if __name__ == '__main__':
     res_sce, conf_mat_sce = model_eval(y_test, y_pred)
     print(res_sce)
     print(conf_mat_sce)
-    save_prob(clf, 1, X_train, X_vali, X_test)
+    # save_prob(clf, 1, X_train, X_vali, X_test)
 
     print('\n\n')
     # scenario 2
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     res_sce, conf_mat_sce = model_eval(y_test, y_pred)
     print(res_sce)
     print(conf_mat_sce)
-    save_prob(clf, 2, X_train, X_vali, X_test)
+    # save_prob(clf, 2, X_train, X_vali, X_test)
 
     print('\n\n')
     # scenario 3
@@ -93,4 +93,4 @@ if __name__ == '__main__':
     res_sce, conf_mat_sce = model_eval(y_test, y_pred)
     print(res_sce)
     print(conf_mat_sce)
-    save_prob(clf, 3, X_train, X_vali, X_test)
+    # save_prob(clf, 3, X_train, X_vali, X_test)

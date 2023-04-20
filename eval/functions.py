@@ -7,33 +7,33 @@ from sklearn.metrics import confusion_matrix
 def load_fea(key, purpose, loc=None, updated=False, w_lts_pred=False):
     if loc is None:
         if updated:
-            speed = np.loadtxt(f'../pred/speed_actual_onehot_{purpose}_updated.txt')
-            n_lanes = np.loadtxt(f'../pred/n_lanes_onehot_{purpose}_updated.txt')
+            speed = np.loadtxt(f'./pred/speed_actual_onehot_{purpose}_updated.txt')
+            n_lanes = np.loadtxt(f'./pred/n_lanes_onehot_{purpose}_updated.txt')
         else:
-            speed = torch.load(f'../pred/speed_actual_onehot_{purpose}.pt')[key]
-            n_lanes = torch.load(f'../pred/n_lanes_onehot_{purpose}.pt')[key]
-        parking = torch.load(f'../pred/parking_onehot_{purpose}.pt')[key]
-        oneway = torch.load(f'../pred/oneway_onehot_{purpose}.pt')[key]
-        cyc_infras = torch.load(f'../pred/cyc_infras_onehot_{purpose}.pt')[key]
-        road_type = torch.load(f'../pred/road_type_onehot_{purpose}.pt')[key]
-        volume = torch.load(f'../pred/volume_onehot_{purpose}.pt')[key]
+            speed = torch.load(f'./pred/speed_actual_onehot_{purpose}.pt')[key]
+            n_lanes = torch.load(f'./pred/n_lanes_onehot_{purpose}.pt')[key]
+        parking = torch.load(f'./pred/parking_onehot_{purpose}.pt')[key]
+        oneway = torch.load(f'./pred/oneway_onehot_{purpose}.pt')[key]
+        cyc_infras = torch.load(f'./pred/cyc_infras_onehot_{purpose}.pt')[key]
+        road_type = torch.load(f'./pred/road_type_onehot_{purpose}.pt')[key]
+        volume = torch.load(f'./pred/volume_onehot_{purpose}.pt')[key]
         if w_lts_pred:
-            lts_pred = torch.load(f'../pred/lts_wo_volume_{purpose}.pt')[key]
+            lts_pred = torch.load(f'./pred/lts_wo_volume_{purpose}.pt')[key]
     else:
         if updated:
-            speed = np.loadtxt(f'../pred/speed_actual_onehot_{purpose}_{loc}_updated.txt')
-            volume = np.loadtxt(f'../pred/volume_onehot_{purpose}_{loc}_updated.txt')
+            speed = np.loadtxt(f'./pred/speed_actual_onehot_{purpose}_{loc}_updated.txt')
+            volume = np.loadtxt(f'./pred/volume_onehot_{purpose}_{loc}_updated.txt')
         else:
-            speed = torch.load(f'../pred/speed_actual_onehot_{purpose}_{loc}.pt')
-            volume = torch.load(f'../pred/volume_onehot_{purpose}_{loc}.pt')
-        parking = torch.load(f'../pred/parking_onehot_{purpose}_{loc}.pt')
-        oneway = torch.load(f'../pred/oneway_onehot_{purpose}_{loc}.pt')
-        cyc_infras = torch.load(f'../pred/cyc_infras_onehot_{purpose}_{loc}.pt')
-        n_lanes = torch.load(f'../pred/n_lanes_onehot_{purpose}_{loc}.pt')
+            speed = torch.load(f'./pred/speed_actual_onehot_{purpose}_{loc}.pt')
+            volume = torch.load(f'./pred/volume_onehot_{purpose}_{loc}.pt')
+        parking = torch.load(f'./pred/parking_onehot_{purpose}_{loc}.pt')
+        oneway = torch.load(f'./pred/oneway_onehot_{purpose}_{loc}.pt')
+        cyc_infras = torch.load(f'./pred/cyc_infras_onehot_{purpose}_{loc}.pt')
+        n_lanes = torch.load(f'./pred/n_lanes_onehot_{purpose}_{loc}.pt')
         n_lanes = [v.item() for v in n_lanes]
-        road_type = torch.load(f'../pred/road_type_onehot_{purpose}_{loc}.pt')
+        road_type = torch.load(f'./pred/road_type_onehot_{purpose}_{loc}.pt')
         if w_lts_pred:
-            lts_pred = torch.load(f'../pred/lts_wo_volume_{purpose}_{loc}.pt')
+            lts_pred = torch.load(f'./pred/lts_wo_volume_{purpose}_{loc}.pt')
     if not w_lts_pred:
         return speed, parking, oneway, cyc_infras, n_lanes, road_type, volume
     else:
