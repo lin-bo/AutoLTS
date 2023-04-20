@@ -1,9 +1,6 @@
 import numpy as np
 import pandas as pd
 
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import GridSearchCV
-
 from eval import model_eval, load_fea, attr_mapping, lts_prediction_wo_volume
 
 
