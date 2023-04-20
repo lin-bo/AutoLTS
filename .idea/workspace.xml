@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add sce-prob features">
-      <change afterPath="$PROJECT_DIR$/eval_twostep_exact.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/eval_twostep_spatial_exact.py" afterDir="false" />
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="remove unnecessary packages">
+      <change afterPath="$PROJECT_DIR$/eval_twostep_cart.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval/functions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_cart_twostep_nn.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_twostep_spatial_cart.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,28 +54,7 @@
       <recent name="$PROJECT_DIR$/utils" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.eval_twostep_spatial_exact">
-    <configuration name="eval_cart_autolts" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="AutoLTS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/eval_cart_autolts.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.eval_twostep_cart">
     <configuration name="eval_cart_roadfea" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AutoLTS" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -94,6 +68,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/eval_cart_roadfea.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="eval_twostep_cart" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AutoLTS" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/eval_twostep_cart.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -167,11 +162,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.eval_twostep_cart" />
         <item itemvalue="Python.eval_twostep_spatial_exact" />
         <item itemvalue="Python.eval_twostep_exact" />
         <item itemvalue="Python.eval_cart_roadfea" />
         <item itemvalue="Python.eval_twostep_spatial_cart" />
-        <item itemvalue="Python.eval_cart_autolts" />
       </list>
     </recent_temporary>
   </component>
@@ -183,20 +178,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00046" summary="add startpoint to all trainers">
-      <created>1670599926868</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1670599926868</updated>
-    </task>
-    <task id="LOCAL-00047" summary="update acc calculations for Classification problems">
-      <created>1670698892162</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1670698892162</updated>
     </task>
     <task id="LOCAL-00048" summary="update test for all attri predictions">
       <created>1670711902966</created>
@@ -527,7 +508,21 @@
       <option name="project" value="LOCAL" />
       <updated>1681954944653</updated>
     </task>
-    <option name="localTasksCounter" value="95" />
+    <task id="LOCAL-00095" summary="add exact mapping">
+      <created>1682006944172</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1682006944172</updated>
+    </task>
+    <task id="LOCAL-00096" summary="remove unnecessary packages">
+      <created>1682007196334</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1682007196334</updated>
+    </task>
+    <option name="localTasksCounter" value="97" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -545,8 +540,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="add MoCoV3 to gen_emb" />
-    <MESSAGE value="update MoCo checkpoint rule to avoid accident re-start from 0" />
     <MESSAGE value="add hl-inc option in MoCo train to control whether or not to increase the dist between LTS2 and LTS3" />
     <MESSAGE value="add frozen/no-frozen option to MoCo_Clf_train. This only applies to MoCoClfV3 onward" />
     <MESSAGE value="add multi task encoder" />
@@ -570,6 +563,8 @@
     <MESSAGE value="add lambda in hierarchical loss" />
     <MESSAGE value="add two-step nn" />
     <MESSAGE value="add sce-prob features" />
-    <option name="LAST_COMMIT_MESSAGE" value="add sce-prob features" />
+    <MESSAGE value="add exact mapping" />
+    <MESSAGE value="remove unnecessary packages" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove unnecessary packages" />
   </component>
 </project>
