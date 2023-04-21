@@ -81,8 +81,8 @@ def model_eval(y_true, y_pred):
     # acc
     acc = np.sum(y_pred == y_true) / y_true.shape[0] * 100
     # h/l acc
-    flag_pred = (y_pred <= 2)
-    flag_true = (y_true <= 2)
+    flag_pred = y_pred <= 2
+    flag_true = y_true <= 2
     hl_acc = (flag_pred == flag_true).sum() / y_true.shape[0] * 100
     # mae
     # mae = np.abs(y_true - y_pred).mean()
