@@ -81,7 +81,7 @@ def causal_adaptation(roads_train, roads_test, loc, target, quiet=False):
     if not quiet:
         print(f'new transition matrix in {loc}')
         print(new_mat)
-    old_acc = ((target_trues[indices] == target_predictions [indices]).sum() / len(indices) * 100).round(2)
+    old_acc = ((target_trues[indices] == target_predictions[indices]).sum() / len(indices) * 100).round(2)
     new_acc = ((target_trues[indices] == updated_preds[indices]).sum() / len(indices) * 100).round(2)
     old_cnt = (target_trues[indices] == target_predictions[indices]).sum()
     new_cnt = (target_trues[indices] == updated_preds[indices]).sum()

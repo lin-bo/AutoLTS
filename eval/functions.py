@@ -20,7 +20,7 @@ def load_fea(key, purpose, loc=None, updated=False, w_lts_pred=False):
         if w_lts_pred:
             lts_pred = torch.load(f'./pred/lts_wo_volume_{purpose}.pt')[key]
     else:
-        if updated:
+        if updated and purpose == 'test':
             speed = np.loadtxt(f'./pred/speed_actual_onehot_{purpose}_{loc}_updated.txt')
             volume = np.loadtxt(f'./pred/volume_onehot_{purpose}_{loc}_updated.txt')
         else:

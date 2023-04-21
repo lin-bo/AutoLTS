@@ -66,6 +66,7 @@ def load_feature(sce, location):
     X = []
     for purpose in ['training', 'validation', 'test']:
         speed, parking, oneway, cyc_infras, n_lanes, road_type, volume = load_fea(key='pred', purpose=purpose, loc=location, updated=True)
+        print(purpose, len(speed), len(n_lanes), len(oneway))
         if purpose == 'validation' and len(speed) > len(indi_vali):
             speed = speed[indi_vali]
         df = attr_mapping(speed, parking, oneway, cyc_infras, n_lanes, road_type, volume)
@@ -103,7 +104,7 @@ def predict_and_eval(location, save=False, grid=False):
 
     # scenario 1
     for sce in [1, 2, 3]:
-        print()
+        print(f'\n Scenario {sce}')
         X_train, X_vali, X_test = load_feature(sce=sce, location=location)
         param = grid_search(X_train, y_train) if grid else best_param(location=location, sce=sce)
         # generate results
@@ -112,7 +113,6 @@ def predict_and_eval(location, save=False, grid=False):
                                      min_samples_split=param['min_samples_split'],
                                      criterion=param['criterion']).fit(X_train, y_train)
         y_pred = clf.predict(X_test)
-        print(f'Scenario {sce} model eval:')
         res, conf_mat = model_eval(y_test, y_pred)
         print(res)
         print(conf_mat)

@@ -1,9 +1,18 @@
 import geopandas
 import numpy as np
+import argparse
 
 from postprocessing import est_trans_prob, load_roads, causal_adaptation, causal_adaptation_full_network
 
 np.random.seed(0)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--location', type=str, default=None)
+    parser.add_argument('--save', action='store_true', default=False)
+    args = parser.parse_args()
+    return args
 
 
 def save_updated_predictions(corrected, loc, target):
@@ -34,10 +43,19 @@ def adapt(loc, target, purpose):
     return corrected
 
 
+def process(location, save):
+    if location is None:
+        roads_train = load_roads(loc=None, purpose='training')
+        roads_full = load_roads(loc=None, purpose=None)
+        corrected = causal_adaptation_full_network(roads_train, roads_full, loc=None, target='speed_actual_onehot', quiet=False)
+    else:
+        roads_train = load_roads(loc=location, purpose='training')
+        roads_test = load_roads(loc=location, purpose='test')
+        corrected = causal_adaptation(roads_train, roads_test, loc='scarborough', target='cyc_infras_onehot', quiet=False)
+    if save:
+        save_updated_predictions(corrected, loc=None, target='speed_actual_onehot')
+
+
 if __name__ == '__main__':
-    roads_train = load_roads(loc=None, purpose='training')
-    roads_full = load_roads(loc=None, purpose=None)
-    roads_test = load_roads(loc=None, purpose='test')
-    # causal_adaptation(roads_train, roads_test, loc='scarborough', target='cyc_infras_onehot', quiet=False)
-    corrected = causal_adaptation_full_network(roads_train, roads_full, loc=None, target='speed_actual_onehot', quiet=False)
-    # save_updated_predictions(corrected, loc=None, target='speed_actual_onehot')
+    args = parse_args()
+    process(location=args.location, save=args.save)
