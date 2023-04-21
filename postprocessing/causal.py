@@ -118,14 +118,18 @@ def causal_adaptation_full_network(roads_train, roads_full, loc, target, quiet=F
         while (y == y_hat).sum() != len(y):
             y_hat = y.copy()
             for i, e in enumerate(road):
-                if i == 0:
-                    probs = [trans_prob[j, y_hat[i+1]] * prob_preds[e][j] for j in range(dim)]
-                elif i == len(road) - 1:
-                    probs = [trans_prob[j, y_hat[i-1]] * prob_preds[e][j] for j in range(dim)]
+                if e in fixed_segments:
+                    prob_preds[e] = np.zeros(dim)
+                    prob_preds[e][y[i]] = 1
                 else:
-                    probs = [trans_prob[j, y_hat[i+1]] * trans_prob[j, y_hat[i-1]] * prob_preds[e][j] for j in range(dim)]
-                y[i] = np.argmax(probs)
-                prob_preds[e] = np.array(probs).copy()
+                    if i == 0:
+                        probs = [trans_prob[j, y_hat[i+1]] * prob_preds[e][j] for j in range(dim)]
+                    elif i == len(road) - 1:
+                        probs = [trans_prob[j, y_hat[i-1]] * prob_preds[e][j] for j in range(dim)]
+                    else:
+                        probs = [trans_prob[j, y_hat[i+1]] * trans_prob[j, y_hat[i-1]] * prob_preds[e][j] for j in range(dim)]
+                    y[i] = np.argmax(probs)
+                    prob_preds[e] = np.array(probs).copy()
     updated_preds = prob_preds.argmax(axis=1)
     # assess
     updated_cnt = (1 - updated_preds[indices] == target_predictions[indices]).sum()

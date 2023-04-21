@@ -11,9 +11,9 @@ def save_updated_predictions(corrected, loc, target):
         indi_train = np.loadtxt(f'./data/training_idx.txt').astype(int)
         indi_vali = np.loadtxt(f'./data/validation_idx.txt').astype(int)
         indi_test = np.loadtxt(f'./data/test_idx.txt').astype(int)
-        np.savetxt(f'./pred/{target}_training_updated.txt', corrected[indi_train])
-        np.savetxt(f'./pred/{target}_validation_updated.txt', corrected[indi_vali])
-        np.savetxt(f'./pred/{target}_test_updated.txt', corrected[indi_test])
+        np.savetxt(f'./pred/{target}_training_updated_tmp.txt', corrected[indi_train])
+        np.savetxt(f'./pred/{target}_validation_updated_tmp.txt', corrected[indi_vali])
+        np.savetxt(f'./pred/{target}_test_updated_tmp.txt', corrected[indi_test])
     else:
         indi_train = np.loadtxt(f'./data/{loc}_training_idx.txt').astype(int)
         indi_vali = np.loadtxt(f'./data/{loc}_validation_idx.txt').astype(int)
@@ -40,4 +40,4 @@ if __name__ == '__main__':
     roads_test = load_roads(loc=None, purpose='test')
     # causal_adaptation(roads_train, roads_test, loc='scarborough', target='cyc_infras_onehot', quiet=False)
     corrected = causal_adaptation_full_network(roads_train, roads_full, loc=None, target='speed_actual_onehot', quiet=False)
-    # save_updated_predictions(corrected, loc=None, target='n_lanes_onehot')
+    # save_updated_predictions(corrected, loc=None, target='speed_actual_onehot')

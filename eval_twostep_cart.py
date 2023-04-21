@@ -17,7 +17,7 @@ def load_feature(sce):
     # training data
     X = []
     for purpose in ['training', 'validation', 'test']:
-        speed, parking, oneway, cyc_infras, n_lanes, road_type, volume = load_fea(key='pred', purpose=purpose, loc=None, updated=True)
+        speed, parking, oneway, cyc_infras, n_lanes, road_type, volume = load_fea(key='pred', purpose=purpose, loc=None, updated=False)
         df = attr_mapping(speed, parking, oneway, cyc_infras, n_lanes, road_type, volume)
         if sce == 2:
             df[['Bike Lanes', 'Cycle Tracks', 'Multi-use Pathway', 'No Infras']] = df_true.loc[s2indi[purpose], ['Bike Lanes', 'Cycle Tracks', 'Multi-use Pathway', 'No Infras']].values
@@ -50,15 +50,16 @@ if __name__ == '__main__':
     # clf = GridSearchCV(dt_clf, params, cv=10)
     # search = clf.fit(X_train, y_train)
     # print(search.best_params_)
-    print('best params: ', {'criterion': 'entropy', 'max_depth': 10, 'min_samples_split': 4})
+    print('best params: ', {'criterion': 'gini', 'max_depth': 5, 'min_samples_split': 2})
     # generate results
-    clf = DecisionTreeClassifier(random_state=0, max_depth=10, min_samples_split=4, criterion='entropy').fit(X_train, y_train)
+    clf = DecisionTreeClassifier(random_state=0, max_depth=5, min_samples_split=2, criterion='gini').fit(X_train, y_train)
     y_pred = clf.predict(X_test)
     print('Scenario one model eval:')
     res_sce, conf_mat_sce = model_eval(y_test, y_pred)
     print(res_sce)
     print(conf_mat_sce)
 
+    print('\n')
     # scenario 2
     X_train, X_vali, X_test = load_feature(sce=2)
     # load data
@@ -70,9 +71,28 @@ if __name__ == '__main__':
     # clf = GridSearchCV(dt_clf, params, cv=10)
     # search = clf.fit(X_train, y_train)
     # print(search.best_params_)
-    print('best params: ', {'criterion': 'gini', 'max_depth': 8, 'min_samples_split': 2})
+    print('best params: ', {'criterion': 'gini', 'max_depth': 7, 'min_samples_split': 6})
     # generate results
-    clf = DecisionTreeClassifier(random_state=0, max_depth=8, min_samples_split=2, criterion='gini').fit(X_train, y_train)
+    clf = DecisionTreeClassifier(random_state=0, max_depth=7, min_samples_split=6, criterion='gini').fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
+    print('Scenario one model eval:')
+    res_sce, conf_mat_sce = model_eval(y_test, y_pred)
+    print(res_sce)
+    print(conf_mat_sce)
+
+    X_train, X_vali, X_test = load_feature(sce=3)
+    # load data
+    # Grid Search
+    # dt_clf = DecisionTreeClassifier(random_state=0)
+    # params = {'criterion': ['gini', 'entropy'],
+    #           'max_depth': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    #           'min_samples_split': [0.01, 0.03, 0.05, 0.1, 0.15, 0.2, 2, 4, 6]}
+    # clf = GridSearchCV(dt_clf, params, cv=10)
+    # search = clf.fit(X_train, y_train)
+    # print(search.best_params_)
+    print('best params: ', {'criterion': 'gini', 'max_depth': 8, 'min_samples_split': 6})
+    # generate results
+    clf = DecisionTreeClassifier(random_state=0, max_depth=8, min_samples_split=6, criterion='gini').fit(X_train, y_train)
     y_pred = clf.predict(X_test)
     print('Scenario one model eval:')
     res_sce, conf_mat_sce = model_eval(y_test, y_pred)
