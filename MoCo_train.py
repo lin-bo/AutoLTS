@@ -93,13 +93,14 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
         raise ValueError('reg MoCo loss has not been implemented yet')
     else:
         net = MoCo(dim=128, device=device, local=local, simple_shuffle=simple_shuffle, queue_size=memsize, temperature=temperature).to(device)
-        dataset_train = MoCoDataset(purpose='training', local=local, toy=toy, loc=loc)
-        dataset_vali = MoCoDataset(purpose='validation', local=local, toy=toy, loc=loc)
+        dataset_train = MoCoDataset(local=local, toy=toy)
         criterion = nn.CrossEntropyLoss().to(device)
     loader_train = DataLoader(dataset_train, shuffle=True, batch_size=batch_size, drop_last=True)
-    loader_vali = DataLoader(dataset_vali, shuffle=False, batch_size=int(batch_size//2), drop_last=True)
+    if aware:
+        loader_vali = DataLoader(dataset_vali, shuffle=False, batch_size=int(batch_size//2), drop_last=True)
     n_train = len(dataset_train)
-    n_vali = len(dataset_vali)
+    if aware:
+        n_vali = len(dataset_vali)
     # initialize optimizer and loss function
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=1e-4)
     # load checkpoint if needed
@@ -113,8 +114,11 @@ def train(device='mps', n_epoch=10, n_check=3, lr=0.03, toy=False, batch_size=32
         loss_train = train_one_epoch(loader_train, net, criterion, optimizer, device, aware)
         loss_train = loss_train / n_train * 100  # normalize
         if epoch % n_check == 0:
-            loss_vali = validate(loader_vali, net, criterion, device, aware)
-            loss_vali = loss_vali / n_vali * 100
+            if aware:
+                loss_vali = validate(loader_vali, net, criterion, device, aware)
+                loss_vali = loss_vali / n_vali * 100
+            else:
+                loss_vali = 0.
         else:
             loss_vali = loss_records[-1][1]
         loss_records.append((loss_train, loss_vali))

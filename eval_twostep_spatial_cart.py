@@ -117,7 +117,7 @@ def predict_and_eval(location, save=False, grid=False):
         print(res)
         print(conf_mat)
         if save:
-            save_prob(clf, 1, X_train, X_vali, X_test, location)
+            save_prob(clf, sce, X_train, X_vali, X_test, location)
 
 
 if __name__ == '__main__':

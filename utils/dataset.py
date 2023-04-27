@@ -55,7 +55,10 @@ class StreetviewDataset(Dataset):
             self.fea -= mu
             self.fea /= std
         elif side_fea and side_fea[0] in {'sce1', 'sce2', 'sce3', 'sce1_prob', 'sce2_prob', 'sce3_prob'}:
-            self.fea = np.loadtxt(f'./data/step_one_feature/{side_fea[0]}_{purpose}.txt', delimiter=',').astype(np.single)
+            if loc is None:
+                self.fea = np.loadtxt(f'./data/step_one_feature/{side_fea[0]}_{purpose}.txt', delimiter=',').astype(np.single)
+            else:
+                self.fea = np.loadtxt(f'./data/step_one_feature/{loc}_{side_fea[0]}_{purpose}.txt', delimiter=',').astype(np.single)
         # load images
         if local:
             img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
@@ -113,7 +116,7 @@ class StreetviewDataset(Dataset):
         return len(self.y)
 
 
-class MoCoDataset(Dataset):
+class MoCoDatasetV0(Dataset):
 
     def __init__(self, purpose='training', local=True, toy=False, loc=None):
         super().__init__()
@@ -122,6 +125,44 @@ class MoCoDataset(Dataset):
             indi = np.loadtxt(f'./data/{purpose}_idx.txt').astype(int)
         else:
             indi = np.loadtxt(f'./data/{loc}_{purpose}_idx.txt').astype(int)
+        if toy:
+            np.random.seed(31415926)
+            np.random.shuffle(indi)
+            indi = indi[:1000]
+        # load images
+        if local:
+            img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
+        else:
+            img_folder = './data/streetview/dataset'
+        self.transform = transforms.Compose([
+            transforms.RandomResizedCrop(224, scale=(0.5, 1.)),
+            transforms.RandomApply([transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)], p=0.8),
+            transforms.RandomGrayscale(p=0.2),
+            transforms.RandomApply([GaussianBlur(sigma=[.1, 2.])], p=0.5),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+            ])
+        self.img_path = np.array([img_folder + f'/{idx}.jpg' for idx in indi])
+
+    def __getitem__(self, idx):
+        img = Image.open(self.img_path[idx])
+        q = self.transform(img)
+        k = self.transform(img)
+        return [q, k]
+
+    def __len__(self):
+        return len(self.img_path)
+
+
+class MoCoDataset(Dataset):
+
+    def __init__(self, local=True, toy=False):
+        super().__init__()
+        # load index and labels
+        indi = np.loadtxt(f'./data/training_idx.txt').astype(int).tolist()
+        for purpose in ['validation', 'test']:
+            indi += np.loadtxt(f'./data/{purpose}_idx.txt').astype(int).tolist()
         if toy:
             np.random.seed(31415926)
             np.random.shuffle(indi)
