@@ -17,7 +17,8 @@ Create a folder for checkpoints:
 mkdir checkpoint
 ```
 
-Download the datasets [here](123.com) and put them under `./data/`
+Download the image data [here](https://utoronto-my.sharepoint.com/:f:/g/personal/imbo_lin_mail_utoronto_ca/EmxhwgYm-UBKv5fnoWUEdGoB4PzT8G2RzFHEW8u79IOw0w?e=kNlPei) and put the folder under `./data/streetview`
+Download the datasets [here](https://utoronto-my.sharepoint.com/:f:/g/personal/imbo_lin_mail_utoronto_ca/EltmiXVh5FZAikzA5xxKNB4Bj1eDFY9vK-EKJ1z4svFrng) and put them under `./data/`
 
 ## Training
 

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="convert eval scripts to cmd line styles for twostep spatial cart">
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="update MoCo so that we train it on the full dataset">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MoCo_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/MoCo_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_twostep_spatial_cart.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_twostep_spatial_cart.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/res/exp_records.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/res/exp_records.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loss.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,13 +180,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00052" summary="add random seed control">
-      <created>1672005580704</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1672005580704</updated>
     </task>
     <task id="LOCAL-00053" summary="update">
       <created>1672515502643</created>
@@ -525,7 +517,14 @@
       <option name="project" value="LOCAL" />
       <updated>1682103156558</updated>
     </task>
-    <option name="localTasksCounter" value="101" />
+    <task id="LOCAL-00101" summary="update MoCo so that we train it on the full dataset">
+      <created>1682574184650</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1682574184650</updated>
+    </task>
+    <option name="localTasksCounter" value="102" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -543,7 +542,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="store losses for all tasks for multitask encoder" />
     <MESSAGE value="solve the re-start issue for MultitaskEnc_train" />
     <MESSAGE value="remove loss normalization for the multitask training so that the training and vali loss scales are consistent across different epochs." />
     <MESSAGE value="add location option to dataset" />
@@ -568,6 +566,7 @@
     <MESSAGE value="correct parameters for two step cart" />
     <MESSAGE value="convert eval scripts to cmd line styles" />
     <MESSAGE value="convert eval scripts to cmd line styles for twostep spatial cart" />
-    <option name="LAST_COMMIT_MESSAGE" value="convert eval scripts to cmd line styles for twostep spatial cart" />
+    <MESSAGE value="update MoCo so that we train it on the full dataset" />
+    <option name="LAST_COMMIT_MESSAGE" value="update MoCo so that we train it on the full dataset" />
   </component>
 </project>

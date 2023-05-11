@@ -92,8 +92,8 @@ class OrdLabelMoCoHierarchyLoss(nn.Module):
         loss += self.lambd * ((logits * flag).sum(dim=1) / flag.sum(dim=1)).mean()
         # level 2
         with torch.no_grad():
-            targets = (targets <= 2).to(torch.long)
-            flag = (targets == targets[:, [0]]).to(torch.long)
+            flag = (targets <= 2).to(torch.long)
+            flag = (flag == flag[:, [0]]).to(torch.long)
         loss += (1 - self.lambd) * ((logits * flag).sum(dim=1) / flag.sum(dim=1)).mean()
         return loss
 
