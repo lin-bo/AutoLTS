@@ -19,9 +19,9 @@ Create a folder for checkpoints:
 mkdir checkpoint
 ```
 
-Download the image data [here](https://utoronto-my.sharepoint.com/:f:/g/personal/imbo_lin_mail_utoronto_ca/EmxhwgYm-UBKv5fnoWUEdGoB4PzT8G2RzFHEW8u79IOw0w?e=kNlPei) and put the folder under `./data/streetview/dataset`.
+Download the image data [here](https://drive.google.com/file/d/1DQxCbSr7J9_h5asjnq2hGE-iHwG1BGsx/view?usp=share_link) and put the folder under `./data/streetview/dataset`.
 
-Download other data [here](https://utoronto-my.sharepoint.com/:f:/g/personal/imbo_lin_mail_utoronto_ca/EltmiXVh5FZAikzA5xxKNB4Bj1eDFY9vK-EKJ1z4svFrng) and put them under `./data/`
+Download other data [here](https://drive.google.com/file/d/1UI1LvhHZln0In6eXn1PUhZ7m902EWgcM/view?usp=share_link) and put them under `./data/`
 
 ## Training
 
@@ -60,7 +60,7 @@ python test.py --device=<GPU name> --modelname=MoCoClfFeaV3 --label=lts_wo_volum
 
 ## Pre-trained Models
 
-You can download pretrained models following this [link](https://utoronto-my.sharepoint.com/:f:/g/personal/imbo_lin_mail_utoronto_ca/EsCq-2HRQ6dOgSPTuGY4N1QBv87sxFFqACiJczzk5qyWbA?e=oT6phP). 
+You can download pretrained models following this [link](https://drive.google.com/drive/folders/1f76sAj2vtxgJmZz-3LEg8oB2zftOl7r5?usp=share_link). 
 Models are named by <Split Name>-<scenario number>.pt 
 where split name can be random, york, etobicoke, and scarborough, and scenario number can be sce1, sce2, and sce3.
 

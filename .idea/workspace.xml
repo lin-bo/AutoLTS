@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add pretrained models" />
+    <list default="true" id="acff3e9a-fc35-4ff8-9056-d63c6f2627a7" name="Changes" comment="add architecture illustration">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -175,13 +178,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1662232529322</updated>
-    </task>
-    <task id="LOCAL-00055" summary="add mask former">
-      <created>1673026167195</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1673026167195</updated>
     </task>
     <task id="LOCAL-00056" summary="get the mask former running within AutoLTS">
       <created>1673038817391</created>
@@ -519,7 +515,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684006347048</updated>
     </task>
-    <option name="localTasksCounter" value="104" />
+    <task id="LOCAL-00104" summary="add architecture illustration">
+      <created>1684006880298</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1684006880299</updated>
+    </task>
+    <option name="localTasksCounter" value="105" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -537,7 +540,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/mask_former" />
     </ignored-roots>
-    <MESSAGE value="add location option to dataset" />
     <MESSAGE value="normalize vali loss for res50" />
     <MESSAGE value="update gen_emb so that we only save the projected embedding (2d). This is to save disc space." />
     <MESSAGE value="add epsilon to streetview dataset when normalizing the sidefeatures to avoid zero dominators" />
@@ -562,6 +564,7 @@
     <MESSAGE value="update MoCo so that we train it on the full dataset" />
     <MESSAGE value="update dataset links" />
     <MESSAGE value="add pretrained models" />
-    <option name="LAST_COMMIT_MESSAGE" value="add pretrained models" />
+    <MESSAGE value="add architecture illustration" />
+    <option name="LAST_COMMIT_MESSAGE" value="add architecture illustration" />
   </component>
 </project>
