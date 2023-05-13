@@ -1,9 +1,11 @@
 # AutoLTS
 
-This repository is the official implementation of [AutoLTS: Automating Cycling Stress Assessment via Contrastive Learning and Spatial Post-processing](123.com). 
+This repository is the implementation of [AutoLTS: Automating Cycling Stress Assessment via Contrastive Learning and Spatial Post-processing](123.com). 
 
-<!-- >📋  Optional: include a graphic explaining your approach/main result, bibtex entry, link to demos, blog posts and tutorials -->
-
+<p align="center">
+<img src="/img/mdl_arch_final_with_illustrations.png" width=700>
+</p>
+  
 ## Requirements
 
 To install requirements:
