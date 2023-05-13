@@ -17,8 +17,9 @@ Create a folder for checkpoints:
 mkdir checkpoint
 ```
 
-Download the image data [here](https://utoronto-my.sharepoint.com/:f:/g/personal/imbo_lin_mail_utoronto_ca/EmxhwgYm-UBKv5fnoWUEdGoB4PzT8G2RzFHEW8u79IOw0w?e=kNlPei) and put the folder under `./data/streetview`
-Download the datasets [here](https://utoronto-my.sharepoint.com/:f:/g/personal/imbo_lin_mail_utoronto_ca/EltmiXVh5FZAikzA5xxKNB4Bj1eDFY9vK-EKJ1z4svFrng) and put them under `./data/`
+Download the image data [here](https://utoronto-my.sharepoint.com/:f:/g/personal/imbo_lin_mail_utoronto_ca/EmxhwgYm-UBKv5fnoWUEdGoB4PzT8G2RzFHEW8u79IOw0w?e=kNlPei) and put the folder under `./data/streetview/dataset`.
+
+Download other data [here](https://utoronto-my.sharepoint.com/:f:/g/personal/imbo_lin_mail_utoronto_ca/EltmiXVh5FZAikzA5xxKNB4Bj1eDFY9vK-EKJ1z4svFrng) and put them under `./data/`
 
 ## Training
 
@@ -57,19 +58,8 @@ python test.py --device=<GPU name> --modelname=MoCoClfFeaV3 --label=lts_wo_volum
 
 ## Pre-trained Models
 
-You can download pretrained models here:
-
-- [AutoLTS-Random-Sce1]()
-- [AutoLTS-Random-Sce2]()
-- [AutoLTS-Random-Sce3]()
-- [AutoLTS-York-Sce1]()
-- [AutoLTS-York-Sce2]()
-- [AutoLTS-York-Sce3]()
-- [AutoLTS-Etobicoke-Sce1]()
-- [AutoLTS-Etobicoke-Sce2]()
-- [AutoLTS-Etobicoke-Sce3]()
-- [AutoLTS-Scarborough-Sce1]()
-- [AutoLTS-Scarborough-Sce2]()
-- [AutoLTS-Scarborough-Sce3]()
+You can download pretrained models following this [link](https://utoronto-my.sharepoint.com/:f:/g/personal/imbo_lin_mail_utoronto_ca/EsCq-2HRQ6dOgSPTuGY4N1QBv87sxFFqACiJczzk5qyWbA?e=oT6phP). 
+Models are named by <Split Name>-<scenario number>.pt 
+where split name can be random, york, etobicoke, and scarborough, and scenario number can be sce1, sce2, and sce3.
 
 
