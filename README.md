@@ -32,18 +32,30 @@ python MoCo_train.py --device=<GPU name> -ne=100 -nc=1 --lr=30 -bs=256 --memsize
 ```
 To train the road feature prediction models, run:
 ```
-python Res50_train.py --device=<GPU name> -ne=100 -nc=1 --lr=0.0001 -bs=128 --label=<name of the labels, choose from speed_actual_onehot, cyc_infras_onehot, n_lanes_onehot, oneway_onehot, parking_onehot, and road_type_onehot>
+python Res50_train.py --device=<GPU name> -ne=100 -nc=1 --lr=0.0001 -bs=128 --label=speed_actual_onehot
+python Res50_train.py --device=<GPU name> -ne=100 -nc=1 --lr=0.0001 -bs=128 --label=cyc_infras_onehot
+python Res50_train.py --device=<GPU name> -ne=100 -nc=1 --lr=0.0001 -bs=128 --label=n_lanes_onehot
+python Res50_train.py --device=<GPU name> -ne=100 -nc=1 --lr=0.0001 -bs=128 --label=oneway_onehot
+python Res50_train.py --device=<GPU name> -ne=100 -nc=1 --lr=0.0001 -bs=128 --label=parking_onehot
+python Res50_train.py --device=<GPU name> -ne=100 -nc=1 --lr=0.0001 -bs=128 --label=road_type_onehot
 ```
 
 To generate the road feature predictions, run
 ```
-python gen_prediction.py --device=<GPU name> --model=Res50 -bs=128 --modelname=Res50 --label=<Road feature name> --checkpoint=<model name> --prob_pred
+python gen_prediction.py --device=<GPU name> --model=Res50 -bs=128 --modelname=Res50 --label=speed_actual_onehot --checkpoint=<model name> --prob_pred
+python gen_prediction.py --device=<GPU name> --model=Res50 -bs=128 --modelname=Res50 --label=cyc_infras_onehot --checkpoint=<model name> --prob_pred
+python gen_prediction.py --device=<GPU name> --model=Res50 -bs=128 --modelname=Res50 --label=n_lanes_onehot --checkpoint=<model name> --prob_pred
+python gen_prediction.py --device=<GPU name> --model=Res50 -bs=128 --modelname=Res50 --label=oneway_onehot --checkpoint=<model name> --prob_pred
+python gen_prediction.py --device=<GPU name> --model=Res50 -bs=128 --modelname=Res50 --label=parking_onehot --checkpoint=<model name> --prob_pred
+python gen_prediction.py --device=<GPU name> --model=Res50 -bs=128 --modelname=Res50 --label=road_type_onehot --checkpoint=<model name> --prob_pred
 ```
+The predicted road features are available in `./pred/`.
 
 To run the post-processing module, run 
 ```
 python postprocessing.py
 ```
+The processed road features are stored in `./pred/` with suffix `_updated`. The embedded road features are stored in `./data/step_one_feature/`.
 
 To train the final LTS prediction module, run:
 ```
