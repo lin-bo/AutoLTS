@@ -61,7 +61,7 @@ class StreetviewDataset(Dataset):
                 self.fea = np.loadtxt(f'./data/step_one_feature/{loc}_{side_fea[0]}_{purpose}.txt', delimiter=',').astype(np.single)
         # load images
         if local:
-            img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
+            img_folder = '../Streetview2LTS/dataset'
         else:
             img_folder = './data/streetview/dataset'
         if not augmentation:
@@ -131,7 +131,7 @@ class MoCoDatasetV0(Dataset):
             indi = indi[:1000]
         # load images
         if local:
-            img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
+            img_folder = '../Streetview2LTS/dataset'
         else:
             img_folder = './data/streetview/dataset'
         self.transform = transforms.Compose([
@@ -169,7 +169,7 @@ class MoCoDataset(Dataset):
             indi = indi[:1000]
         # load images
         if local:
-            img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
+            img_folder = '../Streetview2LTS/dataset'
         else:
             img_folder = './data/streetview/dataset'
         self.transform = transforms.Compose([
@@ -208,7 +208,7 @@ class LabelMoCoDataset(Dataset):
             indi = indi[:1000]
         # load images
         if local:
-            img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
+            img_folder = '../Streetview2LTS/dataset'
         else:
             img_folder = './data/streetview/dataset'
         if aug_method == 'SimCLR':
@@ -266,7 +266,7 @@ class MultitaskEncDataset(Dataset):
             indi = indi[:1000]
         # load images
         if local:
-            img_folder = '/Users/bolin/Library/CloudStorage/OneDrive-UniversityofToronto/Streetview2LTS/dataset'
+            img_folder = '../Streetview2LTS/dataset'
         else:
             img_folder = './data/streetview/dataset'
         if aug_method == 'SimCLR':
