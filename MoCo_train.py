@@ -1,5 +1,3 @@
-# coding: utf-8
-# Author: Bo Lin
 import torch
 from torch import nn
 from tqdm import tqdm

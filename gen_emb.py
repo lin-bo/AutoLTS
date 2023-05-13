@@ -1,6 +1,3 @@
-# coding: utf-8
-# Author: Bo Lin
-
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 import numpy as np
